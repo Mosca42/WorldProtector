@@ -1,0 +1,46 @@
+item.regionstick.name=Baton Des Regions
+
+world.protection.place=§4Tu n'as pas la permission de poser un bloc ici !
+world.protection.break=§4Tu n'as pas la permission casser ici !
+world.interact.use=§4Tu n'as pas la permission d'utiliser se bloc !
+world.hurt.mob=§4Tu n'as pas la permission de taper se mob !
+world.pvp.player=§4Tu n'as pas la permission de pvp !
+world.pickup.player=§4Tu n'as pas la permission récupérer cette item !
+world.speak.player=§4Tu n'as pas la permission de parler !
+world.drop.player=§4Tu n'as pas la permission de jeter un item !
+world.ender.player=§4Tu n'as pas la permission de te téléporter !
+message.itemhand.take=§4Prend le baton des régions dans la main !
+message.itemhand.choose=§4Choisis 2 positions !
+message.itemhand.expand=§4Region étendue !
+message.region.priority=§4Il faut une priorité supérieur à 1 !
+
+help.regionstick.1=§bUtilise le sur deux blocs pour crée une région !
+help.regionstick.2=§bGarde l'item en main pour crée une région !
+
+message.flags.add=§4Flag : %s §4ajouté !
+message.flags.remove=§4Flag : %s §4supprimé !
+message.flags.unknown=§4Le flag : %s §4n'est pas connu dans cette région !
+
+message.region.define=§4Region : %s §4défini !
+message.region.redefine=§4Region : %s §4redéfini !
+message.region.teleport=§4Téléporté à la région : %s §4!
+message.region.remove=§4Région : %s §4supprimé !
+message.region.setpriority=§4Priorité %s §4pour la région : %s §4!
+message.region.unknown=§4Région inconnu : %s §4!
+message.region.infopriority=§4Priorité de la région %s §4: %s §4!
+message.region.priority=§4La priorité doit etre supérieur à 1 !
+
+help.region.1=§4/region define <name> : Define new region !
+help.region.2=§4/region redefine <name> : Redefine old region !
+help.region.3=§4/region delete <name> : Remove region !
+help.region.4=§4/region list : List all region !
+help.region.5=§4/region setpriority <name> <priority> : Set priority for region !
+help.region.6=§4/region getpriority <name>  : Get priority for region !
+help.region.7=§4/region tp <name> : Teleport to region !
+
+help.flags.1=§4/flag add <name> <flag> : Add flag to region !
+help.flags.2=§4/flag remove <name> <flag> : Add flag to region !
+help.flags.3=§4/flag list : List all flag for region !
+help.flags.4=§4/flag info <name> : Get all flag region !
+
+help.expand.1=§4/expand vert  : Expand Y 0 to 255 !

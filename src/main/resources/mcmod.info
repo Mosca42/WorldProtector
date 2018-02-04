@@ -1,0 +1,16 @@
+[
+{
+  "modid": "worldprotector",
+  "name": "WorldProtector",
+  "description": "Protect regions",
+  "version": "1.0",
+  "mcversion": "1.11.2",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["Mosca421"],
+  "credits": "Thanks to BrokenSwing for helping me and TheBossMax2 for the logo",
+  "logoFile": "logo.png",
+  "screenshots": [],
+  "dependencies": []
+}
+]

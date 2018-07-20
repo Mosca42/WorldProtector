@@ -32,7 +32,7 @@ message.region.priority=§4Set priority higher than 1 !
 
 help.region.1=§4/region define <name> : Define new region !
 help.region.2=§4/region redefine <name> : Redefine old region !
-help.region.3=§4/region delete <name> : Remove region !
+help.region.3=§4/region remove <name> : Remove region !
 help.region.4=§4/region list : List all region !
 help.region.5=§4/region setpriority <name> <priority> : Set priority for region !
 help.region.6=§4/region getpriority <name>  : Get priority for region !

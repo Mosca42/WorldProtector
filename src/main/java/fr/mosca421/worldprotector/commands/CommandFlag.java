@@ -1,113 +1,128 @@
 package fr.mosca421.worldprotector.commands;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.Set;
-
-import javax.annotation.Nullable;
-
-import com.google.common.base.Joiner;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
+import com.mojang.brigadier.arguments.StringArgumentType;
+import com.mojang.brigadier.builder.ArgumentBuilder;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
 import fr.mosca421.worldprotector.core.FlagsList;
 import fr.mosca421.worldprotector.core.Region;
 import fr.mosca421.worldprotector.core.Saver;
 import fr.mosca421.worldprotector.utils.FlagsUtils;
-import net.minecraft.command.CommandBase;
-import net.minecraft.command.CommandException;
-import net.minecraft.command.ICommand;
-import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.command.CommandSource;
+import net.minecraft.command.Commands;
+import net.minecraft.command.ISuggestionProvider;
+import net.minecraftforge.registries.ForgeRegistries;
 
-public class CommandFlag extends CommandBase implements ICommand {
+public class CommandFlag {
 
-	@Override
-	public int compareTo(ICommand o) {
+//	@Override
+//	public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos) {
+//		if (args.length == 3) {
+//			return getListOfStringsMatchingLastWord(args, FlagsList.VALID_FLAGS);
+//		}
+//		if (args.length == 1) {
+//			return Lists.newArrayList("help", "list", "info", "add", "remove");
+//		}
+//		if (args.length == 2) {
+//			if (args[0].equalsIgnoreCase("add")) {
+//				return getListOfStringsMatchingLastWord(args, Saver.REGIONS.keySet());
+//			}
+//			if (args[0].equalsIgnoreCase("remove")) {
+//				return getListOfStringsMatchingLastWord(args, Saver.REGIONS.keySet());
+//			}
+//			if (args[0].equalsIgnoreCase("info")) {
+//				return getListOfStringsMatchingLastWord(args, Saver.REGIONS.keySet());
+//			}
+//		}
+//		return Lists.newArrayList();
+//
+//	}
+
+	public static LiteralArgumentBuilder<CommandSource> register() {
+		return Commands.literal("flag").requires(cs -> cs.hasPermissionLevel(4)).executes(ctx -> giveHelp(ctx.getSource()))
+
+				.then(Commands.literal("help").executes(ctx -> giveHelp(ctx.getSource())))
+
+				.then(Commands.literal("list").executes(ctx -> giveList(ctx.getSource())))
+
+				.then(Commands.literal("add").then(Commands.argument("region", StringArgumentType.word()).then(Commands.argument("flag", StringArgumentType.string()).suggests((ctx, builder) -> ISuggestionProvider.suggest(FlagsList.VALID_FLAGS, builder)).then(Commands.argument("name", StringArgumentType.greedyString()).executes(ctx -> add(ctx.getSource(), StringArgumentType.getString(ctx, "region"), StringArgumentType.getString(ctx, "flag"), StringArgumentType.getString(ctx, "name")))))))
+
+				.then(Commands.literal("add").then(Commands.argument("region", StringArgumentType.word()).then(Commands.argument("flag", StringArgumentType.string()).suggests((ctx, builder) -> ISuggestionProvider.suggest(FlagsList.VALID_FLAGS, builder)).executes(ctx -> add(ctx.getSource(), StringArgumentType.getString(ctx, "region"), StringArgumentType.getString(ctx, "flag"), "")))))
+
+				.then(Commands.literal("remove").then(Commands.argument("region", StringArgumentType.word()).then(Commands.argument("flag", StringArgumentType.string()).suggests((ctx, builder) -> ISuggestionProvider.suggest(FlagsList.VALID_FLAGS, builder)).executes(ctx -> remove(ctx.getSource(), StringArgumentType.getString(ctx, "region"), StringArgumentType.getString(ctx, "flag"))))))
+
+				.then(Commands.literal("info").then(Commands.argument("region", StringArgumentType.word()).executes(ctx -> info(ctx.getSource(), StringArgumentType.getString(ctx, "region")))));
+	}
+
+	private static int giveHelp(CommandSource source) {
+		try {
+			FlagsUtils.giveHelpMessage(source.asPlayer());
+		} catch (CommandSyntaxException e) {
+			e.printStackTrace();
+		}
 		return 0;
 	}
 
-	@Override
-	public String getName() {
-		return "flag";
-	}
-
-	@Override
-	public String getUsage(ICommandSender sender) {
-		return "/flag help";
-	}
-
-	@Override
-	public List<String> getAliases() {
-		return Lists.newArrayList();
-	}
-
-	@Override
-	public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
-		if (sender.getCommandSenderEntity() instanceof EntityPlayerMP) {
-			EntityPlayerMP player = (EntityPlayerMP) sender;
-			if (args.length <= 0)
-				FlagsUtils.giveHelpMessage(player);
-
-			if (args.length == 1) {
-				if (args[0].equalsIgnoreCase("help"))
-					FlagsUtils.giveHelpMessage(player);
-
-				if (args[0].equalsIgnoreCase("list"))
-					FlagsUtils.giveListFlagsOfRegion(player);
-			}
-
-			if (args.length == 2) {
-				if (args[0].equalsIgnoreCase("info"))
-					FlagsUtils.getRegionFlags(args[1], player);
-			}
-			if (args.length == 3) {
-				if (args[0].equalsIgnoreCase("add"))
-					FlagsUtils.addFlag(args[1], player, args[2]);
-
-				if (args[0].equalsIgnoreCase("remove"))
-					FlagsUtils.removeFlag(args[1], player, args[2]);
-			}
+	private static int giveList(CommandSource source) {
+		try {
+			FlagsUtils.giveListFlagsOfRegion(source.asPlayer());
+		} catch (CommandSyntaxException e) {
+			e.printStackTrace();
 		}
+		return 0;
 	}
 
-	@Override
-	public boolean checkPermission(MinecraftServer server, ICommandSender sender) {
-		return true;
+	private static int add(CommandSource source, String region, String flag, String name) {
+		try {
+			if (flag.equalsIgnoreCase("enter-message")) {
+				if (Saver.REGIONS.containsKey(region)) {
+					Region regions = Saver.REGIONS.get(region);
+					regions.setEnterMessage(name);
+				}
+			}
+			if (flag.equalsIgnoreCase("exit-message")) {
+				if (Saver.REGIONS.containsKey(region)) {
+					Region regions = Saver.REGIONS.get(region);
+					regions.setExitMessage(name);
+				}
+			}
+			if (flag.equalsIgnoreCase("enter-message-small")) {
+				if (Saver.REGIONS.containsKey(region)) {
+					Region regions = Saver.REGIONS.get(region);
+					regions.setEnterMessageSmall(name);
+				}
+			}
+			if (flag.equalsIgnoreCase("exit-message-small")) {
+				if (Saver.REGIONS.containsKey(region)) {
+					Region regions = Saver.REGIONS.get(region);
+					regions.setExitMessageSmall(name);
+				}
+			}
+			FlagsUtils.addFlag(region, source.asPlayer(), flag);
+
+		} catch (CommandSyntaxException e) {
+			e.printStackTrace();
+		}
+		return 0;
 	}
 
-	@Override
-	public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos) {
-		if (args.length == 3) {
-			return getListOfStringsMatchingLastWord(args, FlagsList.VALID_FLAGS);
+	private static int remove(CommandSource source, String region, String flag) {
+		try {
+			FlagsUtils.removeFlag(region, source.asPlayer(), flag);
+		} catch (CommandSyntaxException e) {
+			e.printStackTrace();
 		}
-		if (args.length == 1) {
-			return Lists.newArrayList("help", "list", "info", "add", "remove");
-		}
-		if (args.length == 2) {
-			if (args[0].equalsIgnoreCase("add")) {
-				return getListOfStringsMatchingLastWord(args, Saver.REGIONS.keySet());
-			}
-			if (args[0].equalsIgnoreCase("remove")) {
-				return getListOfStringsMatchingLastWord(args, Saver.REGIONS.keySet());
-			}
-			if (args[0].equalsIgnoreCase("info")) {
-				return getListOfStringsMatchingLastWord(args, Saver.REGIONS.keySet());
-			}
-		}
-		return Lists.newArrayList();
-
+		return 0;
 	}
 
-	@Override
-	public boolean isUsernameIndex(String[] args, int index) {
-		return false;
+	private static int info(CommandSource source, String region) {
+		try {
+			FlagsUtils.getRegionFlags(region, source.asPlayer());
+		} catch (CommandSyntaxException e) {
+			e.printStackTrace();
+		}
+		return 0;
 	}
 
 }

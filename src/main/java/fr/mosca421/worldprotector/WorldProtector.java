@@ -1,36 +1,87 @@
 package fr.mosca421.worldprotector;
 
-import fr.mosca421.worldprotector.commands.CommandsRegister;
-import fr.mosca421.worldprotector.core.Saver;
-import fr.mosca421.worldprotector.items.ItemsRegister;
-import fr.mosca421.worldprotector.proxy.CommonProxy;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.Mod.EventHandler;
-import net.minecraftforge.fml.common.Mod.Instance;
-import net.minecraftforge.fml.common.SidedProxy;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
-@Mod(modid = WorldProtector.MODID, version = WorldProtector.VERSION)
+import fr.mosca421.worldprotector.commands.CommandsRegister;
+import fr.mosca421.worldprotector.core.Region;
+import fr.mosca421.worldprotector.core.Saver;
+import fr.mosca421.worldprotector.events.EventPlayers;
+import fr.mosca421.worldprotector.items.ItemsRegister;
+import fr.mosca421.worldprotector.utils.RegionsUtils;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.network.play.server.STitlePacket;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextComponentUtils;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.TickEvent.PlayerTickEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
+
+@Mod(WorldProtector.MODID)
+@EventBusSubscriber
 public class WorldProtector {
 
-	@SidedProxy(clientSide = "fr.mosca421.worldprotector.proxy.ClientProxy", serverSide = "fr.mosca421.worldprotector.proxy.CommonProxy")
-	public static CommonProxy proxy;
 	public static final String MODID = "worldprotector";
-	public static final String VERSION = "1.0";
-	@Instance(MODID)
-	public static WorldProtector instance;
 
-	@EventHandler
-	public void preInit(FMLPreInitializationEvent event) {
-		proxy.registerRender();
+	public WorldProtector() {
+
+		MinecraftForge.EVENT_BUS.addListener(EventPriority.HIGH, this::isInRegion);
 	}
-	
-	@EventHandler
-	public void serverStarting(FMLServerStartingEvent event) {
-		CommandsRegister.init(event);
-        Saver.onServerStarting(event);
+
+	@SubscribeEvent
+	public static void serverStarting(final FMLServerStartingEvent event) {
+		CommandsRegister.init(event.getCommandDispatcher());
+		Saver.onServerStarting(event);
+	}
+
+	public boolean enter = false;
+	public String exitMessage = "";
+	public String exitMessageSmall = "";
+	@SubscribeEvent
+	public void isInRegion(PlayerTickEvent event) {
+		if (event.player instanceof ServerPlayerEntity) {
+			ServerPlayerEntity player = (ServerPlayerEntity) event.player;
+			int dim = player.world.getDimension().getType().getId();
+			for (Region region : RegionsUtils.getHandlingRegionsFor(player.getPosition(), dim)) {
+				if (region.getFlags().contains("enter-message")) {
+					try {
+						if (!enter) {
+							player.connection.sendPacket(new STitlePacket(STitlePacket.Type.SUBTITLE, TextComponentUtils.updateForEntity(player.getCommandSource(), new StringTextComponent(region.getEnterMessageSmall().replace("&", "§")), player, 0)));
+							player.connection.sendPacket(new STitlePacket(STitlePacket.Type.TITLE, TextComponentUtils.updateForEntity(player.getCommandSource(), new StringTextComponent(region.getEnterMessage().replace("&", "§")), player, 0), 10, 10, 10));
+							if (region.getFlags().contains("exit-message")) {
+								exitMessage = region.getExitMessage();
+								exitMessageSmall = region.getExitMessageSmall();
+							} else {
+								region.setExitMessage("");
+								region.setExitMessageSmall("");
+								exitMessage = "";
+								exitMessageSmall = "";
+							}
+							enter = true;
+						}
+						return;
+					} catch (CommandSyntaxException e) {
+						e.printStackTrace();
+					}
+				} else {
+					region.setEnterMessage("");
+					region.setEnterMessageSmall("");
+				}
+			}
+			if (enter) {
+				enter = false;
+				if (!exitMessage.equals(""))
+					try {
+						player.connection.sendPacket(new STitlePacket(STitlePacket.Type.SUBTITLE, TextComponentUtils.updateForEntity(player.getCommandSource(), new StringTextComponent(exitMessageSmall.replace("&", "§")), player, 0)));
+						player.connection.sendPacket(new STitlePacket(STitlePacket.Type.TITLE, TextComponentUtils.updateForEntity(player.getCommandSource(), new StringTextComponent(exitMessage.replace("&", "§")), player, 0), 10, 10, 10));
+					} catch (CommandSyntaxException e) {
+						e.printStackTrace();
+					}
+			}
+		}
 	}
 }

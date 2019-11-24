@@ -2,77 +2,74 @@ package fr.mosca421.worldprotector.items;
 
 import java.util.List;
 
-import net.minecraft.block.Block;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.item.ItemUseContext;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.client.FMLClientHandler;
-import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.server.FMLServerHandler;
 
 public class RegionStick extends Item {
 
 	public RegionStick(String name) {
-		this.setUnlocalizedName(name);
-		this.setCreativeTab(CreativeTabs.TOOLS);
+		super(new Item.Properties().maxStackSize(1).group(ItemGroup.MISC));
 		this.setRegistryName(name);
-		this.setMaxStackSize(1);
-	}
-
-	@Override
-	public void addInformation(ItemStack stack, World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
-		tooltip.add(I18n.format("help.regionstick.1"));
-		tooltip.add(I18n.format("help.regionstick.2"));
 	}
 	@Override
-	public EnumActionResult onItemUse(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
-
-		if (!worldIn.isRemote) {
-			if (player.getHeldItem(hand).hasTagCompound()) {
-				switch (player.getHeldItem(hand).getTagCompound().getInteger("id")) {
+	public void addInformation(ItemStack stack, World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
+		tooltip.add(new TranslationTextComponent("help.regionstick.1"));
+		tooltip.add(new TranslationTextComponent("help.regionstick.2"));
+	}
+	@Override
+	public ActionResultType onItemUse(ItemUseContext context) {
+		World world = context.getWorld();
+		PlayerEntity player = context.getPlayer();
+		Hand hand = context.getHand();
+		BlockPos pos = context.getPos();
+		if (!world.isRemote) {
+			if (player.getHeldItem(hand).hasTag()) {
+				switch (player.getHeldItem(hand).getTag().getInt("id")) {
 				case 0:
-					player.getHeldItem(hand).getTagCompound().setInteger("x1", pos.getX());
-					player.getHeldItem(hand).getTagCompound().setInteger("y1", pos.getY());
-					player.getHeldItem(hand).getTagCompound().setInteger("z1", pos.getZ());
-					player.getHeldItem(hand).getTagCompound().setInteger("id", 1);
-					player.sendMessage(new TextComponentString(TextFormatting.DARK_RED + "Position 1 : x=" + player.getHeldItem(hand).getTagCompound().getInteger("x1") + ", y=" + player.getHeldItem(hand).getTagCompound().getInteger("y1") + ", z=" + player.getHeldItem(hand).getTagCompound().getInteger("z1")));
+					player.getHeldItem(hand).getTag().putInt("x1", pos.getX());
+					player.getHeldItem(hand).getTag().putInt("y1", pos.getY());
+					player.getHeldItem(hand).getTag().putInt("z1", pos.getZ());
+					player.getHeldItem(hand).getTag().putInt("id", 1);
+					player.sendMessage(new StringTextComponent(TextFormatting.DARK_RED + "Position 1 : x=" + player.getHeldItem(hand).getTag().getInt("x1") + ", y=" + player.getHeldItem(hand).getTag().getInt("y1") + ", z=" + player.getHeldItem(hand).getTag().getInt("z1")));
 					break;
 				case 1:
-					player.getHeldItem(hand).getTagCompound().setInteger("x2", pos.getX());
-					player.getHeldItem(hand).getTagCompound().setInteger("y2", pos.getY());
-					player.getHeldItem(hand).getTagCompound().setInteger("z2", pos.getZ());
-					player.getHeldItem(hand).getTagCompound().setInteger("id", 0);
-					player.getHeldItem(hand).getTagCompound().setBoolean("valide", true);
-					player.sendMessage(new TextComponentString(TextFormatting.DARK_RED + "Position 2 : x=" + player.getHeldItem(hand).getTagCompound().getInteger("x2") + ", y=" + player.getHeldItem(hand).getTagCompound().getInteger("y2") + ", z=" + player.getHeldItem(hand).getTagCompound().getInteger("z2")));
+					player.getHeldItem(hand).getTag().putInt("x2", pos.getX());
+					player.getHeldItem(hand).getTag().putInt("y2", pos.getY());
+					player.getHeldItem(hand).getTag().putInt("z2", pos.getZ());
+					player.getHeldItem(hand).getTag().putInt("id", 0);
+					player.getHeldItem(hand).getTag().putBoolean("valide", true);
+					player.sendMessage(new StringTextComponent(TextFormatting.DARK_RED + "Position 2 : x=" + player.getHeldItem(hand).getTag().getInt("x2") + ", y=" + player.getHeldItem(hand).getTag().getInt("y2") + ", z=" + player.getHeldItem(hand).getTag().getInt("z2")));
 					break;
 				}
 			}
 		}
-		return EnumActionResult.SUCCESS;
-	}
+		return ActionResultType.SUCCESS;
+		}
+
 
 	@Override
-	public void onUpdate(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
-		super.onUpdate(stack, worldIn, entityIn, itemSlot, isSelected);
+	public void inventoryTick(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
+		super.inventoryTick(stack, worldIn, entityIn, itemSlot, isSelected);
 		if (!worldIn.isRemote) {
-			if (!stack.hasTagCompound()) {
-				NBTTagCompound nbt = new NBTTagCompound();
-				nbt.setInteger("id", 0);
-				nbt.setBoolean("valide", false);
-				stack.setTagCompound(nbt);
+			if (!stack.hasTag()) {
+				CompoundNBT nbt = new CompoundNBT();
+				nbt.putInt("id", 0);
+				nbt.putBoolean("valide", false);
+				stack.setTag(nbt);
 			}
 		}
 	}

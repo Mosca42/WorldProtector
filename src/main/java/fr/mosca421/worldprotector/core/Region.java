@@ -1,36 +1,52 @@
 package fr.mosca421.worldprotector.core;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.nbt.NBTTagString;
+import net.minecraft.client.multiplayer.ServerData;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
+import net.minecraft.nbt.StringNBT;
+import net.minecraft.server.dedicated.DedicatedPlayerList;
+import net.minecraft.server.dedicated.DedicatedServer;
+import net.minecraft.server.management.OpEntry;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraftforge.common.ForgeConfig.Server;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.common.util.INBTSerializable;
+import net.minecraftforge.fml.loading.FMLCommonLaunchHandler;
+import net.minecraftforge.fml.server.ServerLifecycleHooks;
 
-public class Region implements INBTSerializable<NBTTagCompound> {
+public class Region implements INBTSerializable<CompoundNBT> {
 
-	private AxisRegions area;
+	private AxisAlignedBB area;
 	private Set<String> flags = new HashSet<String>();
 	private String name;
 	private int priority = 2;
 	private int dimension;
+	private String enterMessage = "";
+	private String exitMessage = "";
+	private String enterMessageSmall = "";
+	private String exitMessageSmall = "";
+	private List<String> playerList = new ArrayList<>();
 
 	public Region() {
 	}
 
-	public Region(String name, AxisRegions area, int dimension) {
+	public Region(String name, AxisAlignedBB area, int dimension) {
 		this.name = name;
 		this.area = area;
 		this.dimension = dimension;
 	}
 
-	public AxisRegions getArea() {
+	public AxisAlignedBB getArea() {
 		return area;
 	}
 
-	public void setArea(AxisRegions area) {
+	public void setArea(AxisAlignedBB area) {
 		this.area = area;
 	}
 
@@ -66,36 +82,123 @@ public class Region implements INBTSerializable<NBTTagCompound> {
 		return dimension;
 	}
 
-	@Override
-	public NBTTagCompound serializeNBT() {
-		NBTTagCompound nbt = new NBTTagCompound();
-		nbt.setString("name", this.name);
-		nbt.setInteger("minX", (int) area.minX);
-		nbt.setInteger("minY", (int) area.minY);
-		nbt.setInteger("minZ", (int) area.minZ);
-		nbt.setInteger("maxX", (int) area.maxX);
-		nbt.setInteger("maxY", (int) area.maxY);
-		nbt.setInteger("maxZ", (int) area.maxZ);
-		nbt.setInteger("priority", priority);
-		nbt.setInteger("dimension", dimension);
-		NBTTagList flagList = new NBTTagList();
-		for (String flag : flags) {
-			flagList.appendTag(new NBTTagString(flag));
+	public String getEnterMessage() {
+		return enterMessage;
+	}
+
+	public void setEnterMessage(String enterMessage) {
+		this.enterMessage = enterMessage;
+	}
+
+	public String getExitMessage() {
+		return exitMessage;
+	}
+
+	public void setExitMessage(String exitMessage) {
+		this.exitMessage = exitMessage;
+	}
+
+	public String getEnterMessageSmall() {
+		return enterMessageSmall;
+	}
+
+	public void setEnterMessageSmall(String enterMessageSmall) {
+		this.enterMessageSmall = enterMessageSmall;
+	}
+
+	public String getExitMessageSmall() {
+		return exitMessageSmall;
+	}
+
+	public void setExitMessageSmall(String exitMessageSmall) {
+		this.exitMessageSmall = exitMessageSmall;
+	}
+
+	public List<String> getPlayerList() {
+		return playerList;
+	}
+
+	public boolean isInPlayerList(PlayerEntity name) {
+		if (ServerLifecycleHooks.getCurrentServer().getPlayerList().getOppedPlayers().getEntry(name.getGameProfile()) != null)
+			if (ServerLifecycleHooks.getCurrentServer().getPlayerList().getOppedPlayers().getEntry(name.getGameProfile()).getPermissionLevel() == 4)
+				return true;
+
+		if (playerList.contains(name.getUniqueID().toString()))
+			return true;
+
+		return false;
+	}
+
+	public boolean addPlayer(String name) {
+		if (!playerList.contains(name)) {
+			playerList.add(name);
+			return true;
 		}
-		nbt.setTag("flags", flagList);
+		return false;
+	}
+
+	public boolean removePlayer(String name) {
+		if (playerList.contains(name)) {
+			playerList.remove(name);
+			return true;
+		}
+		return false;
+	}
+
+	public void setPlayerList(List<String> playerList) {
+		this.playerList = playerList;
+	}
+
+	@Override
+	public CompoundNBT serializeNBT() {
+		CompoundNBT nbt = new CompoundNBT();
+		nbt.putString("name", this.name);
+		nbt.putInt("minX", (int) area.minX);
+		nbt.putInt("minY", (int) area.minY);
+		nbt.putInt("minZ", (int) area.minZ);
+		nbt.putInt("maxX", (int) area.maxX);
+		nbt.putInt("maxY", (int) area.maxY);
+		nbt.putInt("maxZ", (int) area.maxZ);
+		nbt.putInt("priority", priority);
+		nbt.putInt("dimension", dimension);
+		nbt.putString("enterMessage", enterMessage);
+		nbt.putString("exitMessage", exitMessage);
+		nbt.putString("enterMessageSmall", enterMessageSmall);
+		nbt.putString("exitMessageSmall", exitMessageSmall);
+		ListNBT flagList = new ListNBT();
+		for (String flag : flags) {
+			flagList.add(new StringNBT(flag));
+		}
+		nbt.put("flags", flagList);
+
+		ListNBT playerLists = new ListNBT();
+		for (String player : playerList) {
+			playerLists.add(new StringNBT(player));
+		}
+		nbt.put("playerList", flagList);
 		return nbt;
 	}
 
 	@Override
-	public void deserializeNBT(NBTTagCompound nbt) {
+	public void deserializeNBT(CompoundNBT nbt) {
 		this.name = nbt.getString("name");
-		this.area = new AxisRegions(nbt.getInteger("minX"), nbt.getInteger("minY"), nbt.getInteger("minZ"), nbt.getInteger("maxX"), nbt.getInteger("maxY"), nbt.getInteger("maxZ"));
-		this.priority = nbt.getInteger("priority");
-		this.dimension = nbt.getInteger("dimension");
-		NBTTagList flagsList = nbt.getTagList("flags", NBT.TAG_STRING);
-		for (int i = 0; i < flagsList.tagCount(); i++) {
-			flags.add(flagsList.getStringTagAt(i));
+		this.area = new AxisAlignedBB(nbt.getInt("minX"), nbt.getInt("minY"), nbt.getInt("minZ"), nbt.getInt("maxX"), nbt.getInt("maxY"), nbt.getInt("maxZ"));
+		this.priority = nbt.getInt("priority");
+		this.dimension = nbt.getInt("dimension");
+		this.enterMessage = nbt.getString("enterMessage");
+		this.exitMessage = nbt.getString("exitMessage");
+		this.enterMessageSmall = nbt.getString("enterMessageSmall");
+		this.exitMessageSmall = nbt.getString("exitMessageSmall");
+		ListNBT flagsList = nbt.getList("flags", NBT.TAG_STRING);
+		for (int i = 0; i < flagsList.size(); i++) {
+			flags.add(flagsList.getString(i));
 		}
+
+		ListNBT playerLists = nbt.getList("playerList", NBT.TAG_STRING);
+		for (int i = 0; i < playerLists.size(); i++) {
+			playerList.add(playerLists.getString(i));
+		}
+
 	}
 
 }

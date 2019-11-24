@@ -1,13 +1,15 @@
 package fr.mosca421.worldprotector.commands;
 
-import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
+import com.mojang.brigadier.CommandDispatcher;
+
+import net.minecraft.command.CommandSource;
 
 public class CommandsRegister {
 
-	public static void init(FMLServerStartingEvent event) {
-		event.registerServerCommand(new CommandRegion());
-		event.registerServerCommand(new CommandExpand());
-		event.registerServerCommand(new CommandFlag());
+	public static void init(CommandDispatcher<CommandSource> commandDispatcher) {
+		commandDispatcher.register(CommandExpand.register());
+		commandDispatcher.register(CommandFlag.register());
+		commandDispatcher.register(CommandRegion.register());
 	}
 
 }

@@ -31,7 +31,6 @@ public class WorldProtector {
 
 	@SubscribeEvent
 	public void serverStarting(FMLServerStartingEvent event) {
-		System.out.println("fonctionne");
 		CommandsRegister.init(event.getCommandDispatcher());
 		Saver.onServerStarting(event);
 	}

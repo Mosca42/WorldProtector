@@ -4,22 +4,17 @@ import java.util.Iterator;
 
 import fr.mosca421.worldprotector.WorldProtector;
 import fr.mosca421.worldprotector.core.Region;
-import fr.mosca421.worldprotector.items.ItemsRegister;
 import fr.mosca421.worldprotector.utils.RegionsUtils;
 import net.minecraft.entity.monster.CreeperEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.FillBucketEvent;
 import net.minecraftforge.event.world.BlockEvent.BreakEvent;
 import net.minecraftforge.event.world.BlockEvent.EntityPlaceEvent;
 import net.minecraftforge.event.world.ExplosionEvent;
-import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 
 @Mod.EventBusSubscriber(modid = WorldProtector.MODID)
 public class EventProtection {
@@ -68,6 +63,7 @@ public class EventProtection {
 				}
 			}
 		}
+		it = event.getAffectedBlocks().iterator();
 
 		if (!(event.getExplosion().getExplosivePlacedBy() instanceof CreeperEntity)) {
 			while (it.hasNext()) {
@@ -80,6 +76,7 @@ public class EventProtection {
 				}
 			}
 		}
+		it = event.getAffectedBlocks().iterator();
 
 		if (event.getExplosion().getExplosivePlacedBy() instanceof CreeperEntity) {
 			while (it.hasNext()) {

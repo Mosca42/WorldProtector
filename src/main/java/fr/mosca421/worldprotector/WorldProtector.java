@@ -5,6 +5,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import fr.mosca421.worldprotector.commands.CommandsRegister;
 import fr.mosca421.worldprotector.core.Region;
 import fr.mosca421.worldprotector.core.Saver;
+import fr.mosca421.worldprotector.items.ItemsRegister;
 import fr.mosca421.worldprotector.utils.RegionsUtils;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.play.server.STitlePacket;
@@ -13,9 +14,9 @@ import net.minecraft.util.text.TextComponentUtils;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
@@ -27,6 +28,9 @@ public class WorldProtector {
 	public WorldProtector() {
 		MinecraftForge.EVENT_BUS.addListener(EventPriority.HIGH, this::isInRegion);
 		MinecraftForge.EVENT_BUS.register(this);
+        IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+        ItemsRegister.ITEMS.register(modEventBus);
+
 	}
 
 	@SubscribeEvent
@@ -34,7 +38,7 @@ public class WorldProtector {
 		CommandsRegister.init(event.getCommandDispatcher());
 		Saver.onServerStarting(event);
 	}
-
+	
 	public boolean enter = false;
 	public String exitMessage = "";
 	public String exitMessageSmall = "";

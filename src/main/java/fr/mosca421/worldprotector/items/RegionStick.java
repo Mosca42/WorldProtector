@@ -21,10 +21,10 @@ import net.minecraft.world.World;
 
 public class RegionStick extends Item {
 
-	public RegionStick(String name) {
+	public RegionStick() {
 		super(new Item.Properties().maxStackSize(1).group(ItemGroup.MISC));
-		this.setRegistryName(name);
 	}
+	
 	@Override
 	public void addInformation(ItemStack stack, World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
 		tooltip.add(new TranslationTextComponent("help.regionstick.1"));

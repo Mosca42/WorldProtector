@@ -3,8 +3,11 @@ package fr.mosca421.worldprotector.events;
 import fr.mosca421.worldprotector.WorldProtector;
 import fr.mosca421.worldprotector.core.Region;
 import fr.mosca421.worldprotector.core.Saver;
+import net.minecraft.entity.FlyingEntity;
 import net.minecraft.entity.MobEntity;
+import net.minecraft.entity.boss.dragon.EnderDragonEntity;
 import net.minecraft.entity.item.ExperienceOrbEntity;
+import net.minecraft.entity.monster.MonsterEntity;
 import net.minecraft.entity.monster.SlimeEntity;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.passive.WaterMobEntity;
@@ -32,7 +35,10 @@ public class EventMobs {
 						event.setCanceled(true);
 				}
 				if (region.getFlags().contains("mob-spawning-monsters")) {
-					if (event.getEntity() instanceof MobEntity || event.getEntity() instanceof SlimeEntity)
+					if (event.getEntity() instanceof MonsterEntity
+							|| event.getEntity() instanceof SlimeEntity
+							|| event.getEntity() instanceof FlyingEntity
+							|| event.getEntity() instanceof EnderDragonEntity)
 						event.setCanceled(true);
 				}
 				if (region.getFlags().contains("exp-drop")) {

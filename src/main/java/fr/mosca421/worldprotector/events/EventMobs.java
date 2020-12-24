@@ -3,6 +3,7 @@ package fr.mosca421.worldprotector.events;
 import fr.mosca421.worldprotector.WorldProtector;
 import fr.mosca421.worldprotector.core.Region;
 import fr.mosca421.worldprotector.core.Saver;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.FlyingEntity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.boss.dragon.EnderDragonEntity;
@@ -24,25 +25,26 @@ public class EventMobs {
 
 	@SubscribeEvent
 	public static void onEntityJoinWorld(EntityJoinWorldEvent event) {
+		Entity eventEntity = event.getEntity();
 		for (Region region : Saver.REGIONS.values()) {
-			if (region.getArea().contains(new Vec3d(event.getEntity().getPosition()))) {
+			if (region.getArea().contains(new Vec3d(eventEntity.getPosition()))) {
 				if (region.getFlags().contains("mob-spawning-all")) {
-					if (event.getEntity() instanceof MobEntity || event.getEntity() instanceof AnimalEntity || event.getEntity() instanceof WaterMobEntity || event.getEntity() instanceof SlimeEntity)
+					if (eventEntity instanceof MobEntity)
 						event.setCanceled(true);
 				}
 				if (region.getFlags().contains("mob-spawning-animals")) {
-					if (event.getEntity() instanceof AnimalEntity || event.getEntity() instanceof WaterMobEntity)
+					if (eventEntity instanceof AnimalEntity || eventEntity instanceof WaterMobEntity)
 						event.setCanceled(true);
 				}
 				if (region.getFlags().contains("mob-spawning-monsters")) {
-					if (event.getEntity() instanceof MonsterEntity
-							|| event.getEntity() instanceof SlimeEntity
-							|| event.getEntity() instanceof FlyingEntity
-							|| event.getEntity() instanceof EnderDragonEntity)
+					if (eventEntity instanceof MonsterEntity
+							|| eventEntity instanceof SlimeEntity
+							|| eventEntity instanceof FlyingEntity
+							|| eventEntity instanceof EnderDragonEntity)
 						event.setCanceled(true);
 				}
 				if (region.getFlags().contains("exp-drop")) {
-					if (event.getEntity() instanceof ExperienceOrbEntity) {
+					if (eventEntity instanceof ExperienceOrbEntity) {
 						event.setCanceled(true);
 					}
 				}

@@ -9,7 +9,9 @@ import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.boss.dragon.EnderDragonEntity;
 import net.minecraft.entity.item.ExperienceOrbEntity;
 import net.minecraft.entity.monster.MonsterEntity;
+import net.minecraft.entity.monster.ShulkerEntity;
 import net.minecraft.entity.monster.SlimeEntity;
+import net.minecraft.entity.passive.AmbientEntity;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.passive.WaterMobEntity;
 import net.minecraft.util.math.Vec3d;
@@ -40,7 +42,8 @@ public class EventMobs {
 					if (eventEntity instanceof MonsterEntity
 							|| eventEntity instanceof SlimeEntity
 							|| eventEntity instanceof FlyingEntity
-							|| eventEntity instanceof EnderDragonEntity)
+							|| eventEntity instanceof EnderDragonEntity
+							|| eventEntity instanceof ShulkerEntity)
 						event.setCanceled(true);
 				}
 				if (region.getFlags().contains("exp-drop")) {

@@ -11,11 +11,13 @@ import net.minecraft.item.ItemStack;
 public class CommandExpand {
 
 	public static LiteralArgumentBuilder<CommandSource> register() {
-		return Commands.literal("expand").requires(cs -> cs.hasPermissionLevel(4))
+		return Commands.literal("expand")
+				.requires(cs -> cs.hasPermissionLevel(4))
 				.executes(ctx -> giveHelp(ctx.getSource()))
 				.then(Commands.literal("help")
 						.executes(ctx -> giveHelp(ctx.getSource())))
-				.then(Commands.literal("vert").executes(ctx -> vert(ctx.getSource())));
+				.then(Commands.literal("vert")
+						.executes(ctx -> vert(ctx.getSource())));
 	}
 
 	private static int giveHelp(CommandSource source) {

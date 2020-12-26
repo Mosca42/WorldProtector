@@ -4,8 +4,7 @@ import java.util.HashMap;
 
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
-import net.minecraft.world.ForcedChunksSaveData;
-import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.world.World;
 import net.minecraft.world.storage.DimensionSavedDataManager;
 import net.minecraft.world.storage.WorldSavedData;
 import net.minecraftforge.common.util.Constants.NBT;
@@ -14,7 +13,7 @@ import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 public class Saver extends WorldSavedData {
 	private static Saver INSTANCE;
 
-	public static final HashMap<String, Region> REGIONS = new HashMap<String, Region>();
+	public static final HashMap<String, Region> REGIONS = new HashMap<>();
 
 	public Saver() {
 		super("worldprotector");
@@ -52,9 +51,10 @@ public class Saver extends WorldSavedData {
 		return compound;
 	}
 
+	// Changed: !event.getServer().getWorld(DimensionType.OVERWORLD).isRemote -> !event.getServer().getWorld(World.OVERWORLD).isRemote
 	public static void onServerStarting(FMLServerStartingEvent event) {
-		if (!event.getServer().getWorld(DimensionType.OVERWORLD).isRemote) {
-			DimensionSavedDataManager storage = event.getServer().getWorld(DimensionType.OVERWORLD).getSavedData();
+		if (!event.getServer().getWorld(World.OVERWORLD).isRemote) {
+			DimensionSavedDataManager storage = event.getServer().getWorld(World.OVERWORLD).getSavedData();
 			Saver data = storage.get(Saver::new, "worldprotector");
 			if (data == null) {
 				data = new Saver();

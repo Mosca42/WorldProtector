@@ -52,7 +52,7 @@ public class EventMobs {
 					if (region.getArea().contains(animal.getPositionVec())) {
 						if (region.getFlags().contains("damage-animals")) {
 							if (!region.isInPlayerList(event.getPlayer())) {
-								event.getPlayer().sendMessage(new TranslationTextComponent("world.hurt.mob"));
+								event.getPlayer().sendMessage(new TranslationTextComponent("world.hurt.mob"), event.getPlayer().getUniqueID());
 								event.setCanceled(true);
 							}
 						}
@@ -66,7 +66,7 @@ public class EventMobs {
 					if (region.getArea().contains(animal.getPositionVec())) {
 						if (region.getFlags().contains("damage-monsters")) {
 							if (!region.isInPlayerList(event.getPlayer())) {
-								event.getPlayer().sendMessage(new TranslationTextComponent("world.hurt.mob"));
+								event.getPlayer().sendMessage(new TranslationTextComponent("world.hurt.mob"), event.getPlayer().getUniqueID());
 								event.setCanceled(true);
 							}
 						}

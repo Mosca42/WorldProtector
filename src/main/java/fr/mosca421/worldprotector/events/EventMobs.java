@@ -8,7 +8,6 @@ import net.minecraft.entity.item.ExperienceOrbEntity;
 import net.minecraft.entity.monster.SlimeEntity;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.passive.WaterMobEntity;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
@@ -22,7 +21,7 @@ public class EventMobs {
 	@SubscribeEvent
 	public static void onEntityJoinWorld(EntityJoinWorldEvent event) {
 		for (Region region : Saver.REGIONS.values()) {
-			if (region.getArea().contains(new Vec3d(event.getEntity().getPosition()))) {
+			if (region.getArea().contains(event.getEntity().getPositionVec())) {
 				if (region.getFlags().contains("mob-spawning-all")) {
 					if (event.getEntity() instanceof MobEntity || event.getEntity() instanceof AnimalEntity || event.getEntity() instanceof WaterMobEntity || event.getEntity() instanceof SlimeEntity)
 						event.setCanceled(true);
@@ -50,7 +49,7 @@ public class EventMobs {
 			if (event.getTarget() instanceof AnimalEntity) {
 				AnimalEntity animal = (AnimalEntity) event.getTarget();
 				for (Region region : Saver.REGIONS.values()) {
-					if (region.getArea().contains(new Vec3d(animal.getPosition()))) {
+					if (region.getArea().contains(animal.getPositionVec())) {
 						if (region.getFlags().contains("damage-animals")) {
 							if (!region.isInPlayerList(event.getPlayer())) {
 								event.getPlayer().sendMessage(new TranslationTextComponent("world.hurt.mob"));
@@ -64,7 +63,7 @@ public class EventMobs {
 			if (event.getTarget() instanceof MobEntity) {
 				MobEntity animal = (MobEntity) event.getTarget();
 				for (Region region : Saver.REGIONS.values()) {
-					if (region.getArea().contains(new Vec3d(animal.getPosition()))) {
+					if (region.getArea().contains(animal.getPositionVec())) {
 						if (region.getFlags().contains("damage-monsters")) {
 							if (!region.isInPlayerList(event.getPlayer())) {
 								event.getPlayer().sendMessage(new TranslationTextComponent("world.hurt.mob"));

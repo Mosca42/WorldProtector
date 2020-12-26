@@ -1,7 +1,6 @@
 package fr.mosca421.worldprotector;
 
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-
 import fr.mosca421.worldprotector.commands.CommandsRegister;
 import fr.mosca421.worldprotector.core.Region;
 import fr.mosca421.worldprotector.core.Saver;
@@ -35,7 +34,8 @@ public class WorldProtector {
 
 	@SubscribeEvent
 	public void serverStarting(FMLServerStartingEvent event) {
-		CommandsRegister.init(event.getCommandDispatcher());
+		// Changed: event.getCommandDispatcher() ->	event.getServer().getCommandManager().getDispatcher()
+		CommandsRegister.init(event.getServer().getCommandManager().getDispatcher());
 		Saver.onServerStarting(event);
 	}
 	
@@ -53,11 +53,13 @@ public class WorldProtector {
 					try {
 						if (!enter) {
 							player.connection.sendPacket(new STitlePacket(STitlePacket.Type.SUBTITLE,
-									TextComponentUtils.updateForEntity(player.getCommandSource(),
+									// Changed: .updateForEntity -> func_240645_a_
+									TextComponentUtils.func_240645_a_(player.getCommandSource(),
 											new StringTextComponent(region.getEnterMessageSmall().replace("&", "§")),
 											player, 0)));
 							player.connection.sendPacket(new STitlePacket(STitlePacket.Type.TITLE,
-									TextComponentUtils.updateForEntity(player.getCommandSource(),
+									// Changed: .updateForEntity -> func_240645_a_
+									TextComponentUtils.func_240645_a_(player.getCommandSource(),
 											new StringTextComponent(region.getEnterMessage().replace("&", "§")), player,
 											0),
 									10, 10, 10));
@@ -86,10 +88,12 @@ public class WorldProtector {
 				if (!exitMessage.equals(""))
 					try {
 						player.connection.sendPacket(new STitlePacket(STitlePacket.Type.SUBTITLE,
-								TextComponentUtils.updateForEntity(player.getCommandSource(),
+								// Changed: .updateForEntity -> func_240645_a_
+								TextComponentUtils.func_240645_a_(player.getCommandSource(),
 										new StringTextComponent(exitMessageSmall.replace("&", "§")), player, 0)));
 						player.connection.sendPacket(new STitlePacket(STitlePacket.Type.TITLE,
-								TextComponentUtils.updateForEntity(player.getCommandSource(),
+								// Changed: .updateForEntity -> func_240645_a_
+								TextComponentUtils.func_240645_a_(player.getCommandSource(),
 										new StringTextComponent(exitMessage.replace("&", "§")), player, 0),
 								10, 10, 10));
 					} catch (CommandSyntaxException e) {

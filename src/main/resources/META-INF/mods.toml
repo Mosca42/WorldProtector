@@ -1,6 +1,6 @@
 modLoader="javafml" #mandatory
 loaderVersion="[33,)" #mandatory
-license="MIT"
+license="CCPL" # https://www.curseforge.com/project/278829/license
 issueTrackerURL="" #optional
 displayURL="" #optional
 logoFile="worldprotector.png" #optional

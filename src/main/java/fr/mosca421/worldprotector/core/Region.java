@@ -5,25 +5,19 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import net.minecraft.client.multiplayer.ServerData;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.StringNBT;
-import net.minecraft.server.dedicated.DedicatedPlayerList;
-import net.minecraft.server.dedicated.DedicatedServer;
-import net.minecraft.server.management.OpEntry;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraftforge.common.ForgeConfig.Server;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.common.util.INBTSerializable;
-import net.minecraftforge.fml.loading.FMLCommonLaunchHandler;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 
 public class Region implements INBTSerializable<CompoundNBT> {
 
 	private AxisAlignedBB area;
-	private Set<String> flags = new HashSet<String>();
+	private final Set<String> flags = new HashSet<>();
 	private String name;
 	private int priority = 2;
 	private int dimension;
@@ -175,7 +169,8 @@ public class Region implements INBTSerializable<CompoundNBT> {
 		for (String player : playerList) {
 			playerLists.add(StringNBT.valueOf(player));
 		}
-		nbt.put("playerList", flagList);
+		// Changed: playerlist should be put instead of flagList, right?
+		nbt.put("playerList", playerLists);
 		return nbt;
 	}
 

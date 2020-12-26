@@ -1,12 +1,18 @@
 modLoader="javafml" #mandatory
-loaderVersion="[28,)" #mandatory (28 is current forge version)
+loaderVersion="[33,)" #mandatory
+license="MIT"
+issueTrackerURL="" #optional
+displayURL="" #optional
+logoFile="worldprotector.png" #optional
+credits="Thanks to BrokenSwing for helping me and TheBossMax2 for the logo"
+authors="Mosca42, BrokenSwing" #optional
+
 [[mods]] #mandatory
 modId="worldprotector"
 version="${file.jarVersion}" #mandatory
 displayName="WorldProtector" #mandatory
-logoFile="worldprotector.png" #optional
-authors="Mosca42, BrokenSwing" #optional
-description='Protect your server'
+description='''
+Protect your server'''
 
 [[dependencies.worldprotector]] #optional
     # the modid of the dependency
@@ -14,7 +20,7 @@ description='Protect your server'
     # Does this dependency have to exist - if not, ordering below must be specified
     mandatory=true #mandatory
     # The version range of the dependency
-    versionRange="[28,)" #mandatory
+    versionRange="[35.1.10,)" #mandatory
     # An ordering relationship for the dependency - BEFORE or AFTER required if the relationship is not mandatory
     ordering="NONE"
     # Side this dependency is applied on - BOTH, CLIENT or SERVER
@@ -23,6 +29,6 @@ description='Protect your server'
 [[dependencies.worldprotector]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.15.2]"
+    versionRange="[1.16.4]"
     ordering="NONE"
     side="BOTH"

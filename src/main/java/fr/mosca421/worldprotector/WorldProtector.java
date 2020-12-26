@@ -47,7 +47,7 @@ public class WorldProtector {
 	public void isInRegion(PlayerTickEvent event) {
 		if (event.player instanceof ServerPlayerEntity) {
 			ServerPlayerEntity player = (ServerPlayerEntity) event.player;
-			int dim = player.world.getDimension().getType().getId();
+			int dim = 1; // player.world.getDimension().getType().getId();
 			for (Region region : RegionsUtils.getHandlingRegionsFor(player.getPosition(), dim)) {
 				if (region.getFlags().contains("enter-message")) {
 					try {

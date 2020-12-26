@@ -23,7 +23,7 @@ public class EventPlayers {
 	public static void onAttackEntity(AttackEntityEvent event) {
 		if (event.getTarget() instanceof ServerPlayerEntity) {
 			ServerPlayerEntity player = (ServerPlayerEntity) event.getTarget();
-			int dim = event.getPlayer().world.getDimension().getType().getId();
+			int dim = 1; // event.getPlayer().world.getDimension().getType().getId();
 			for (Region region : RegionsUtils.getHandlingRegionsFor(player.getPosition(), dim)) {
 				if (region.getFlags().contains("damage-players")) {
 					if (FlagsUtils.isOp(player)) {
@@ -38,7 +38,7 @@ public class EventPlayers {
 
 	@SubscribeEvent
 	public static void onPickupItem(ItemPickupEvent event) {
-		int dim = event.getPlayer().world.getDimension().getType().getId();
+		int dim = 1; // event.getPlayer().world.getDimension().getType().getId();
 		for (Region region : RegionsUtils.getHandlingRegionsFor(event.getPlayer().getPosition(), dim)) {
 			if (region.getFlags().contains("pickup-item")) {
 				if (!region.isInPlayerList(event.getPlayer())) {
@@ -54,7 +54,7 @@ public class EventPlayers {
 	public static void onHurt(LivingHurtEvent event) {
 		if (event.getEntityLiving() instanceof ServerPlayerEntity) {
 			ServerPlayerEntity player = (ServerPlayerEntity) event.getEntityLiving();
-			int dim = player.world.getDimension().getType().getId();
+			int dim = 1; // player.world.getDimension().getType().getId();
 			for (Region region : RegionsUtils.getHandlingRegionsFor(player.getPosition(), dim)) {
 				if (region.getFlags().contains("invincible")) {
 					event.setCanceled(true);
@@ -69,7 +69,7 @@ public class EventPlayers {
 	public static void onFall(LivingFallEvent event) {
 		if (event.getEntityLiving() instanceof ServerPlayerEntity) {
 			ServerPlayerEntity player = (ServerPlayerEntity) event.getEntityLiving();
-			int dim = player.world.getDimension().getType().getId();
+			int dim = 1; // player.world.getDimension().getType().getId();
 			for (Region region : RegionsUtils.getHandlingRegionsFor(player.getPosition(), dim)) {
 				if (region.getFlags().contains("fall-damage")) {
 					event.setCanceled(true);
@@ -83,7 +83,7 @@ public class EventPlayers {
 	public static void onSendChat(ServerChatEvent event) {
 		if (event.getPlayer() instanceof ServerPlayerEntity) {
 			ServerPlayerEntity player = (ServerPlayerEntity) event.getPlayer();
-			int dim = event.getPlayer().world.getDimension().getType().getId();
+			int dim = 1; // event.getPlayer().world.getDimension().getType().getId();
 			for (Region region : RegionsUtils.getHandlingRegionsFor(player.getPosition(), dim)) {
 				if (region.getFlags().contains("send-chat")) {
 					if (!region.isInPlayerList(event.getPlayer())) {
@@ -97,7 +97,7 @@ public class EventPlayers {
 
 	@SubscribeEvent
 	public static void playerDropItem(ItemTossEvent event) {
-		int dim = event.getPlayer().world.getDimension().getType().getId();
+		int dim = 1; // event.getPlayer().world.getDimension().getType().getId();
 		for (Region region : RegionsUtils.getHandlingRegionsFor(event.getPlayer().getPosition(), dim)) {
 			if (region.getFlags().contains("item-drop")) {
 				if (!region.isInPlayerList(event.getPlayer())) {

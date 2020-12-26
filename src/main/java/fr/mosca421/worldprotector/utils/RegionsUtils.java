@@ -74,7 +74,7 @@ public class RegionsUtils {
 			if (item.hasTag()) {
 				if (item.getTag().getBoolean("valide")) {
 					AxisAlignedBB regions = new AxisAlignedBB(item.getTag().getInt("x1"), item.getTag().getInt("y1"), item.getTag().getInt("z1"), item.getTag().getInt("x2"), item.getTag().getInt("y2"), item.getTag().getInt("z2")).grow(1);
-					Region region = new Region(regionName, regions, player.world.getDimension().getType().getId());
+					Region region = new Region(regionName, regions, 1 /*player.world.getDimension().getType().getId()*/);
 					Saver.addRegion(region);
 					Saver.save();
 					player.sendMessage(new TranslationTextComponent("message.region.define", regionName), playerUUID);
@@ -116,7 +116,7 @@ public class RegionsUtils {
 			if (item.hasTag()) {
 				if (item.getTag().getBoolean("valide")) {
 					AxisAlignedBB regions = new AxisAlignedBB(item.getTag().getInt("x1"), item.getTag().getInt("y1"), item.getTag().getInt("z1"), item.getTag().getInt("x2"), item.getTag().getInt("y2"), item.getTag().getInt("z2")).grow(1);
-					Region region = new Region(regionName, regions, player.world.getDimension().getType().getId());
+					Region region = new Region(regionName, regions, 1 /*player.world.getDimension().getType().getId()*/);
 					if (Saver.REGIONS.containsKey(regionName)) {
 						Region oldRegion = Saver.REGIONS.get(regionName);
 						for (String st : oldRegion.getFlags()) {

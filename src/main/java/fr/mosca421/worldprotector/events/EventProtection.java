@@ -20,7 +20,7 @@ import net.minecraftforge.fml.common.Mod;
 public class EventProtection {
 	@SubscribeEvent
 	public static void onPlayerBreakBlock(BreakEvent event) {
-		int dim = event.getWorld().getDimension().getType().getId();
+		int dim = 1; // event.getWorld().getDimension().getType().getId();
 		for (Region region : RegionsUtils.getHandlingRegionsFor(event.getPos(), dim)) {
 			if (region.getFlags().contains("break")) {
 				if (!region.isInPlayerList(event.getPlayer())) {
@@ -34,7 +34,7 @@ public class EventProtection {
 
 	@SubscribeEvent
 	public static void onPlayerPlaceBlock(EntityPlaceEvent event) {
-		int dim = event.getWorld().getDimension().getType().getId();
+		int dim = 1; //event.getWorld().getDimension().getType().getId();
 		for (Region region : RegionsUtils.getHandlingRegionsFor(event.getPos(), dim)) {
 			if (region.getFlags().contains("place")) {
 				if (event.getEntity() instanceof PlayerEntity) {
@@ -56,7 +56,7 @@ public class EventProtection {
 		Iterator<BlockPos> it = event.getAffectedBlocks().iterator();
 		while (it.hasNext()) {
 			BlockPos pos = it.next();
-			for (Region region : RegionsUtils.getHandlingRegionsFor(pos, event.getWorld().getDimension().getType().getId())) {
+			for (Region region : RegionsUtils.getHandlingRegionsFor(pos, 1 /* event.getWorld().getDimension().getType().getId() */ )) {
 				if (region.getFlags().contains("explosions")) {
 					it.remove();
 					break;
@@ -68,7 +68,7 @@ public class EventProtection {
 		if (!(event.getExplosion().getExplosivePlacedBy() instanceof CreeperEntity)) {
 			while (it.hasNext()) {
 				BlockPos pos = it.next();
-				for (Region region : RegionsUtils.getHandlingRegionsFor(pos, event.getWorld().getDimension().getType().getId())) {
+				for (Region region : RegionsUtils.getHandlingRegionsFor(pos, 1 /* event.getWorld().getDimension().getType().getId() */ )) {
 					if (region.getFlags().contains("other-explosions")) {
 						it.remove();
 						break;
@@ -81,7 +81,7 @@ public class EventProtection {
 		if (event.getExplosion().getExplosivePlacedBy() instanceof CreeperEntity) {
 			while (it.hasNext()) {
 				BlockPos pos = it.next();
-				for (Region region : RegionsUtils.getHandlingRegionsFor(pos, event.getWorld().getDimension().getType().getId())) {
+				for (Region region : RegionsUtils.getHandlingRegionsFor(pos, 1 /* event.getWorld().getDimension().getType().getId() */ )) {
 					if (region.getFlags().contains("creeper-explosions")) {
 						it.remove();
 						break;
@@ -93,7 +93,7 @@ public class EventProtection {
 
 	@SubscribeEvent
 	public static void onBucketFill(FillBucketEvent event) {
-		int dim = event.getWorld().getDimension().getType().getId();
+		int dim = 1; // event.getWorld().getDimension().getType().getId();
 		if (event.getTarget() != null) {
 			for (Region region : RegionsUtils.getHandlingRegionsFor(new BlockPos(event.getTarget().getHitVec()), dim)) {
 				if (region.getFlags().contains("place")) {

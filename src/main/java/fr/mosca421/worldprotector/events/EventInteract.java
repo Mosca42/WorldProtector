@@ -15,7 +15,7 @@ public class EventInteract {
 
 	@SubscribeEvent
 	public static void onPlayerInteractEvent(PlayerInteractEvent.RightClickBlock event) {
-		int dim = event.getWorld().getDimension().getType().getId();
+		int dim = 1; // event.getWorld().getDimension().getType().getId();
 		for (Region region : RegionsUtils.getHandlingRegionsFor(event.getPos(), dim)) {
 			if (region.getFlags().contains("use")) {
 				if (!(event.getWorld().getTileEntity(event.getPos()) instanceof LockableTileEntity))

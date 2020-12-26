@@ -17,7 +17,7 @@ public class EventTeleport {
 	public static void enderTeleport(EnderTeleportEvent event) {
 		if (event.getEntityLiving() instanceof ServerPlayerEntity) {
 			ServerPlayerEntity player = (ServerPlayerEntity) event.getEntityLiving();
-			int dim = event.getEntityLiving().world.getDimension().getType().getId();
+			int dim = 1; // event.getEntityLiving().world.getDimension().getType().getId();
 			for (Region region : RegionsUtils.getHandlingRegionsFor(player.getPosition(), dim)) {
 				if (region.getFlags().contains("enderpearls")) {
 					if (!region.isInPlayerList(player)) {

@@ -44,7 +44,7 @@ public class RegionStick extends Item {
 					player.getHeldItem(hand).getTag().putInt("y1", pos.getY());
 					player.getHeldItem(hand).getTag().putInt("z1", pos.getZ());
 					player.getHeldItem(hand).getTag().putInt("id", 1);
-					player.sendMessage(new StringTextComponent(TextFormatting.DARK_RED + "Position 1 : x=" + player.getHeldItem(hand).getTag().getInt("x1") + ", y=" + player.getHeldItem(hand).getTag().getInt("y1") + ", z=" + player.getHeldItem(hand).getTag().getInt("z1")));
+					player.sendMessage(new StringTextComponent(TextFormatting.DARK_RED + "Position 1 : x=" + player.getHeldItem(hand).getTag().getInt("x1") + ", y=" + player.getHeldItem(hand).getTag().getInt("y1") + ", z=" + player.getHeldItem(hand).getTag().getInt("z1")), player.getUniqueID());
 					break;
 				case 1:
 					player.getHeldItem(hand).getTag().putInt("x2", pos.getX());
@@ -52,7 +52,7 @@ public class RegionStick extends Item {
 					player.getHeldItem(hand).getTag().putInt("z2", pos.getZ());
 					player.getHeldItem(hand).getTag().putInt("id", 0);
 					player.getHeldItem(hand).getTag().putBoolean("valide", true);
-					player.sendMessage(new StringTextComponent(TextFormatting.DARK_RED + "Position 2 : x=" + player.getHeldItem(hand).getTag().getInt("x2") + ", y=" + player.getHeldItem(hand).getTag().getInt("y2") + ", z=" + player.getHeldItem(hand).getTag().getInt("z2")));
+					player.sendMessage(new StringTextComponent(TextFormatting.DARK_RED + "Position 2 : x=" + player.getHeldItem(hand).getTag().getInt("x2") + ", y=" + player.getHeldItem(hand).getTag().getInt("y2") + ", z=" + player.getHeldItem(hand).getTag().getInt("z2")), player.getUniqueID());
 					break;
 				}
 			}

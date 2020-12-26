@@ -7,13 +7,16 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 
+import java.util.UUID;
+
 public class ExpandUtils {
 	
 	public static void giveHelpMessage(ServerPlayerEntity player) {
-		player.sendMessage(new StringTextComponent(""));
-		player.sendMessage(new TranslationTextComponent(TextFormatting.BLUE + "==WorldProtector Help=="));
-		player.sendMessage(new TranslationTextComponent("help.expand.1"));
-		player.sendMessage(new TranslationTextComponent(TextFormatting.BLUE + "==WorldProtector Help=="));
+		UUID playerUUID = player.getUniqueID();
+		player.sendMessage(new StringTextComponent(""), playerUUID);
+		player.sendMessage(new TranslationTextComponent(TextFormatting.BLUE + "==WorldProtector Help=="), playerUUID);
+		player.sendMessage(new TranslationTextComponent("help.expand.1"), playerUUID);
+		player.sendMessage(new TranslationTextComponent(TextFormatting.BLUE + "==WorldProtector Help=="), playerUUID);
 	}
 
 	public static void expandVert(ServerPlayerEntity player, ItemStack item) {
@@ -24,13 +27,14 @@ public class ExpandUtils {
 					item.getTag().putDouble("y2", 255);
 					player.sendStatusMessage(new TranslationTextComponent("message.itemhand.expand"), true);
 				} else {
-					player.sendMessage(new TranslationTextComponent("message.itemhand.choose"));
+
+					player.sendMessage(new TranslationTextComponent("message.itemhand.choose"), player.getUniqueID());
 				}
 			} else {
-				player.sendMessage(new TranslationTextComponent("message.itemhand.choose"));
+				player.sendMessage(new TranslationTextComponent("message.itemhand.choose"), player.getUniqueID());
 			}
 		} else {
-			player.sendMessage(new TranslationTextComponent("message.itemhand.take"));
+			player.sendMessage(new TranslationTextComponent("message.itemhand.take"), player.getUniqueID());
 		}
 	}
 }

@@ -27,7 +27,7 @@ public class EventPlayers {
 			for (Region region : RegionsUtils.getHandlingRegionsFor(player.getPosition(), dim)) {
 				if (region.getFlags().contains("damage-players")) {
 					if (FlagsUtils.isOp(player)) {
-						event.getPlayer().sendMessage(new TranslationTextComponent("world.pvp.player"));
+						event.getPlayer().sendMessage(new TranslationTextComponent("world.pvp.player"), event.getPlayer().getUniqueID());
 						event.setCanceled(true);
 						return;
 					}
@@ -42,7 +42,7 @@ public class EventPlayers {
 		for (Region region : RegionsUtils.getHandlingRegionsFor(event.getPlayer().getPosition(), dim)) {
 			if (region.getFlags().contains("pickup-item")) {
 				if (!region.isInPlayerList(event.getPlayer())) {
-					event.getPlayer().sendMessage(new TranslationTextComponent("world.pickup.player"));
+					event.getPlayer().sendMessage(new TranslationTextComponent("world.pickup.player"), event.getPlayer().getUniqueID());
 					event.setCanceled(true);
 				}
 			}
@@ -88,7 +88,7 @@ public class EventPlayers {
 				if (region.getFlags().contains("send-chat")) {
 					if (!region.isInPlayerList(event.getPlayer())) {
 						event.setCanceled(true);
-						event.getPlayer().sendMessage(new TranslationTextComponent("world.speak.player"));
+						event.getPlayer().sendMessage(new TranslationTextComponent("world.speak.player"), event.getPlayer().getUniqueID());
 					}
 				}
 			}
@@ -103,7 +103,7 @@ public class EventPlayers {
 				if (!region.isInPlayerList(event.getPlayer())) {
 					event.setCanceled(true);
 					event.getPlayer().inventory.addItemStackToInventory(event.getEntityItem().getItem());
-					event.getPlayer().sendMessage(new TranslationTextComponent("world.drop.player"));
+					event.getPlayer().sendMessage(new TranslationTextComponent("world.drop.player"), event.getPlayer().getUniqueID());
 				}
 			}
 		}

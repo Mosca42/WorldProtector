@@ -24,7 +24,7 @@ public class EventProtection {
 		for (Region region : RegionsUtils.getHandlingRegionsFor(event.getPos(), dim)) {
 			if (region.getFlags().contains("break")) {
 				if (!region.isInPlayerList(event.getPlayer())) {
-					event.getPlayer().sendMessage(new TranslationTextComponent("world.protection.break"));
+					event.getPlayer().sendMessage(new TranslationTextComponent("world.protection.break"), event.getPlayer().getUniqueID());
 					event.setCanceled(true);
 					return;
 				}
@@ -39,7 +39,7 @@ public class EventProtection {
 			if (region.getFlags().contains("place")) {
 				if (event.getEntity() instanceof PlayerEntity) {
 						if (!region.isInPlayerList(((PlayerEntity)event.getEntity()))) {
-						((PlayerEntity)event.getEntity()).sendMessage(new TranslationTextComponent("world.protection.place"));
+						((PlayerEntity)event.getEntity()).sendMessage(new TranslationTextComponent("world.protection.place"), event.getEntity().getUniqueID());
 						event.setCanceled(true);
 						return;
 					}
@@ -98,7 +98,7 @@ public class EventProtection {
 			for (Region region : RegionsUtils.getHandlingRegionsFor(new BlockPos(event.getTarget().getHitVec()), dim)) {
 				if (region.getFlags().contains("place")) {
 					if (!region.isInPlayerList(event.getPlayer())) {
-						event.getPlayer().sendMessage(new TranslationTextComponent("world.protection.place"));
+						event.getPlayer().sendMessage(new TranslationTextComponent("world.protection.place"), event.getPlayer().getUniqueID());
 						event.setCanceled(true);
 						return;
 					}

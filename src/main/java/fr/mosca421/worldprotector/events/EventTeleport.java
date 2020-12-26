@@ -22,7 +22,7 @@ public class EventTeleport {
 				if (region.getFlags().contains("enderpearls")) {
 					if (!region.isInPlayerList(player)) {
 						event.setCanceled(true);
-						player.sendMessage(new TranslationTextComponent("world.ender.player"));
+						player.sendMessage(new TranslationTextComponent("world.ender.player"), player.getUniqueID());
 					}
 				}
 			}

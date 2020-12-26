@@ -13,7 +13,7 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -144,7 +144,8 @@ public class RegionsUtils {
 		int maxPriority = 1;
 		ArrayList<Region> handlers = new ArrayList<Region>();
 		for (Region region : Saver.REGIONS.values()) {
-			if (region.getDimension() == dimension && region.getArea().contains(new Vec3d(position))) {
+			// Changed: new Vec3d(position) -> new Vector3d(position.getX(), position.getY(), position.getZ()))
+			if (region.getDimension() == dimension && region.getArea().contains(new Vector3d(position.getX(), position.getY(), position.getZ()))) {
 				if (region.getPriority() == maxPriority) {
 					handlers.add(region);
 				} else if (region.getPriority() > maxPriority) {

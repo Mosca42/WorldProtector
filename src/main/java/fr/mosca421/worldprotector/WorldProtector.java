@@ -18,6 +18,8 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
@@ -25,6 +27,7 @@ import java.util.List;
 public class WorldProtector {
 
 	public static final String MODID = "worldprotector";
+	private static final Logger LOGGER = LogManager.getLogger();
 
 	public WorldProtector() {
 		MinecraftForge.EVENT_BUS.addListener(EventPriority.HIGH, this::isInRegion);
@@ -41,9 +44,13 @@ public class WorldProtector {
 		Saver.onServerStarting(event);
 	}
 	
-	public boolean enter = false;
-	public String exitMessage = "";
-	public String exitMessageSmall = "";
+	private boolean enter = false;
+	private String exitMessage = "";
+	private String exitMessageSmall = "";
+
+	// FIXME: isInRegion works not as intended - the flags only work for one region at a time.
+	// if mupltiple regions are overlapping only 1 enter and exit message is displayer.
+	// the flag for entering and leaving has to be saved per region
 
 	@SubscribeEvent
 	public void isInRegion(PlayerTickEvent event) {

@@ -9,6 +9,8 @@ import net.minecraftforge.event.entity.living.EnderTeleportEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
+import java.util.List;
+
 @Mod.EventBusSubscriber(modid = WorldProtector.MODID)
 
 public class EventTeleport {
@@ -17,8 +19,8 @@ public class EventTeleport {
 	public static void enderTeleport(EnderTeleportEvent event) {
 		if (event.getEntityLiving() instanceof ServerPlayerEntity) {
 			ServerPlayerEntity player = (ServerPlayerEntity) event.getEntityLiving();
-			int dim = 1; // event.getEntityLiving().world.getDimension().getType().getId();
-			for (Region region : RegionsUtils.getHandlingRegionsFor(player.getPosition(), dim)) {
+			List<Region> regions = RegionsUtils.getHandlingRegionsFor(player.getPosition(), RegionsUtils.getDimension(player.world));
+			for (Region region : regions) {
 				if (region.getFlags().contains("enderpearls")) {
 					if (!region.isInPlayerList(player)) {
 						event.setCanceled(true);

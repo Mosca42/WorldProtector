@@ -19,6 +19,8 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
+import java.util.List;
+
 @Mod(WorldProtector.MODID)
 public class WorldProtector {
 
@@ -47,8 +49,8 @@ public class WorldProtector {
 	public void isInRegion(PlayerTickEvent event) {
 		if (event.player instanceof ServerPlayerEntity) {
 			ServerPlayerEntity player = (ServerPlayerEntity) event.player;
-			int dim = 1; // player.world.getDimension().getType().getId();
-			for (Region region : RegionsUtils.getHandlingRegionsFor(player.getPosition(), dim)) {
+			List<Region> regions = RegionsUtils.getHandlingRegionsFor(player.getPosition(), RegionsUtils.getDimension(player.world));
+			for (Region region : regions) {
 				if (region.getFlags().contains("enter-message")) {
 					try {
 						if (!enter) {

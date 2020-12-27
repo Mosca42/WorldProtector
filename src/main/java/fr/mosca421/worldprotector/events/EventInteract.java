@@ -10,13 +10,15 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
+import java.util.List;
+
 @Mod.EventBusSubscriber(modid = WorldProtector.MODID)
 public class EventInteract {
 
 	@SubscribeEvent
 	public static void onPlayerInteractEvent(PlayerInteractEvent.RightClickBlock event) {
-		int dim = 1; // event.getWorld().getDimension().getType().getId();
-		for (Region region : RegionsUtils.getHandlingRegionsFor(event.getPos(), dim)) {
+		List<Region> regions = RegionsUtils.getHandlingRegionsFor(event.getPos(), RegionsUtils.getDimension(event.getWorld()));
+		for (Region region : regions) {
 			if (region.getFlags().contains("use")) {
 				if (!(event.getWorld().getTileEntity(event.getPos()) instanceof LockableTileEntity))
 					if (!region.isInPlayerList(event.getPlayer())) {

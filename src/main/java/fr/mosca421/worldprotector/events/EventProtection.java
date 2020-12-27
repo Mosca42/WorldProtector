@@ -1,6 +1,7 @@
 package fr.mosca421.worldprotector.events;
 
 import java.util.Iterator;
+import java.util.List;
 
 import fr.mosca421.worldprotector.WorldProtector;
 import fr.mosca421.worldprotector.core.Region;
@@ -9,6 +10,7 @@ import net.minecraft.entity.monster.CreeperEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.World;
 import net.minecraftforge.event.entity.player.FillBucketEvent;
 import net.minecraftforge.event.world.BlockEvent.BreakEvent;
 import net.minecraftforge.event.world.BlockEvent.EntityPlaceEvent;
@@ -20,8 +22,8 @@ import net.minecraftforge.fml.common.Mod;
 public class EventProtection {
 	@SubscribeEvent
 	public static void onPlayerBreakBlock(BreakEvent event) {
-		int dim = 1; // event.getWorld().getDimension().getType().getId();
-		for (Region region : RegionsUtils.getHandlingRegionsFor(event.getPos(), dim)) {
+		List<Region> regions = RegionsUtils.getHandlingRegionsFor(event.getPos(), RegionsUtils.getDimension(event.getPlayer().world));
+		for (Region region : regions) {
 			if (region.getFlags().contains("break")) {
 				if (!region.isInPlayerList(event.getPlayer())) {
 					event.getPlayer().sendMessage(new TranslationTextComponent("world.protection.break"), event.getPlayer().getUniqueID());
@@ -34,12 +36,12 @@ public class EventProtection {
 
 	@SubscribeEvent
 	public static void onPlayerPlaceBlock(EntityPlaceEvent event) {
-		int dim = 1; //event.getWorld().getDimension().getType().getId();
-		for (Region region : RegionsUtils.getHandlingRegionsFor(event.getPos(), dim)) {
+		List<Region> regions = RegionsUtils.getHandlingRegionsFor(event.getPos(), RegionsUtils.getDimension((World) event.getWorld()));
+		for (Region region : regions) {
 			if (region.getFlags().contains("place")) {
 				if (event.getEntity() instanceof PlayerEntity) {
 						if (!region.isInPlayerList(((PlayerEntity)event.getEntity()))) {
-						((PlayerEntity)event.getEntity()).sendMessage(new TranslationTextComponent("world.protection.place"), event.getEntity().getUniqueID());
+						event.getEntity().sendMessage(new TranslationTextComponent("world.protection.place"), event.getEntity().getUniqueID());
 						event.setCanceled(true);
 						return;
 					}
@@ -56,7 +58,8 @@ public class EventProtection {
 		Iterator<BlockPos> it = event.getAffectedBlocks().iterator();
 		while (it.hasNext()) {
 			BlockPos pos = it.next();
-			for (Region region : RegionsUtils.getHandlingRegionsFor(pos, 1 /* event.getWorld().getDimension().getType().getId() */ )) {
+			List<Region> regions = RegionsUtils.getHandlingRegionsFor(pos, RegionsUtils.getDimension(event.getWorld()));
+			for (Region region : regions) {
 				if (region.getFlags().contains("explosions")) {
 					it.remove();
 					break;
@@ -68,7 +71,8 @@ public class EventProtection {
 		if (!(event.getExplosion().getExplosivePlacedBy() instanceof CreeperEntity)) {
 			while (it.hasNext()) {
 				BlockPos pos = it.next();
-				for (Region region : RegionsUtils.getHandlingRegionsFor(pos, 1 /* event.getWorld().getDimension().getType().getId() */ )) {
+				List<Region> regions = RegionsUtils.getHandlingRegionsFor(pos, RegionsUtils.getDimension(event.getWorld()));
+				for (Region region : regions) {
 					if (region.getFlags().contains("other-explosions")) {
 						it.remove();
 						break;
@@ -81,7 +85,8 @@ public class EventProtection {
 		if (event.getExplosion().getExplosivePlacedBy() instanceof CreeperEntity) {
 			while (it.hasNext()) {
 				BlockPos pos = it.next();
-				for (Region region : RegionsUtils.getHandlingRegionsFor(pos, 1 /* event.getWorld().getDimension().getType().getId() */ )) {
+				List<Region> regions = RegionsUtils.getHandlingRegionsFor(pos, RegionsUtils.getDimension(event.getWorld()));
+				for (Region region : regions) {
 					if (region.getFlags().contains("creeper-explosions")) {
 						it.remove();
 						break;
@@ -93,9 +98,9 @@ public class EventProtection {
 
 	@SubscribeEvent
 	public static void onBucketFill(FillBucketEvent event) {
-		int dim = 1; // event.getWorld().getDimension().getType().getId();
 		if (event.getTarget() != null) {
-			for (Region region : RegionsUtils.getHandlingRegionsFor(new BlockPos(event.getTarget().getHitVec()), dim)) {
+			List<Region> regions = RegionsUtils.getHandlingRegionsFor(new BlockPos(event.getTarget().getHitVec()), RegionsUtils.getDimension(event.getWorld()));
+			for (Region region : regions) {
 				if (region.getFlags().contains("place")) {
 					if (!region.isInPlayerList(event.getPlayer())) {
 						event.getPlayer().sendMessage(new TranslationTextComponent("world.protection.place"), event.getPlayer().getUniqueID());

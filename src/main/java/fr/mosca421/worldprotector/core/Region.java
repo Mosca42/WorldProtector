@@ -20,7 +20,7 @@ public class Region implements INBTSerializable<CompoundNBT> {
 	private final Set<String> flags = new HashSet<>();
 	private String name;
 	private int priority = 2;
-	private int dimension;
+	private String dimension;
 	private String enterMessage = "";
 	private String exitMessage = "";
 	private String enterMessageSmall = "";
@@ -30,7 +30,7 @@ public class Region implements INBTSerializable<CompoundNBT> {
 	public Region() {
 	}
 
-	public Region(String name, AxisAlignedBB area, int dimension) {
+	public Region(String name, AxisAlignedBB area, String dimension) {
 		this.name = name;
 		this.area = area;
 		this.dimension = dimension;
@@ -72,7 +72,7 @@ public class Region implements INBTSerializable<CompoundNBT> {
 		return priority;
 	}
 
-	public int getDimension() {
+	public String getDimension() {
 		return dimension;
 	}
 
@@ -154,7 +154,7 @@ public class Region implements INBTSerializable<CompoundNBT> {
 		nbt.putInt("maxY", (int) area.maxY);
 		nbt.putInt("maxZ", (int) area.maxZ);
 		nbt.putInt("priority", priority);
-		nbt.putInt("dimension", dimension);
+		nbt.putString("dimension", dimension);
 		nbt.putString("enterMessage", enterMessage);
 		nbt.putString("exitMessage", exitMessage);
 		nbt.putString("enterMessageSmall", enterMessageSmall);
@@ -179,7 +179,7 @@ public class Region implements INBTSerializable<CompoundNBT> {
 		this.name = nbt.getString("name");
 		this.area = new AxisAlignedBB(nbt.getInt("minX"), nbt.getInt("minY"), nbt.getInt("minZ"), nbt.getInt("maxX"), nbt.getInt("maxY"), nbt.getInt("maxZ"));
 		this.priority = nbt.getInt("priority");
-		this.dimension = nbt.getInt("dimension");
+		this.dimension = nbt.getString("dimension");
 		this.enterMessage = nbt.getString("enterMessage");
 		this.exitMessage = nbt.getString("exitMessage");
 		this.enterMessageSmall = nbt.getString("enterMessageSmall");

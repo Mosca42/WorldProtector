@@ -17,6 +17,7 @@ import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.World;
 
 public class RegionsUtils {
 
@@ -74,7 +75,7 @@ public class RegionsUtils {
 			if (item.hasTag()) {
 				if (item.getTag().getBoolean("valide")) {
 					AxisAlignedBB regions = new AxisAlignedBB(item.getTag().getInt("x1"), item.getTag().getInt("y1"), item.getTag().getInt("z1"), item.getTag().getInt("x2"), item.getTag().getInt("y2"), item.getTag().getInt("z2")).grow(1);
-					Region region = new Region(regionName, regions, 1 /*player.world.getDimension().getType().getId()*/);
+					Region region = new Region(regionName, regions, getDimension(player.world));
 					Saver.addRegion(region);
 					Saver.save();
 					player.sendMessage(new TranslationTextComponent("message.region.define", regionName), playerUUID);
@@ -116,7 +117,7 @@ public class RegionsUtils {
 			if (item.hasTag()) {
 				if (item.getTag().getBoolean("valide")) {
 					AxisAlignedBB regions = new AxisAlignedBB(item.getTag().getInt("x1"), item.getTag().getInt("y1"), item.getTag().getInt("z1"), item.getTag().getInt("x2"), item.getTag().getInt("y2"), item.getTag().getInt("z2")).grow(1);
-					Region region = new Region(regionName, regions, 1 /*player.world.getDimension().getType().getId()*/);
+					Region region = new Region(regionName, regions, getDimension(player.world));
 					if (Saver.REGIONS.containsKey(regionName)) {
 						Region oldRegion = Saver.REGIONS.get(regionName);
 						for (String st : oldRegion.getFlags()) {
@@ -140,12 +141,12 @@ public class RegionsUtils {
 		}
 	}
 
-	public static List<Region> getHandlingRegionsFor(BlockPos position, int dimension) {
+	public static List<Region> getHandlingRegionsFor(BlockPos position, String dimension) {
 		int maxPriority = 1;
-		ArrayList<Region> handlers = new ArrayList<Region>();
+		ArrayList<Region> handlers = new ArrayList<>();
 		for (Region region : Saver.REGIONS.values()) {
 			// Changed: new Vec3d(position) -> new Vector3d(position.getX(), position.getY(), position.getZ()))
-			if (region.getDimension() == dimension && region.getArea().contains(new Vector3d(position.getX(), position.getY(), position.getZ()))) {
+			if (region.getDimension().equals(dimension) && region.getArea().contains(new Vector3d(position.getX(), position.getY(), position.getZ()))) {
 				if (region.getPriority() == maxPriority) {
 					handlers.add(region);
 				} else if (region.getPriority() > maxPriority) {
@@ -194,4 +195,9 @@ public class RegionsUtils {
 		}
 		return false;
 	}
+
+	public static String getDimension(World world){
+		return world.getDimensionKey().getLocation().toString();
+	}
+
 }

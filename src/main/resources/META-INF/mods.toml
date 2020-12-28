@@ -1,6 +1,6 @@
 modLoader="javafml" #mandatory
 loaderVersion="[33,)" #mandatory
-license="Creative Commons 3.0 Attribution Non-Commercial" # https://www.curseforge.com/project/278829/license
+license="CC BY-NC 3.0" # https://www.curseforge.com/project/278829/license
 logoFile="worldprotector.png" #optional
 credits="Thanks to BrokenSwing for helping me and TheBossMax2 for the logo"
 authors="Mosca42, BrokenSwing" #optional

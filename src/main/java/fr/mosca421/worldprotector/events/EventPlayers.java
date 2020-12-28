@@ -3,7 +3,7 @@ package fr.mosca421.worldprotector.events;
 import fr.mosca421.worldprotector.WorldProtector;
 import fr.mosca421.worldprotector.core.Region;
 import fr.mosca421.worldprotector.core.RegionFlag;
-import fr.mosca421.worldprotector.utils.FlagsUtils;
+import fr.mosca421.worldprotector.utils.RegionFlagUtils;
 import fr.mosca421.worldprotector.utils.RegionsUtils;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -29,7 +29,7 @@ public class EventPlayers {
 			ServerPlayerEntity player = (ServerPlayerEntity) event.getTarget();
 			List<Region> regions = RegionsUtils.getHandlingRegionsFor(player.getPosition(), RegionsUtils.getDimension(player.world));
 			for (Region region : regions) {
-				if (region.getFlags().contains(RegionFlag.DAMAGE_PLAYERS.toString()) && FlagsUtils.isOp(player)) {
+				if (region.getFlags().contains(RegionFlag.DAMAGE_PLAYERS.toString()) && RegionFlagUtils.isOp(player)) {
 					event.getPlayer().sendMessage(new TranslationTextComponent("world.pvp.player"), event.getPlayer().getUniqueID());
 					event.setCanceled(true);
 					return;

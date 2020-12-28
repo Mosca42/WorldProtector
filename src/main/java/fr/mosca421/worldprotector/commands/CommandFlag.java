@@ -6,8 +6,8 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
 import fr.mosca421.worldprotector.core.Region;
 import fr.mosca421.worldprotector.core.RegionFlag;
-import fr.mosca421.worldprotector.core.Saver;
-import fr.mosca421.worldprotector.utils.FlagsUtils;
+import fr.mosca421.worldprotector.core.RegionSaver;
+import fr.mosca421.worldprotector.utils.RegionFlagUtils;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.command.ISuggestionProvider;
@@ -47,7 +47,7 @@ public class CommandFlag {
 
 	private static int giveHelp(CommandSource source) {
 		try {
-			FlagsUtils.giveHelpMessage(source.asPlayer());
+			RegionFlagUtils.giveHelpMessage(source.asPlayer());
 		} catch (CommandSyntaxException e) {
 			e.printStackTrace();
 		}
@@ -56,7 +56,7 @@ public class CommandFlag {
 
 	private static int giveList(CommandSource source) {
 		try {
-			FlagsUtils.giveListFlagsOfRegion(source.asPlayer());
+			RegionFlagUtils.giveListFlagsOfRegion(source.asPlayer());
 		} catch (CommandSyntaxException e) {
 			e.printStackTrace();
 		}
@@ -65,24 +65,24 @@ public class CommandFlag {
 
 	private static int add(CommandSource source, String region, String flag, String name) {
 		try {
-			boolean regionsContain = Saver.containsRegion(region);
+			boolean regionsContain = RegionSaver.containsRegion(region);
 			if (flag.equalsIgnoreCase(RegionFlag.ENTER_MESSAGE_TITLE.toString()) && regionsContain) {
-				Region regions = Saver.getRegion(region);
+				Region regions = RegionSaver.getRegion(region);
 				regions.setEnterMessage(name);
 			}
 			if (flag.equalsIgnoreCase(RegionFlag.EXIT_MESSAGE_TITLE.toString()) && regionsContain) {
-				Region regions = Saver.getRegion(region);
+				Region regions = RegionSaver.getRegion(region);
 				regions.setExitMessage(name);
 			}
 			if (flag.equalsIgnoreCase(RegionFlag.ENTER_MESSAGE_SUBTITLE.toString()) && regionsContain) {
-				Region regions = Saver.getRegion(region);
+				Region regions = RegionSaver.getRegion(region);
 				regions.setEnterMessageSmall(name);
 			}
 			if (flag.equalsIgnoreCase(RegionFlag.EXIT_MESSAGE_SUBTITLE.toString()) && regionsContain) {
-				Region regions = Saver.getRegion(region);
+				Region regions = RegionSaver.getRegion(region);
 				regions.setExitMessageSmall(name);
 			}
-			FlagsUtils.addFlag(region, source.asPlayer(), flag);
+			RegionFlagUtils.addFlag(region, source.asPlayer(), flag);
 
 		} catch (CommandSyntaxException e) {
 			e.printStackTrace();
@@ -92,7 +92,7 @@ public class CommandFlag {
 
 	private static int remove(CommandSource source, String region, String flag) {
 		try {
-			FlagsUtils.removeFlag(region, source.asPlayer(), flag);
+			RegionFlagUtils.removeFlag(region, source.asPlayer(), flag);
 		} catch (CommandSyntaxException e) {
 			e.printStackTrace();
 		}
@@ -101,7 +101,7 @@ public class CommandFlag {
 
 	private static int info(CommandSource source, String region) {
 		try {
-			FlagsUtils.getRegionFlags(region, source.asPlayer());
+			RegionFlagUtils.getRegionFlags(region, source.asPlayer());
 		} catch (CommandSyntaxException e) {
 			e.printStackTrace();
 		}

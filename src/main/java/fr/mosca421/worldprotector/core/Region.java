@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import fr.mosca421.worldprotector.utils.FlagsUtils;
+import fr.mosca421.worldprotector.utils.RegionFlagUtils;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -115,7 +115,7 @@ public class Region implements INBTSerializable<CompoundNBT> {
 	}
 
 	public boolean isInPlayerList(PlayerEntity name) {
-		if (FlagsUtils.isOp(name)) {
+		if (RegionFlagUtils.isOp(name)) {
 			return true;
 		}
 		return playerList.contains(name.getUniqueID().toString());

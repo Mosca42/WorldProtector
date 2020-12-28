@@ -1,15 +1,8 @@
 package fr.mosca421.worldprotector;
 
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import fr.mosca421.worldprotector.commands.CommandsRegister;
-import fr.mosca421.worldprotector.core.Region;
-import fr.mosca421.worldprotector.core.Saver;
+import fr.mosca421.worldprotector.core.RegionSaver;
 import fr.mosca421.worldprotector.items.ItemsRegister;
-import fr.mosca421.worldprotector.utils.RegionsUtils;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.network.play.server.STitlePacket;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextComponentUtils;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
@@ -21,13 +14,11 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.List;
-
 @Mod(WorldProtector.MODID)
 public class WorldProtector {
 
 	public static final String MODID = "worldprotector";
-	private static final Logger LOGGER = LogManager.getLogger();
+	public static final Logger LOGGER = LogManager.getLogger();
 
 	public WorldProtector() {
 		MinecraftForge.EVENT_BUS.addListener(EventPriority.HIGH, this::isInRegion);
@@ -40,7 +31,7 @@ public class WorldProtector {
 	@SubscribeEvent
 	public void serverStarting(FMLServerStartingEvent event) {
 		CommandsRegister.init(event.getServer().getCommandManager().getDispatcher());
-		Saver.onServerStarting(event);
+		RegionSaver.onServerStarting(event);
 	}
 
 	/*

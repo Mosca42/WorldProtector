@@ -105,3 +105,20 @@ Thanks to BrokenSwing for his help about regions and safeguard in the world.
 Thanks to TheBossMax2 for the mod logo.
 
 DISCORD: [WorldProtector Discord](https://discord.gg/MsA8XPc)
+
+# License
+This mod is open sourced under the Creative Commons 3.0 Attribution Non-Commercial License
+https://creativecommons.org/licenses/by-nc/3.0/legalcode
+
+Summary
+https://creativecommons.org/licenses/by-nc/3.0/
+
+You are free to:
+* Share — copy and redistribute the material in any medium or format
+* Adapt — remix, transform, and build upon the material
+* The licensor cannot revoke these freedoms as long as you follow the license terms.
+
+Under the following conditions:
+* Attribution — You must give appropriate credit, provide a link to the license, and indicate if changes were made. You may do so in any reasonable manner, but not in any way that suggests the licensor endorses you or your use.
+* NonCommercial — You may not use the material for commercial purposes.
+* No additional restrictions — You may not apply legal terms or technological measures that legally restrict others from doing anything the license permits.

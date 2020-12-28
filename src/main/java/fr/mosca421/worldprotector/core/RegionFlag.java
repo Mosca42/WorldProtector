@@ -54,7 +54,7 @@ public enum RegionFlag {
                 .anyMatch(flag -> flag.toString().equals(flagIdentifier));
     }
 
-    public static List<String> FlagList() {
+    public static List<String> getFlags() {
         return Arrays.stream(RegionFlag.values()).map(RegionFlag::toString).collect(Collectors.toList());
     }
 }

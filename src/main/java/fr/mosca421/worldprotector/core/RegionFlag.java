@@ -1,6 +1,8 @@
 package fr.mosca421.worldprotector.core;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public enum RegionFlag {
     BREAK("break"),
@@ -49,6 +51,10 @@ public enum RegionFlag {
      */
     public static boolean contains(String flagIdentifier) {
         return Arrays.stream(RegionFlag.values())
-                .anyMatch(flag -> flag.name().equals(flagIdentifier));
+                .anyMatch(flag -> flag.toString().equals(flagIdentifier));
+    }
+
+    public static List<String> FlagList() {
+        return Arrays.stream(RegionFlag.values()).map(RegionFlag::toString).collect(Collectors.toList());
     }
 }

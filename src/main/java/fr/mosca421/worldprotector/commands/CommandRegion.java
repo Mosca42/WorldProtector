@@ -6,9 +6,6 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import com.sun.jna.platform.win32.WinBase.SYSTEM_INFO;
-
-import fr.mosca421.worldprotector.utils.FlagsUtils;
 import fr.mosca421.worldprotector.utils.RegionsUtils;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
@@ -17,45 +14,47 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 
 public class CommandRegion {
 
+	private CommandRegion(){}
+
     public static LiteralArgumentBuilder<CommandSource> register() {
-        return Commands.literal("region")
+        return Commands.literal(Command.REGION.toString())
                 .requires(cs -> cs.hasPermissionLevel(4))
                 .executes(ctx -> giveHelp(ctx.getSource()))
-                .then(Commands.literal("help")
+                .then(Commands.literal(Command.HELP.toString())
                         .executes(ctx -> giveHelp(ctx.getSource())))
-                .then(Commands.literal("list")
+                .then(Commands.literal(Command.LIST.toString())
                         .executes(ctx -> giveList(ctx.getSource())))
-                .then(Commands.literal("define")
+                .then(Commands.literal(Command.DEFINE.toString())
                         .executes(ctx -> giveHelp(ctx.getSource()))
-                        .then(Commands.argument("region", StringArgumentType.string())
-                                .executes(ctx -> define(ctx.getSource(), StringArgumentType.getString(ctx, "region")))))
-                .then(Commands.literal("redefine")
-                        .then(Commands.argument("region", StringArgumentType.string())
-                                .executes(ctx -> redefine(ctx.getSource(), StringArgumentType.getString(ctx, "region")))))
-                .then(Commands.literal("remove")
-                        .then(Commands.argument("region", StringArgumentType.string())
-                                .executes(ctx -> remove(ctx.getSource(), StringArgumentType.getString(ctx, "region")))))
-                .then(Commands.literal("teleport")
-                        .then(Commands.argument("region", StringArgumentType.string())
-                                .executes(ctx -> teleport(ctx.getSource(), StringArgumentType.getString(ctx, "region")))))
+                        .then(Commands.argument(Command.REGION.toString(), StringArgumentType.string())
+                                .executes(ctx -> define(ctx.getSource(), StringArgumentType.getString(ctx, Command.REGION.toString())))))
+                .then(Commands.literal(Command.REDEFINE.toString())
+                        .then(Commands.argument(Command.REGION.toString(), StringArgumentType.string())
+                                .executes(ctx -> redefine(ctx.getSource(), StringArgumentType.getString(ctx, Command.REGION.toString())))))
+                .then(Commands.literal(Command.REMOVE.toString())
+                        .then(Commands.argument(Command.REGION.toString(), StringArgumentType.string())
+                                .executes(ctx -> remove(ctx.getSource(), StringArgumentType.getString(ctx, Command.REGION.toString())))))
+                .then(Commands.literal(Command.TELEPORT.toString())
+                        .then(Commands.argument(Command.REGION.toString(), StringArgumentType.string())
+                                .executes(ctx -> teleport(ctx.getSource(), StringArgumentType.getString(ctx, Command.REGION.toString())))))
                 .then(Commands.literal("tp")
-                        .then(Commands.argument("region", StringArgumentType.string())
-                                .executes(ctx -> teleport(ctx.getSource(), StringArgumentType.getString(ctx, "region")))))
-                .then(Commands.literal("getpriority")
-                        .then(Commands.argument("region", StringArgumentType.string())
-                                .executes(ctx -> getpriority(ctx.getSource(), StringArgumentType.getString(ctx, "region")))))
-                .then(Commands.literal("addplayer")
-                        .then(Commands.argument("region", StringArgumentType.string())
-                                .then(Commands.argument("player", EntityArgument.players())
-                                        .executes(ctx -> addPlayer(ctx.getSource(), StringArgumentType.getString(ctx, "region"), EntityArgument.getPlayers(ctx, "player"))))))
-                .then(Commands.literal("removeplayer")
-                        .then(Commands.argument("region", StringArgumentType.string())
-                                .then(Commands.argument("player", EntityArgument.players())
-                                        .executes(ctx -> removePlayer(ctx.getSource(), StringArgumentType.getString(ctx, "region"), EntityArgument.getPlayers(ctx, "player"))))))
-                .then(Commands.literal("setpriority")
-                        .then(Commands.argument("region", StringArgumentType.string())
-                                .then(Commands.argument("priority", IntegerArgumentType.integer())
-                                        .executes(ctx -> setpriority(ctx.getSource(), StringArgumentType.getString(ctx, "region"), IntegerArgumentType.getInteger(ctx, "priority"))))));
+                        .then(Commands.argument(Command.REGION.toString(), StringArgumentType.string())
+                                .executes(ctx -> teleport(ctx.getSource(), StringArgumentType.getString(ctx, Command.REGION.toString())))))
+                .then(Commands.literal(Command.PRIORITY_GET.toString())
+                        .then(Commands.argument(Command.REGION.toString(), StringArgumentType.string())
+                                .executes(ctx -> getpriority(ctx.getSource(), StringArgumentType.getString(ctx, Command.REGION.toString())))))
+                .then(Commands.literal(Command.PLAYER_ADD.toString())
+                        .then(Commands.argument(Command.REGION.toString(), StringArgumentType.string())
+                                .then(Commands.argument(Command.PLAYER.toString(), EntityArgument.players())
+                                        .executes(ctx -> addPlayer(ctx.getSource(), StringArgumentType.getString(ctx, Command.REGION.toString()), EntityArgument.getPlayers(ctx, Command.PLAYER.toString()))))))
+                .then(Commands.literal(Command.PLAYER_REMOVE.toString())
+                        .then(Commands.argument(Command.REGION.toString(), StringArgumentType.string())
+                                .then(Commands.argument(Command.PLAYER.toString(), EntityArgument.players())
+                                        .executes(ctx -> removePlayer(ctx.getSource(), StringArgumentType.getString(ctx, Command.REGION.toString()), EntityArgument.getPlayers(ctx, Command.PLAYER.toString()))))))
+                .then(Commands.literal(Command.PRIORITY_SET.toString())
+                        .then(Commands.argument(Command.REGION.toString(), StringArgumentType.string())
+                                .then(Commands.argument(Command.PRIORITY.toString(), IntegerArgumentType.integer())
+                                        .executes(ctx -> setpriority(ctx.getSource(), StringArgumentType.getString(ctx, Command.REGION.toString()), IntegerArgumentType.getInteger(ctx, Command.PRIORITY.toString()))))));
     }
 
 	private static int addPlayer(CommandSource source, String region, Collection<ServerPlayerEntity> players) {

@@ -10,13 +10,15 @@ import net.minecraft.item.ItemStack;
 
 public class CommandExpand {
 
+	private CommandExpand(){}
+
 	public static LiteralArgumentBuilder<CommandSource> register() {
-		return Commands.literal("expand")
+		return Commands.literal(Command.EXPAND.toString())
 				.requires(cs -> cs.hasPermissionLevel(4))
 				.executes(ctx -> giveHelp(ctx.getSource()))
-				.then(Commands.literal("help")
+				.then(Commands.literal(Command.HELP.toString())
 						.executes(ctx -> giveHelp(ctx.getSource())))
-				.then(Commands.literal("vert")
+				.then(Commands.literal(Command.VERT.toString())
 						.executes(ctx -> vert(ctx.getSource())));
 	}
 

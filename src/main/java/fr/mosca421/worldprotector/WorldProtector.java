@@ -39,14 +39,15 @@ public class WorldProtector {
 
 	@SubscribeEvent
 	public void serverStarting(FMLServerStartingEvent event) {
-		// Changed: event.getCommandDispatcher() ->	event.getServer().getCommandManager().getDispatcher()
 		CommandsRegister.init(event.getServer().getCommandManager().getDispatcher());
 		Saver.onServerStarting(event);
 	}
-	
+
+	/*
 	private boolean enter = false;
 	private String exitMessage = "";
 	private String exitMessageSmall = "";
+	*/
 
 	// FIXME: isInRegion works not as intended - the flags only work for one region at a time.
 	// if mupltiple regions are overlapping only 1 enter and exit message is displayer.
@@ -54,6 +55,7 @@ public class WorldProtector {
 
 	@SubscribeEvent
 	public void isInRegion(PlayerTickEvent event) {
+		/*
 		if (event.player instanceof ServerPlayerEntity) {
 			ServerPlayerEntity player = (ServerPlayerEntity) event.player;
 			List<Region> regions = RegionsUtils.getHandlingRegionsFor(player.getPosition(), RegionsUtils.getDimension(player.world));
@@ -110,5 +112,6 @@ public class WorldProtector {
 					}
 			}
 		}
+		*/
 	}
 }

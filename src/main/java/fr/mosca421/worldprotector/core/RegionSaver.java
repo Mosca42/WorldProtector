@@ -1,9 +1,6 @@
 package fr.mosca421.worldprotector.core;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 import fr.mosca421.worldprotector.WorldProtector;
 import net.minecraft.nbt.CompoundNBT;
@@ -28,6 +25,10 @@ public class RegionSaver extends WorldSavedData {
 		if (instance != null) {
 			instance.markDirty();
 		}
+	}
+
+	public static Set<String> getRegionFlags(String regionName){
+		return Regions.get(regionName).getFlags();
 	}
 
 	public static Collection<Region> getRegions(){

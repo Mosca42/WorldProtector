@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import fr.mosca421.worldprotector.utils.FlagsUtils;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -12,8 +13,8 @@ import net.minecraft.nbt.StringNBT;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.common.util.INBTSerializable;
-import net.minecraftforge.fml.server.ServerLifecycleHooks;
 
+// TODO: Work on immutability
 public class Region implements INBTSerializable<CompoundNBT> {
 
 	private AxisAlignedBB area;
@@ -21,13 +22,14 @@ public class Region implements INBTSerializable<CompoundNBT> {
 	private String name;
 	private int priority = 2;
 	private String dimension;
-	private String enterMessage = "";
-	private String exitMessage = "";
-	private String enterMessageSmall = "";
-	private String exitMessageSmall = "";
+	private String enterMessage;
+	private String exitMessage;
+	private String enterMessageSmall;
+	private String exitMessageSmall;
 	private List<String> playerList = new ArrayList<>();
 
-	public Region() {
+	public Region(CompoundNBT nbt) {
+		deserializeNBT(nbt);
 	}
 
 	public Region(String name, AxisAlignedBB area, String dimension) {
@@ -113,14 +115,10 @@ public class Region implements INBTSerializable<CompoundNBT> {
 	}
 
 	public boolean isInPlayerList(PlayerEntity name) {
-		if (ServerLifecycleHooks.getCurrentServer().getPlayerList().getOppedPlayers().getEntry(name.getGameProfile()) != null)
-			if (ServerLifecycleHooks.getCurrentServer().getPlayerList().getOppedPlayers().getEntry(name.getGameProfile()).getPermissionLevel() == 4)
-				return true;
-
-		if (playerList.contains(name.getUniqueID().toString()))
+		if (FlagsUtils.isOp(name)) {
 			return true;
-
-		return false;
+		}
+		return playerList.contains(name.getUniqueID().toString());
 	}
 
 	public boolean addPlayer(String name) {
@@ -169,15 +167,21 @@ public class Region implements INBTSerializable<CompoundNBT> {
 		for (String player : playerList) {
 			playerLists.add(StringNBT.valueOf(player));
 		}
-		// Changed: playerlist should be put instead of flagList, right?
 		nbt.put("playerList", playerLists);
 		return nbt;
+	}
+
+	private AxisAlignedBB areaFromNBT(CompoundNBT nbt){
+		return new AxisAlignedBB(
+				nbt.getInt("minX"), nbt.getInt("minY"), nbt.getInt("minZ"),
+				nbt.getInt("maxX"), nbt.getInt("maxY"), nbt.getInt("maxZ")
+		);
 	}
 
 	@Override
 	public void deserializeNBT(CompoundNBT nbt) {
 		this.name = nbt.getString("name");
-		this.area = new AxisAlignedBB(nbt.getInt("minX"), nbt.getInt("minY"), nbt.getInt("minZ"), nbt.getInt("maxX"), nbt.getInt("maxY"), nbt.getInt("maxZ"));
+		this.area = areaFromNBT(nbt);
 		this.priority = nbt.getInt("priority");
 		this.dimension = nbt.getString("dimension");
 		this.enterMessage = nbt.getString("enterMessage");

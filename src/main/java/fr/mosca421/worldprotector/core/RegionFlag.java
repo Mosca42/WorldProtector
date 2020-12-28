@@ -1,5 +1,7 @@
 package fr.mosca421.worldprotector.core;
 
+import java.util.Arrays;
+
 public enum RegionFlag {
     BREAK("break"),
     PLACE("place"),
@@ -37,5 +39,16 @@ public enum RegionFlag {
     @Override
     public String toString() {
         return flagIdentifier;
+    }
+
+    /**
+     * Checks if a flagIdentifier is defined within the RegionFlag enum.
+     * Replaces the check of FlagsList.VALID_FLAGS.contains(flag).
+     * @param flagIdentifier to be checked
+     * @return true if flagIdentifier is defined within this enum, false otherwise
+     */
+    public static boolean contains(String flagIdentifier) {
+        return Arrays.stream(RegionFlag.values())
+                .anyMatch(flag -> flag.name().equals(flagIdentifier));
     }
 }

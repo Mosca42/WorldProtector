@@ -54,7 +54,13 @@ public enum RegionFlag {
                 .anyMatch(flag -> flag.toString().equals(flagIdentifier));
     }
 
+    /**
+     * Returns a list of all flags with their string representation defined within this enum.
+     * @return a list of all flagIdentifiers defined within RegionFlag
+     */
     public static List<String> getFlags() {
-        return Arrays.stream(RegionFlag.values()).map(RegionFlag::toString).collect(Collectors.toList());
+        return Arrays.stream(RegionFlag.values())
+                .map(RegionFlag::toString)
+                .collect(Collectors.toList());
     }
 }

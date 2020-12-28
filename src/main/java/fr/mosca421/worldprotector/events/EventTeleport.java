@@ -2,6 +2,7 @@ package fr.mosca421.worldprotector.events;
 
 import fr.mosca421.worldprotector.WorldProtector;
 import fr.mosca421.worldprotector.core.Region;
+import fr.mosca421.worldprotector.core.RegionFlag;
 import fr.mosca421.worldprotector.utils.RegionsUtils;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -15,17 +16,17 @@ import java.util.List;
 
 public class EventTeleport {
 
+	private EventTeleport(){}
+
 	@SubscribeEvent
-	public static void enderTeleport(EnderTeleportEvent event) {
+	public static void onEnderTeleport(EnderTeleportEvent event) {
 		if (event.getEntityLiving() instanceof ServerPlayerEntity) {
 			ServerPlayerEntity player = (ServerPlayerEntity) event.getEntityLiving();
 			List<Region> regions = RegionsUtils.getHandlingRegionsFor(player.getPosition(), RegionsUtils.getDimension(player.world));
 			for (Region region : regions) {
-				if (region.getFlags().contains("enderpearls")) {
-					if (!region.isInPlayerList(player)) {
-						event.setCanceled(true);
-						player.sendMessage(new TranslationTextComponent("world.ender.player"), player.getUniqueID());
-					}
+				if (region.getFlags().contains(RegionFlag.ENDERPEARL_TELEPORTATION.toString()) && !region.isInPlayerList(player)) {
+					event.setCanceled(true);
+					player.sendMessage(new TranslationTextComponent("world.ender.player"), player.getUniqueID());
 				}
 			}
 		}

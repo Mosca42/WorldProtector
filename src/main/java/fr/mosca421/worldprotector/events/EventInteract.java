@@ -2,7 +2,9 @@ package fr.mosca421.worldprotector.events;
 
 import fr.mosca421.worldprotector.WorldProtector;
 import fr.mosca421.worldprotector.core.Region;
+import fr.mosca421.worldprotector.core.RegionFlag;
 import fr.mosca421.worldprotector.utils.RegionsUtils;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.tileentity.LockableTileEntity;
 import net.minecraft.util.Hand;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -15,27 +17,30 @@ import java.util.List;
 @Mod.EventBusSubscriber(modid = WorldProtector.MODID)
 public class EventInteract {
 
+	private EventInteract(){}
+
 	@SubscribeEvent
 	public static void onPlayerInteractEvent(PlayerInteractEvent.RightClickBlock event) {
 		List<Region> regions = RegionsUtils.getHandlingRegionsFor(event.getPos(), RegionsUtils.getDimension(event.getWorld()));
 		for (Region region : regions) {
-			if (region.getFlags().contains("use")) {
-				if (!(event.getWorld().getTileEntity(event.getPos()) instanceof LockableTileEntity))
-					if (!region.isInPlayerList(event.getPlayer())) {
-						event.setCanceled(true);
-						// Added ", event.getPlayer().getUniqueID()"
-						event.getPlayer().sendMessage(new TranslationTextComponent("world.interact.use"), event.getPlayer().getUniqueID());
-						return;
-					}
+			PlayerEntity player = event.getPlayer();
+			boolean containsUse = region.getFlags().contains(RegionFlag.USE.toString());
+			boolean containsChestAccess = region.getFlags().contains(RegionFlag.CHEST_ACCESS.toString());
+			boolean isLockableTileEntity = (event.getWorld().getTileEntity(event.getPos()) instanceof LockableTileEntity);
+			boolean isInPlayerList = region.isInPlayerList(player);
+
+			if (containsUse && !isLockableTileEntity && !isInPlayerList) {
+				event.setCanceled(true);
+				player.sendMessage(new TranslationTextComponent("world.interact.use"), player.getUniqueID());
+				return;
 			}
-			if (region.getFlags().contains("chest-access")) {
-				if (!region.isInPlayerList(event.getPlayer())) {
-					event.setCanceled(true);
-					if (event.getHand() == Hand.MAIN_HAND)
-						// Added ", event.getPlayer().getUniqueID()"
-						event.getPlayer().sendMessage(new TranslationTextComponent("world.interact.use"), event.getPlayer().getUniqueID());
-					return;
-				}
+
+			if (containsChestAccess && !isInPlayerList) {
+				event.setCanceled(true);
+				if (event.getHand() == Hand.MAIN_HAND)
+					player.sendMessage(new TranslationTextComponent("world.interact.use"), player.getUniqueID());
+				return;
+
 			}
 		}
 	}

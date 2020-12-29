@@ -60,7 +60,7 @@ public class CommandRegion {
 	private static int addPlayer(CommandSource source, String region, Collection<ServerPlayerEntity> players) {
 		try {
 			for (ServerPlayerEntity serverplayerentity : players) {
-				RegionsUtils.addPlayer(region, source.asPlayer(), serverplayerentity.getUniqueID().toString());
+				RegionsUtils.addPlayer(region, source.asPlayer(), serverplayerentity);
 			}
 		} catch (CommandSyntaxException e) {
 			e.printStackTrace();
@@ -70,8 +70,8 @@ public class CommandRegion {
 
 	private static int removePlayer(CommandSource source, String region, Collection<ServerPlayerEntity> players) {
 		try {
-			for (ServerPlayerEntity serverplayerentity : players) {
-				RegionsUtils.removePlayer(region, source.asPlayer(), serverplayerentity.getUniqueID().toString());
+			for (ServerPlayerEntity playerToRemove : players) {
+				RegionsUtils.removePlayer(region, source.asPlayer(), playerToRemove);
 			}
 		} catch (CommandSyntaxException e) {
 			e.printStackTrace();

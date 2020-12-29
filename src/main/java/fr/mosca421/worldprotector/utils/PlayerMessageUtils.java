@@ -9,8 +9,8 @@ public class PlayerMessageUtils {
 
     private PlayerMessageUtils(){}
 
-    public static void sendInfoMessage(ServerPlayerEntity player, String text){
-        player.sendMessage(new TranslationTextComponent(text), player.getUniqueID());
+    public static void sendInfoMessage(ServerPlayerEntity player, String translationKey){
+        player.sendMessage(new TranslationTextComponent(translationKey), player.getUniqueID());
     }
 
     public static void sendInfoMessage(ServerPlayerEntity player, ITextComponent textComponent){
@@ -21,7 +21,7 @@ public class PlayerMessageUtils {
         player.sendMessage(textComponent, player.getUniqueID());
     }
 
-    public static void sendInfoMessage(PlayerEntity player, String text){
-        player.sendMessage(new TranslationTextComponent(text), player.getUniqueID());
+    public static void sendInfoMessage(PlayerEntity player, String translationKey){
+        player.sendMessage(new TranslationTextComponent(translationKey), player.getUniqueID());
     }
 }

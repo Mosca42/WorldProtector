@@ -1,7 +1,7 @@
 package fr.mosca421.worldprotector.events;
 
-import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import fr.mosca421.worldprotector.WorldProtector;
 import fr.mosca421.worldprotector.core.Region;
@@ -43,7 +43,7 @@ public class EventProtection {
 		for (Region region : regions) {
 			if (region.getFlags().contains(RegionFlag.PLACE.toString())) {
 				if (event.getEntity() instanceof PlayerEntity) {
-						if (!region.permits(((PlayerEntity)event.getEntity()))) {
+					if (!region.permits(((PlayerEntity)event.getEntity()))) {
 						event.getEntity().sendMessage(new TranslationTextComponent("world.protection.place"), event.getEntity().getUniqueID());
 						event.setCanceled(true);
 						return;
@@ -56,46 +56,41 @@ public class EventProtection {
 		}
 	}
 
+	/**
+	 * Checks is any region contains the specified flag
+	 * @param regions regions to check for
+	 * @param flag flag to be checked for
+	 * @return true if any region contains the specified flag, false otherwise
+	 */
+	private static boolean anyRegionContainsFlag(List<Region> regions, String flag){
+		return regions.stream()
+				.anyMatch(region -> region.getFlags().contains(flag));
+	}
+
+	/**
+	 * Filters affected blocks from explosion event which are in a region with the specified flag.
+	 * @param event detonation event
+	 * @param flag flag to be filtered for
+	 * @return list of block positions which are in a region with the specified flag
+	 */
+	private static List<BlockPos> filterExplosionAffectedBlocks(ExplosionEvent.Detonate event, String flag){
+		return event.getAffectedBlocks().stream()
+				.filter(blockPos -> anyRegionContainsFlag(
+						RegionsUtils.getHandlingRegionsFor(blockPos, RegionsUtils.getDimension(event.getWorld())),
+						flag))
+				.collect(Collectors.toList());
+	}
+
 	@SubscribeEvent
 	public static void onExplosion(ExplosionEvent.Detonate event) {
-		Iterator<BlockPos> it = event.getAffectedBlocks().iterator();
-		while (it.hasNext()) {
-			BlockPos pos = it.next();
-			List<Region> regions = RegionsUtils.getHandlingRegionsFor(pos, RegionsUtils.getDimension(event.getWorld()));
-			for (Region region : regions) {
-				if (region.getFlags().contains(RegionFlag.EXPLOSION.toString())) {
-					it.remove();
-					break;
-				}
-			}
-		}
-		it = event.getAffectedBlocks().iterator();
+		event.getAffectedBlocks().removeAll(filterExplosionAffectedBlocks(event, RegionFlag.EXPLOSION.toString()));
 
-		if (!(event.getExplosion().getExplosivePlacedBy() instanceof CreeperEntity)) {
-			while (it.hasNext()) {
-				BlockPos pos = it.next();
-				List<Region> regions = RegionsUtils.getHandlingRegionsFor(pos, RegionsUtils.getDimension(event.getWorld()));
-				for (Region region : regions) {
-					if (region.getFlags().contains(RegionFlag.EXPLOSION_OTHER.toString())) {
-						it.remove();
-						break;
-					}
-				}
-			}
+		boolean explosionTriggeredByCreeper = (event.getExplosion().getExplosivePlacedBy() instanceof CreeperEntity);
+		if (!explosionTriggeredByCreeper) {
+			event.getAffectedBlocks().removeAll(filterExplosionAffectedBlocks(event, RegionFlag.EXPLOSION_OTHER.toString()));
 		}
-		it = event.getAffectedBlocks().iterator();
-
-		if (event.getExplosion().getExplosivePlacedBy() instanceof CreeperEntity) {
-			while (it.hasNext()) {
-				BlockPos pos = it.next();
-				List<Region> regions = RegionsUtils.getHandlingRegionsFor(pos, RegionsUtils.getDimension(event.getWorld()));
-				for (Region region : regions) {
-					if (region.getFlags().contains(RegionFlag.EXPLOSION_CREEPER.toString())) {
-						it.remove();
-						break;
-					}
-				}
-			}
+		if (explosionTriggeredByCreeper) {
+			event.getAffectedBlocks().removeAll(filterExplosionAffectedBlocks(event, RegionFlag.EXPLOSION_CREEPER.toString()));
 		}
 	}
 

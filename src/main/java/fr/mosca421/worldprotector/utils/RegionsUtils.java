@@ -44,7 +44,7 @@ public class RegionsUtils {
 				// Player already defined in this region -> Message needed or silent acknowledgement?
 				sendMessage(sourcePlayer, new TranslationTextComponent("message.region.errorplayer", regionName, playerToAddName));
 			}
-			sendMessage(sourcePlayer, new TranslationTextComponent("message.region.addplayer", regionName, playerToAddName));
+			sendMessage(sourcePlayer, new TranslationTextComponent("message.region.addplayer", playerToAddName, regionName));
 			sendMessage(playerToAdd, new TranslationTextComponent("message.player.regionadded", regionName));
 			RegionSaver.save();
 		} else {
@@ -60,7 +60,7 @@ public class RegionsUtils {
 				// Player was not present in this region -> Message needed or silent acknowledgement?
 				sendMessage(sourcePlayer, new TranslationTextComponent("message.region.unknownplayer", regionName, playerToRemoveName));
 			}
-			sendMessage(sourcePlayer, new TranslationTextComponent("message.region.removeplayer", regionName, playerToRemoveName));
+			sendMessage(sourcePlayer, new TranslationTextComponent("message.region.removeplayer", playerToRemoveName, regionName));
 			sendMessage(playerToRemove, new TranslationTextComponent("message.player.regionremoved", regionName));
 			RegionSaver.save();
 		} else {

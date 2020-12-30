@@ -132,19 +132,11 @@ public class Region implements INBTSerializable<CompoundNBT> {
 	}
 
 	public boolean addPlayer(String playerUUID) {
-		if (!players.contains(playerUUID)) {
-			players.add(playerUUID);
-			return true;
-		}
-		return false;
+		return players.add(playerUUID);
 	}
 
 	public boolean removePlayer(String playerUUID) {
-		if (players.contains(playerUUID)) {
-			players.remove(playerUUID);
-			return true;
-		}
-		return false;
+		return players.remove(playerUUID);
 	}
 
 	@Override

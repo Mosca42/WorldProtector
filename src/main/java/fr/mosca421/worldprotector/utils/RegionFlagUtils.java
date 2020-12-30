@@ -12,8 +12,6 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import net.minecraft.util.text.TextFormatting;
 
-import java.util.UUID;
-
 public class RegionFlagUtils {
 
 	private RegionFlagUtils(){}
@@ -21,7 +19,8 @@ public class RegionFlagUtils {
 	public static void getRegionFlags(String regionName, ServerPlayerEntity player) {
 		if (RegionSaver.containsRegion(regionName)) {
 			Region region = RegionSaver.getRegion(regionName);
-			player.sendMessage(new TranslationTextComponent(TextFormatting.DARK_RED + regionName + " Flags : " + Joiner.on(", ").join(region.getFlags())), player.getUniqueID());
+			String regionFlags = Joiner.on(", ").join(region.getFlags());
+			PlayerMessageUtils.sendInfoMessage(player, new TranslationTextComponent(TextFormatting.DARK_RED + regionName + " Flags: " + regionFlags));
 		}
 	}
 
@@ -30,7 +29,7 @@ public class RegionFlagUtils {
 			Region region = RegionSaver.getRegion(regionName);
 			if (RegionFlag.contains(flag)) {
 				region.addFlag(flag);
-				player.sendMessage(new TranslationTextComponent("message.flags.add", flag), player.getUniqueID());
+				PlayerMessageUtils.sendInfoMessage(player, new TranslationTextComponent("message.flags.add", flag, regionName));
 				RegionSaver.save();
 			}
 		}
@@ -41,28 +40,28 @@ public class RegionFlagUtils {
 			Region region = RegionSaver.getRegion(regionName);
 			if (RegionFlag.contains(flag)) {
 				if (region.removeFlag(flag)) {
-					player.sendMessage(new TranslationTextComponent("message.flags.remove", flag), player.getUniqueID());
+					PlayerMessageUtils.sendInfoMessage(player, new TranslationTextComponent("message.flags.remove", flag, regionName));
 					RegionSaver.save();
 				} else {
-					player.sendMessage(new TranslationTextComponent("message.flags.unknown", flag), player.getUniqueID());
+					PlayerMessageUtils.sendInfoMessage(player, new TranslationTextComponent("message.flags.unknown", flag, regionName));
 				}
 			}
 		}
 	}
 	
 	public static void giveHelpMessage(ServerPlayerEntity player) {
-		UUID playerUUID = player.getUniqueID();
-		player.sendMessage(new TranslationTextComponent(""), playerUUID);
-		player.sendMessage(new TranslationTextComponent(TextFormatting.BLUE + "==WorldProtector Help=="), playerUUID);
-		player.sendMessage(new TranslationTextComponent("help.flags.1"), playerUUID);
-		player.sendMessage(new TranslationTextComponent("help.flags.2"), playerUUID);
-		player.sendMessage(new TranslationTextComponent("help.flags.3"), playerUUID);
-		player.sendMessage(new TranslationTextComponent("help.flags.4"), playerUUID);
-		player.sendMessage(new TranslationTextComponent(TextFormatting.BLUE + "==WorldProtector Help=="), playerUUID);
+		PlayerMessageUtils.sendInfoMessage(player, "");
+		PlayerMessageUtils.sendInfoMessage(player, new TranslationTextComponent(TextFormatting.BLUE + "==WorldProtector Help=="));
+		PlayerMessageUtils.sendInfoMessage(player, "help.flags.1");
+		PlayerMessageUtils.sendInfoMessage(player, "help.flags.2");
+		PlayerMessageUtils.sendInfoMessage(player, "help.flags.3");
+		PlayerMessageUtils.sendInfoMessage(player, "help.flags.4");
+		PlayerMessageUtils.sendInfoMessage(player, new TranslationTextComponent(TextFormatting.BLUE + "==WorldProtector Help=="));
 	}
 	
-	public static void giveListFlagsOfRegion(ServerPlayerEntity player){
-		player.sendMessage(new StringTextComponent(TextFormatting.DARK_RED + "Flags : " + Joiner.on(", ").join(RegionFlag.getFlags())), player.getUniqueID());
+	public static void listAvailableFlags(ServerPlayerEntity player){
+		String flags = Joiner.on(", ").join(RegionFlag.getFlags());
+		PlayerMessageUtils.sendInfoMessage(player, new StringTextComponent(TextFormatting.DARK_RED + "Flags: " + flags));
 	}
 	
 	public static boolean isOp(PlayerEntity name) {

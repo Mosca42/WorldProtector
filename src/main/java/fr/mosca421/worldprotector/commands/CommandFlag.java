@@ -56,7 +56,7 @@ public class CommandFlag {
 
 	private static int giveList(CommandSource source) {
 		try {
-			RegionFlagUtils.giveListFlagsOfRegion(source.asPlayer());
+			RegionFlagUtils.listAvailableFlags(source.asPlayer());
 		} catch (CommandSyntaxException e) {
 			e.printStackTrace();
 		}

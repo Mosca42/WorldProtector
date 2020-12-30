@@ -27,15 +27,15 @@ public class EventInteract {
 			boolean containsUse = region.getFlags().contains(RegionFlag.USE.toString());
 			boolean containsChestAccess = region.getFlags().contains(RegionFlag.CHEST_ACCESS.toString());
 			boolean isLockableTileEntity = (event.getWorld().getTileEntity(event.getPos()) instanceof LockableTileEntity);
-			boolean isInPlayerList = region.isInPlayerList(player);
+			boolean playerHasPermission = region.permits(player);
 
-			if (containsUse && !isLockableTileEntity && !isInPlayerList) {
+			if (containsUse && !isLockableTileEntity && !region.permits(player)) {
 				event.setCanceled(true);
 				player.sendMessage(new TranslationTextComponent("world.interact.use"), player.getUniqueID());
 				return;
 			}
 
-			if (containsChestAccess && !isInPlayerList) {
+			if (containsChestAccess && !playerHasPermission) {
 				event.setCanceled(true);
 				if (event.getHand() == Hand.MAIN_HAND)
 					player.sendMessage(new TranslationTextComponent("world.interact.use"), player.getUniqueID());

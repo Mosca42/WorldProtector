@@ -1,9 +1,8 @@
 package fr.mosca421.worldprotector.core;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import fr.mosca421.worldprotector.utils.RegionFlagUtils;
 import net.minecraft.entity.player.PlayerEntity;
@@ -18,7 +17,6 @@ import net.minecraftforge.common.util.INBTSerializable;
 public class Region implements INBTSerializable<CompoundNBT> {
 
 	private AxisAlignedBB area;
-	private final Set<String> flags = new HashSet<>();
 	private String name;
 	private int priority = 2;
 	private String dimension;
@@ -26,9 +24,12 @@ public class Region implements INBTSerializable<CompoundNBT> {
 	private String exitMessage;
 	private String enterMessageSmall;
 	private String exitMessageSmall;
-	private List<String> playerList = new ArrayList<>();
+	private final Set<String> flags;
+	private final Set<String> players;
 
 	public Region(CompoundNBT nbt) {
+		this.players = new HashSet<>();
+		this.flags = new HashSet<>();
 		deserializeNBT(nbt);
 	}
 
@@ -36,6 +37,8 @@ public class Region implements INBTSerializable<CompoundNBT> {
 		this.name = name;
 		this.area = area;
 		this.dimension = dimension;
+		this.players = new HashSet<>();
+		this.flags = new HashSet<>();
 	}
 
 	public AxisAlignedBB getArea() {
@@ -110,41 +113,37 @@ public class Region implements INBTSerializable<CompoundNBT> {
 		this.exitMessageSmall = exitMessageSmall;
 	}
 
-	public List<String> getPlayerList() {
-		return playerList;
+	public Set<String> getPlayers() {
+		return players;
 	}
 
-	public boolean isInPlayerList(PlayerEntity name) {
-		if (RegionFlagUtils.isOp(name)) {
+	public boolean isInPlayerList(PlayerEntity player) {
+		if (RegionFlagUtils.isOp(player)) {
 			return true;
 		}
-		return playerList.contains(name.getUniqueID().toString());
+		return players.contains(player.getUniqueID().toString());
 	}
 
-	public boolean addPlayer(String name) {
-		if (!playerList.contains(name)) {
-			playerList.add(name);
-			return true;
-		}
-		return false;
-	}
-
-	public boolean removePlayer(String name) {
-		if (playerList.contains(name)) {
-			playerList.remove(name);
+	public boolean addPlayer(String playerUUID) {
+		if (!players.contains(playerUUID)) {
+			players.add(playerUUID);
 			return true;
 		}
 		return false;
 	}
 
-	public void setPlayerList(List<String> playerList) {
-		this.playerList = playerList;
+	public boolean removePlayer(String playerUUID) {
+		if (players.contains(playerUUID)) {
+			players.remove(playerUUID);
+			return true;
+		}
+		return false;
 	}
 
 	@Override
 	public CompoundNBT serializeNBT() {
 		CompoundNBT nbt = new CompoundNBT();
-		nbt.putString("name", this.name);
+		nbt.putString("name", name);
 		nbt.putInt("minX", (int) area.minX);
 		nbt.putInt("minY", (int) area.minY);
 		nbt.putInt("minZ", (int) area.minZ);
@@ -157,17 +156,17 @@ public class Region implements INBTSerializable<CompoundNBT> {
 		nbt.putString("exitMessage", exitMessage);
 		nbt.putString("enterMessageSmall", enterMessageSmall);
 		nbt.putString("exitMessageSmall", exitMessageSmall);
-		ListNBT flagList = new ListNBT();
-		for (String flag : flags) {
-			flagList.add(StringNBT.valueOf(flag));
-		}
-		nbt.put("flags", flagList);
+		ListNBT flagsNBT = new ListNBT();
+		flagsNBT.addAll(flags.stream()
+				.map(StringNBT::valueOf)
+				.collect(Collectors.toSet()));
+		nbt.put("flags", flagsNBT);
 
-		ListNBT playerLists = new ListNBT();
-		for (String player : playerList) {
-			playerLists.add(StringNBT.valueOf(player));
-		}
-		nbt.put("playerList", playerLists);
+		ListNBT playersNBT = new ListNBT();
+		playersNBT.addAll(players.stream()
+				.map(StringNBT::valueOf)
+				.collect(Collectors.toSet()));
+		nbt.put("players", playersNBT);
 		return nbt;
 	}
 
@@ -188,16 +187,16 @@ public class Region implements INBTSerializable<CompoundNBT> {
 		this.exitMessage = nbt.getString("exitMessage");
 		this.enterMessageSmall = nbt.getString("enterMessageSmall");
 		this.exitMessageSmall = nbt.getString("exitMessageSmall");
+		this.flags.clear();
 		ListNBT flagsList = nbt.getList("flags", NBT.TAG_STRING);
 		for (int i = 0; i < flagsList.size(); i++) {
 			flags.add(flagsList.getString(i));
 		}
-
-		ListNBT playerLists = nbt.getList("playerList", NBT.TAG_STRING);
+		this.players.clear();
+		ListNBT playerLists = nbt.getList("players", NBT.TAG_STRING);
 		for (int i = 0; i < playerLists.size(); i++) {
-			playerList.add(playerLists.getString(i));
+			players.add(playerLists.getString(i));
 		}
-
 	}
 
 }

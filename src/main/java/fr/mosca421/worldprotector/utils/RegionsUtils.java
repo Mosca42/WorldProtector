@@ -93,7 +93,7 @@ public class RegionsUtils {
 					Region region = new Region(regionName, regions, getDimension(player.world));
 					RegionSaver.addRegion(region);
 					RegionSaver.save();
-					sendMessage(player, "message.region.define");
+					sendMessage(player, new TranslationTextComponent("message.region.define", regionName));
 				} else {
 					sendMessage(player, "message.itemhand.choose");
 				}

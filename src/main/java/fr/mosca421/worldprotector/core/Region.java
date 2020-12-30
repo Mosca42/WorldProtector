@@ -117,7 +117,14 @@ public class Region implements INBTSerializable<CompoundNBT> {
 		return players;
 	}
 
-	public boolean isInPlayerList(PlayerEntity player) {
+	/**
+	 * Checks if the player is defined in the regions player list OR whether the player is an operator.
+	 * Usually this check is needed when an event occurs and it needs to be checked whether
+	 * the player has a specific permission to perform an action in the region.
+	 * @param player to be checked
+	 * @return true if player is in region list or is an operator, false otherwise
+	 */
+	public boolean permits(PlayerEntity player) {
 		if (RegionFlagUtils.isOp(player)) {
 			return true;
 		}

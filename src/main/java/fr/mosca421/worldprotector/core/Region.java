@@ -5,6 +5,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import fr.mosca421.worldprotector.utils.RegionFlagUtils;
+import joptsimple.internal.Strings;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -20,10 +21,10 @@ public class Region implements INBTSerializable<CompoundNBT> {
 	private String name;
 	private int priority = 2;
 	private String dimension;
-	private String enterMessage;
-	private String exitMessage;
-	private String enterMessageSmall;
-	private String exitMessageSmall;
+	private String enterMessage = Strings.EMPTY;
+	private String exitMessage = Strings.EMPTY;
+	private String enterMessageSmall = Strings.EMPTY;
+	private String exitMessageSmall = Strings.EMPTY;
 	private final Set<String> flags;
 	private final Set<String> players;
 

@@ -6,9 +6,11 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import fr.mosca421.worldprotector.core.RegionSaver;
 import fr.mosca421.worldprotector.utils.RegionsUtils;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
+import net.minecraft.command.ISuggestionProvider;
 import net.minecraft.command.arguments.EntityArgument;
 import net.minecraft.entity.player.ServerPlayerEntity;
 
@@ -30,29 +32,37 @@ public class CommandRegion {
                                 .executes(ctx -> define(ctx.getSource(), StringArgumentType.getString(ctx, Command.REGION.toString())))))
                 .then(Commands.literal(Command.REDEFINE.toString())
                         .then(Commands.argument(Command.REGION.toString(), StringArgumentType.string())
+								.suggests((ctx, builder) -> ISuggestionProvider.suggest(RegionSaver.getRegionNames(), builder))
                                 .executes(ctx -> redefine(ctx.getSource(), StringArgumentType.getString(ctx, Command.REGION.toString())))))
                 .then(Commands.literal(Command.REMOVE.toString())
                         .then(Commands.argument(Command.REGION.toString(), StringArgumentType.string())
+								.suggests((ctx, builder) -> ISuggestionProvider.suggest(RegionSaver.getRegionNames(), builder))
                                 .executes(ctx -> remove(ctx.getSource(), StringArgumentType.getString(ctx, Command.REGION.toString())))))
                 .then(Commands.literal(Command.TELEPORT.toString())
                         .then(Commands.argument(Command.REGION.toString(), StringArgumentType.string())
+								.suggests((ctx, builder) -> ISuggestionProvider.suggest(RegionSaver.getRegionNames(), builder))
                                 .executes(ctx -> teleport(ctx.getSource(), StringArgumentType.getString(ctx, Command.REGION.toString())))))
                 .then(Commands.literal("tp")
                         .then(Commands.argument(Command.REGION.toString(), StringArgumentType.string())
+								.suggests((ctx, builder) -> ISuggestionProvider.suggest(RegionSaver.getRegionNames(), builder))
                                 .executes(ctx -> teleport(ctx.getSource(), StringArgumentType.getString(ctx, Command.REGION.toString())))))
                 .then(Commands.literal(Command.PRIORITY_GET.toString())
                         .then(Commands.argument(Command.REGION.toString(), StringArgumentType.string())
+								.suggests((ctx, builder) -> ISuggestionProvider.suggest(RegionSaver.getRegionNames(), builder))
                                 .executes(ctx -> getpriority(ctx.getSource(), StringArgumentType.getString(ctx, Command.REGION.toString())))))
                 .then(Commands.literal(Command.PLAYER_ADD.toString())
                         .then(Commands.argument(Command.REGION.toString(), StringArgumentType.string())
+								.suggests((ctx, builder) -> ISuggestionProvider.suggest(RegionSaver.getRegionNames(), builder))
                                 .then(Commands.argument(Command.PLAYER.toString(), EntityArgument.players())
                                         .executes(ctx -> addPlayer(ctx.getSource(), StringArgumentType.getString(ctx, Command.REGION.toString()), EntityArgument.getPlayers(ctx, Command.PLAYER.toString()))))))
                 .then(Commands.literal(Command.PLAYER_REMOVE.toString())
                         .then(Commands.argument(Command.REGION.toString(), StringArgumentType.string())
+								.suggests((ctx, builder) -> ISuggestionProvider.suggest(RegionSaver.getRegionNames(), builder))
                                 .then(Commands.argument(Command.PLAYER.toString(), EntityArgument.players())
                                         .executes(ctx -> removePlayer(ctx.getSource(), StringArgumentType.getString(ctx, Command.REGION.toString()), EntityArgument.getPlayers(ctx, Command.PLAYER.toString()))))))
                 .then(Commands.literal(Command.PRIORITY_SET.toString())
                         .then(Commands.argument(Command.REGION.toString(), StringArgumentType.string())
+								.suggests((ctx, builder) -> ISuggestionProvider.suggest(RegionSaver.getRegionNames(), builder))
                                 .then(Commands.argument(Command.PRIORITY.toString(), IntegerArgumentType.integer())
                                         .executes(ctx -> setpriority(ctx.getSource(), StringArgumentType.getString(ctx, Command.REGION.toString()), IntegerArgumentType.getInteger(ctx, Command.PRIORITY.toString()))))));
     }

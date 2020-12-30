@@ -5,23 +5,23 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 
-public class PlayerMessageUtils {
+public class MessageUtils {
 
-    private PlayerMessageUtils(){}
+    private MessageUtils(){}
 
-    public static void sendInfoMessage(ServerPlayerEntity player, String translationKey){
+    public static void sendMessage(ServerPlayerEntity player, String translationKey){
         player.sendMessage(new TranslationTextComponent(translationKey), player.getUniqueID());
     }
 
-    public static void sendInfoMessage(ServerPlayerEntity player, ITextComponent textComponent){
+    public static void sendMessage(ServerPlayerEntity player, ITextComponent textComponent){
         player.sendMessage(textComponent, player.getUniqueID());
     }
 
-    public static void sendInfoMessage(PlayerEntity player, ITextComponent textComponent){
+    public static void sendMessage(PlayerEntity player, ITextComponent textComponent){
         player.sendMessage(textComponent, player.getUniqueID());
     }
 
-    public static void sendInfoMessage(PlayerEntity player, String translationKey){
+    public static void sendMessage(PlayerEntity player, String translationKey){
         player.sendMessage(new TranslationTextComponent(translationKey), player.getUniqueID());
     }
 }

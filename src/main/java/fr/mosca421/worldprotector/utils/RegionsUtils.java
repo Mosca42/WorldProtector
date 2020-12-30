@@ -20,7 +20,7 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 
-import static fr.mosca421.worldprotector.utils.PlayerMessageUtils.*;
+import static fr.mosca421.worldprotector.utils.MessageUtils.*;
 
 public class RegionsUtils {
 
@@ -29,10 +29,10 @@ public class RegionsUtils {
 	public static void teleportRegion(String regionName, ServerPlayerEntity player) {
 		if (RegionSaver.containsRegion(regionName)) {
 			Region region = RegionSaver.getRegion(regionName);
-			sendInfoMessage(player, new TranslationTextComponent("message.region.teleport", regionName));
+			sendMessage(player, new TranslationTextComponent("message.region.teleport", regionName));
 			player.setPositionAndUpdate(region.getArea().minX, 200, region.getArea().minZ);
 		} else {
-			sendInfoMessage(player, new TranslationTextComponent("message.region.unknown", regionName));
+			sendMessage(player, new TranslationTextComponent("message.region.unknown", regionName));
 		}
 	}
 
@@ -42,13 +42,13 @@ public class RegionsUtils {
 			String playerToAddName = playerToAdd.getName().getString();
 			if (!region.addPlayer(playerToAdd.getUniqueID().toString())) {
 				// Player already defined in this region -> Message needed or silent acknowledgement?
-				sendInfoMessage(sourcePlayer, new TranslationTextComponent("message.region.errorplayer", regionName, playerToAddName));
+				sendMessage(sourcePlayer, new TranslationTextComponent("message.region.errorplayer", regionName, playerToAddName));
 			}
-			sendInfoMessage(sourcePlayer, new TranslationTextComponent("message.region.addplayer", regionName, playerToAddName));
-			sendInfoMessage(playerToAdd, new TranslationTextComponent("message.player.regionadded", regionName));
+			sendMessage(sourcePlayer, new TranslationTextComponent("message.region.addplayer", regionName, playerToAddName));
+			sendMessage(playerToAdd, new TranslationTextComponent("message.player.regionadded", regionName));
 			RegionSaver.save();
 		} else {
-			sendInfoMessage(sourcePlayer,  new TranslationTextComponent("message.region.unknown", regionName));
+			sendMessage(sourcePlayer,  new TranslationTextComponent("message.region.unknown", regionName));
 		}
 	}
 
@@ -58,22 +58,22 @@ public class RegionsUtils {
 			String playerToRemoveName = playerToRemove.getName().getString();
 			if (!region.removePlayer(playerToRemove.getUniqueID().toString())) {
 				// Player was not present in this region -> Message needed or silent acknowledgement?
-				sendInfoMessage(sourcePlayer, new TranslationTextComponent("message.region.unknownplayer", regionName, playerToRemoveName));
+				sendMessage(sourcePlayer, new TranslationTextComponent("message.region.unknownplayer", regionName, playerToRemoveName));
 			}
-			sendInfoMessage(sourcePlayer, new TranslationTextComponent("message.region.removeplayer", regionName, playerToRemoveName));
-			sendInfoMessage(playerToRemove, new TranslationTextComponent("message.player.regionremoved", regionName));
+			sendMessage(sourcePlayer, new TranslationTextComponent("message.region.removeplayer", regionName, playerToRemoveName));
+			sendMessage(playerToRemove, new TranslationTextComponent("message.player.regionremoved", regionName));
 			RegionSaver.save();
 		} else {
-			sendInfoMessage(sourcePlayer, new TranslationTextComponent("message.region.unknown", regionName));
+			sendMessage(sourcePlayer, new TranslationTextComponent("message.region.unknown", regionName));
 		}
 	}
 
 	public static void removeRegion(String regionName, ServerPlayerEntity player) {
 		if (RegionSaver.removeRegion(regionName) != null) {
-			sendInfoMessage(player, new TranslationTextComponent("message.region.remove", regionName));
+			sendMessage(player, new TranslationTextComponent("message.region.remove", regionName));
 			RegionSaver.save();
 		} else {
-			sendInfoMessage(player, new TranslationTextComponent("message.region.unknown", regionName));
+			sendMessage(player, new TranslationTextComponent("message.region.unknown", regionName));
 		}
 	}
 
@@ -93,29 +93,29 @@ public class RegionsUtils {
 					Region region = new Region(regionName, regions, getDimension(player.world));
 					RegionSaver.addRegion(region);
 					RegionSaver.save();
-					sendInfoMessage(player, "message.region.define");
+					sendMessage(player, "message.region.define");
 				} else {
-					sendInfoMessage(player, "message.itemhand.choose");
+					sendMessage(player, "message.itemhand.choose");
 				}
 			}
 		} else {
-			sendInfoMessage(player,"message.itemhand.take");
+			sendMessage(player,"message.itemhand.take");
 		}
 	}
 
 	public static void giveHelpMessage(ServerPlayerEntity player) {
-		sendInfoMessage(player, "");
-		sendInfoMessage(player, new TranslationTextComponent(TextFormatting.BLUE + "==WorldProtector Help=="));
-		sendInfoMessage(player,"help.region.1");
-		sendInfoMessage(player,"help.region.2");
-		sendInfoMessage(player,"help.region.3");
-		sendInfoMessage(player,"help.region.4");
-		sendInfoMessage(player,"help.region.5");
-		sendInfoMessage(player,"help.region.6");
-		sendInfoMessage(player,"help.region.7");
-		sendInfoMessage(player,"help.region.8");
-		sendInfoMessage(player,"help.region.9");
-		sendInfoMessage(player, new TranslationTextComponent(TextFormatting.BLUE + "==WorldProtector Help=="));
+		sendMessage(player, "");
+		sendMessage(player, new TranslationTextComponent(TextFormatting.BLUE + "==WorldProtector Help=="));
+		sendMessage(player,"help.region.1");
+		sendMessage(player,"help.region.2");
+		sendMessage(player,"help.region.3");
+		sendMessage(player,"help.region.4");
+		sendMessage(player,"help.region.5");
+		sendMessage(player,"help.region.6");
+		sendMessage(player,"help.region.7");
+		sendMessage(player,"help.region.8");
+		sendMessage(player,"help.region.9");
+		sendMessage(player, new TranslationTextComponent(TextFormatting.BLUE + "==WorldProtector Help=="));
 
 	}
 
@@ -133,16 +133,16 @@ public class RegionsUtils {
 						Region region = new Region(regionName, regions, getDimension(player.world));
 						RegionSaver.replaceRegion(region);
 						RegionSaver.save();
-						sendInfoMessage(player, "message.region.redefine");}
+						sendMessage(player, "message.region.redefine");}
 					else {
-						sendInfoMessage(player, new TranslationTextComponent("message.region.unknown", regionName));
+						sendMessage(player, new TranslationTextComponent("message.region.unknown", regionName));
 					}
 				} else {
-					sendInfoMessage(player, "message.itemhand.choose");
+					sendMessage(player, "message.itemhand.choose");
 				}
 			}
 		} else {
-			sendInfoMessage(player,"message.itemhand.take");
+			sendMessage(player,"message.itemhand.take");
 		}
 	}
 
@@ -170,12 +170,12 @@ public class RegionsUtils {
 			Region region = RegionSaver.getRegion(regionName);
 			if (priority >= 1) {
 				region.setPriority(priority);
-				sendInfoMessage(player, new TranslationTextComponent("message.region.setpriority", priority, regionName));
+				sendMessage(player, new TranslationTextComponent("message.region.setpriority", priority, regionName));
 			} else {
-				sendInfoMessage(player, "message.region.priority");
+				sendMessage(player, "message.region.priority");
 			}
 		} else {
-			sendInfoMessage(player, "message.region.unknown");
+			sendMessage(player, "message.region.unknown");
 		}
 	}
 
@@ -183,9 +183,9 @@ public class RegionsUtils {
 		if (RegionSaver.containsRegion(regionName)) {
 			Region region = RegionSaver.getRegion(regionName);
 			String priority = "" + region.getPriority();
-			sendInfoMessage(player, new TranslationTextComponent("message.region.infopriority", regionName, priority));
+			sendMessage(player, new TranslationTextComponent("message.region.infopriority", regionName, priority));
 		} else {
-			sendInfoMessage(player, new TranslationTextComponent("message.region.unknown", regionName));
+			sendMessage(player, new TranslationTextComponent("message.region.unknown", regionName));
 		}
 	}
 

@@ -26,7 +26,7 @@
   "message.flags.unknown": "Unbekannte Regel '%s' in der Region '%s'!",
   "message.region.define": "Region '%s' erfolgreich erstellt!",
   "message.region.redefine": "Region '%s' erfolgreich geändert!",
-  "message.region.delete": "Region '%s' entfernt!",
+  "message.region.remove": "Region '%s' entfernt!",
   "message.region.teleport": "Zur Region '%s' teleportiert!",
   "message.region.setpriority": "Priorität %s für Region '%s' gesetzt!",
   "message.region.unknown": "Unbekannte Region: '%s'!",

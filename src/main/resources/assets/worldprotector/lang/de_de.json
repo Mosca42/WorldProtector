@@ -1,5 +1,7 @@
 {
   "item.worldprotector.region_stick": "Bereichsmarkierer",
+  "item.worldprotector.emblem": "WorldProtector Emblem",
+  "itemGroup.worldprotector": "World Protector",
   "world.protection.place": "Du hast keine Berechtigung diesen Block hier zu platzieren!",
   "world.protection.break": "Du hast keine Berechtigung diesen Block zu zerstören!",
   "world.interact.use": "Du hast keine Berechtigung diesen Block zu benutzen!",

@@ -127,13 +127,14 @@ public class RegionUtils {
 	public static void redefineRegion(String regionName, ServerPlayerEntity player, ItemStack item) {
 		if (item.getItem() instanceof RegionStick) {
 			if (item.getTag() != null) {
-				CompoundNBT regionTag = item.getTag();
-				if (item.hasTag() && regionTag.getBoolean("valide")) {
+				CompoundNBT regionValidTag = item.getTag();
+				if (item.hasTag() && regionValidTag.getBoolean("valide")) {
 					if (RegionSaver.containsRegion(regionName)) {
-						AxisAlignedBB regions = getRegionFromNBT(regionTag);
+						AxisAlignedBB regions = getRegionFromNBT(regionValidTag);
 						Region region = new Region(regionName, regions, getDimension(player.world));
 						RegionSaver.replaceRegion(region);
 						RegionSaver.save();
+						regionValidTag.putBoolean("valide", false); // reset flag for consistent command behaviour
 						sendMessage(player, "message.region.redefine");}
 					else {
 						sendMessage(player, new TranslationTextComponent("message.region.unknown", regionName));

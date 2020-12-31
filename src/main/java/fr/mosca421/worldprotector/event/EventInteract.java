@@ -1,9 +1,9 @@
-package fr.mosca421.worldprotector.events;
+package fr.mosca421.worldprotector.event;
 
 import fr.mosca421.worldprotector.WorldProtector;
 import fr.mosca421.worldprotector.core.Region;
 import fr.mosca421.worldprotector.core.RegionFlag;
-import fr.mosca421.worldprotector.utils.RegionsUtils;
+import fr.mosca421.worldprotector.util.RegionUtils;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.tileentity.LockableTileEntity;
 import net.minecraft.util.Hand;
@@ -21,7 +21,7 @@ public class EventInteract {
 
 	@SubscribeEvent
 	public static void onPlayerInteractEvent(PlayerInteractEvent.RightClickBlock event) {
-		List<Region> regions = RegionsUtils.getHandlingRegionsFor(event.getPos(), RegionsUtils.getDimension(event.getWorld()));
+		List<Region> regions = RegionUtils.getHandlingRegionsFor(event.getPos(), RegionUtils.getDimension(event.getWorld()));
 		for (Region region : regions) {
 			PlayerEntity player = event.getPlayer();
 			boolean containsUse = region.getFlags().contains(RegionFlag.USE.toString());

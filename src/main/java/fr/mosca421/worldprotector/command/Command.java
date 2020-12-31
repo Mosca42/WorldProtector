@@ -1,4 +1,4 @@
-package fr.mosca421.worldprotector.commands;
+package fr.mosca421.worldprotector.command;
 
 public enum Command {
     REGION("region"),

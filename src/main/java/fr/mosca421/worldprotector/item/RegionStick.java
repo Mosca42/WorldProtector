@@ -1,9 +1,9 @@
-package fr.mosca421.worldprotector.items;
+package fr.mosca421.worldprotector.item;
 
 import java.util.List;
 
 import fr.mosca421.worldprotector.WorldProtector;
-import fr.mosca421.worldprotector.utils.MessageUtils;
+import fr.mosca421.worldprotector.util.MessageUtils;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;

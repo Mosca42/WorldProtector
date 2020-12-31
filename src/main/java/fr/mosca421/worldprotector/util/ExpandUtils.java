@@ -1,13 +1,13 @@
-package fr.mosca421.worldprotector.utils;
+package fr.mosca421.worldprotector.util;
 
-import fr.mosca421.worldprotector.items.RegionStick;
+import fr.mosca421.worldprotector.item.RegionStick;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 
-import static fr.mosca421.worldprotector.utils.MessageUtils.*;
+import static fr.mosca421.worldprotector.util.MessageUtils.*;
 
 public class ExpandUtils {
 

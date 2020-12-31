@@ -1,13 +1,12 @@
-package fr.mosca421.worldprotector.items;
+package fr.mosca421.worldprotector.registry;
 
 import fr.mosca421.worldprotector.WorldProtector;
-import fr.mosca421.worldprotector.utils.ItemDeferredRegister;
-import net.minecraft.item.Item;
-import net.minecraftforge.fml.RegistryObject;
+import fr.mosca421.worldprotector.item.Emblem;
+import fr.mosca421.worldprotector.item.RegionStick;
 
-public class ItemsRegister {
+public class ItemRegister {
 
-    private ItemsRegister() {}
+    private ItemRegister() {}
 	
     public static final ItemDeferredRegister ITEMS = new ItemDeferredRegister(WorldProtector.MODID);
 

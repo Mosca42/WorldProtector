@@ -1,6 +1,5 @@
-package fr.mosca421.worldprotector.items;
+package fr.mosca421.worldprotector.registry;
 
-import fr.mosca421.worldprotector.utils.WrappedRegistryObject;
 import net.minecraft.item.Item;
 import net.minecraft.util.IItemProvider;
 import net.minecraftforge.fml.RegistryObject;

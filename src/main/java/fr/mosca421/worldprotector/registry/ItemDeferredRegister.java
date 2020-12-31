@@ -1,4 +1,4 @@
-package fr.mosca421.worldprotector.utils;
+package fr.mosca421.worldprotector.registry;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,7 +6,6 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 import fr.mosca421.worldprotector.WorldProtector;
-import fr.mosca421.worldprotector.items.ItemRegistryObject;
 import net.minecraft.item.Item;
 import net.minecraft.util.IItemProvider;
 import net.minecraftforge.registries.ForgeRegistries;

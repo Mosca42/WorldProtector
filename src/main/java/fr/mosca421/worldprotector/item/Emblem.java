@@ -1,4 +1,4 @@
-package fr.mosca421.worldprotector.items;
+package fr.mosca421.worldprotector.item;
 
 import net.minecraft.item.Item;
 

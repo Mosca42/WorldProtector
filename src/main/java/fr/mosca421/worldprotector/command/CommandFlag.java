@@ -1,4 +1,4 @@
-package fr.mosca421.worldprotector.commands;
+package fr.mosca421.worldprotector.command;
 
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
@@ -7,7 +7,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import fr.mosca421.worldprotector.core.Region;
 import fr.mosca421.worldprotector.core.RegionFlag;
 import fr.mosca421.worldprotector.core.RegionSaver;
-import fr.mosca421.worldprotector.utils.RegionFlagUtils;
+import fr.mosca421.worldprotector.util.RegionFlagUtils;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.command.ISuggestionProvider;

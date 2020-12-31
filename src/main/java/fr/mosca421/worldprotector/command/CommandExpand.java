@@ -1,9 +1,9 @@
-package fr.mosca421.worldprotector.commands;
+package fr.mosca421.worldprotector.command;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
-import fr.mosca421.worldprotector.utils.ExpandUtils;
+import fr.mosca421.worldprotector.util.ExpandUtils;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.item.ItemStack;

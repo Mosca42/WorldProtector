@@ -1,10 +1,10 @@
-package fr.mosca421.worldprotector.events;
+package fr.mosca421.worldprotector.event;
 
 import fr.mosca421.worldprotector.WorldProtector;
 import fr.mosca421.worldprotector.core.Region;
 import fr.mosca421.worldprotector.core.RegionFlag;
 import fr.mosca421.worldprotector.core.RegionSaver;
-import fr.mosca421.worldprotector.utils.RegionsUtils;
+import fr.mosca421.worldprotector.util.RegionUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.FlyingEntity;
 import net.minecraft.entity.MobEntity;
@@ -62,7 +62,7 @@ public class EventMobs {
 				AnimalEntity animal = (AnimalEntity) event.getTarget();
 				for (Region region : RegionSaver.getRegions()) {
 					boolean flagDamageAnimals = region.getFlags().contains(RegionFlag.DAMAGE_ANIMALS.toString());
-					boolean isInPlayerList = RegionsUtils.isInRegion(region.getName(), player);
+					boolean isInPlayerList = RegionUtils.isInRegion(region.getName(), player);
 					boolean animalIsInRegion = region.getArea().contains(animal.getPositionVec());
 					if (animalIsInRegion && flagDamageAnimals && !isInPlayerList) {
 						player.sendMessage(new TranslationTextComponent("world.hurt.mob"), player.getUniqueID());
@@ -75,7 +75,7 @@ public class EventMobs {
 				MobEntity monster = (MobEntity) event.getTarget();
 				for (Region region : RegionSaver.getRegions()) {
 					boolean flagDamageMonsters = region.getFlags().contains(RegionFlag.DAMAGE_MONSTERS.toString());
-					boolean isInPlayerList = RegionsUtils.isInRegion(region.getName(), player);
+					boolean isInPlayerList = RegionUtils.isInRegion(region.getName(), player);
 					boolean mobIsInRegion = region.getArea().contains(monster.getPositionVec());
 					if (mobIsInRegion && flagDamageMonsters && !isInPlayerList) {
 						player.sendMessage(new TranslationTextComponent("world.hurt.mob"), player.getUniqueID());

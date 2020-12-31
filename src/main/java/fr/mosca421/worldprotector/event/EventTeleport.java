@@ -1,9 +1,9 @@
-package fr.mosca421.worldprotector.events;
+package fr.mosca421.worldprotector.event;
 
 import fr.mosca421.worldprotector.WorldProtector;
 import fr.mosca421.worldprotector.core.Region;
 import fr.mosca421.worldprotector.core.RegionFlag;
-import fr.mosca421.worldprotector.utils.RegionsUtils;
+import fr.mosca421.worldprotector.util.RegionUtils;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.event.entity.living.EnderTeleportEvent;
@@ -22,7 +22,7 @@ public class EventTeleport {
 	public static void onEnderTeleport(EnderTeleportEvent event) {
 		if (event.getEntityLiving() instanceof ServerPlayerEntity) {
 			ServerPlayerEntity player = (ServerPlayerEntity) event.getEntityLiving();
-			List<Region> regions = RegionsUtils.getHandlingRegionsFor(player.getPosition(), RegionsUtils.getDimension(player.world));
+			List<Region> regions = RegionUtils.getHandlingRegionsFor(player.getPosition(), RegionUtils.getDimension(player.world));
 			for (Region region : regions) {
 				if (region.getFlags().contains(RegionFlag.ENDERPEARL_TELEPORTATION.toString()) && !region.permits(player)) {
 					event.setCanceled(true);

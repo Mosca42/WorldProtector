@@ -1,4 +1,4 @@
-package fr.mosca421.worldprotector.utils;
+package fr.mosca421.worldprotector.util;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;

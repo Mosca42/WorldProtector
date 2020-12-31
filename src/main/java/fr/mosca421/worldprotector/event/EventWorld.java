@@ -1,9 +1,7 @@
-package fr.mosca421.worldprotector.events;
+package fr.mosca421.worldprotector.event;
 
 import fr.mosca421.worldprotector.WorldProtector;
-import net.minecraftforge.event.TickEvent.WorldTickEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 
 @Mod.EventBusSubscriber(modid = WorldProtector.MODID)
 public class EventWorld {

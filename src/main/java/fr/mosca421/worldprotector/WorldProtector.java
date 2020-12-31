@@ -1,8 +1,8 @@
 package fr.mosca421.worldprotector;
 
-import fr.mosca421.worldprotector.commands.CommandsRegister;
+import fr.mosca421.worldprotector.command.CommandsRegister;
 import fr.mosca421.worldprotector.core.RegionSaver;
-import fr.mosca421.worldprotector.items.ItemsRegister;
+import fr.mosca421.worldprotector.registry.ItemRegister;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
@@ -26,13 +26,13 @@ public class WorldProtector {
 		MinecraftForge.EVENT_BUS.addListener(EventPriority.HIGH, this::isInRegion);
 		MinecraftForge.EVENT_BUS.register(this);
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
-        ItemsRegister.ITEMS.register(modEventBus);
+        ItemRegister.ITEMS.register(modEventBus);
 	}
 
 	public static final ItemGroup WORLD_PROTECTOR_TAB = new ItemGroup("worldprotector") {
 		@Override
 		public ItemStack createIcon() {
-			return new ItemStack(ItemsRegister.EMBLEM.get());
+			return new ItemStack(ItemRegister.EMBLEM.get());
 		}
 	};
 
@@ -57,7 +57,7 @@ public class WorldProtector {
 		/*
 		if (event.player instanceof ServerPlayerEntity) {
 			ServerPlayerEntity player = (ServerPlayerEntity) event.player;
-			List<Region> regions = RegionsUtils.getHandlingRegionsFor(player.getPosition(), RegionsUtils.getDimension(player.world));
+			List<Region> regions = RegionUtils.getHandlingRegionsFor(player.getPosition(), RegionUtils.getDimension(player.world));
 			for (Region region : regions) {
 				if (region.getFlags().contains("enter-message")) {
 					try {

@@ -1,4 +1,4 @@
-package fr.mosca421.worldprotector.commands;
+package fr.mosca421.worldprotector.command;
 
 import java.util.Collection;
 
@@ -7,7 +7,7 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import fr.mosca421.worldprotector.core.RegionSaver;
-import fr.mosca421.worldprotector.utils.RegionsUtils;
+import fr.mosca421.worldprotector.util.RegionUtils;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.command.ISuggestionProvider;
@@ -70,7 +70,7 @@ public class CommandRegion {
 	private static int addPlayer(CommandSource source, String region, Collection<ServerPlayerEntity> players) {
 		try {
 			for (ServerPlayerEntity serverplayerentity : players) {
-				RegionsUtils.addPlayer(region, source.asPlayer(), serverplayerentity);
+				RegionUtils.addPlayer(region, source.asPlayer(), serverplayerentity);
 			}
 		} catch (CommandSyntaxException e) {
 			e.printStackTrace();
@@ -81,7 +81,7 @@ public class CommandRegion {
 	private static int removePlayer(CommandSource source, String region, Collection<ServerPlayerEntity> players) {
 		try {
 			for (ServerPlayerEntity playerToRemove : players) {
-				RegionsUtils.removePlayer(region, source.asPlayer(), playerToRemove);
+				RegionUtils.removePlayer(region, source.asPlayer(), playerToRemove);
 			}
 		} catch (CommandSyntaxException e) {
 			e.printStackTrace();
@@ -91,7 +91,7 @@ public class CommandRegion {
 
 	private static int giveHelp(CommandSource source) {
 		try {
-			RegionsUtils.giveHelpMessage(source.asPlayer());
+			RegionUtils.giveHelpMessage(source.asPlayer());
 		} catch (CommandSyntaxException e) {
 			e.printStackTrace();
 		}
@@ -100,7 +100,7 @@ public class CommandRegion {
 
 	private static int giveList(CommandSource source) {
 		try {
-			RegionsUtils.giveRegionList(source.asPlayer());
+			RegionUtils.giveRegionList(source.asPlayer());
 		} catch (CommandSyntaxException e) {
 			e.printStackTrace();
 		}
@@ -110,7 +110,7 @@ public class CommandRegion {
 	private static int define(CommandSource source, String region) {
 
 		try {
-			RegionsUtils.createRegion(region, source.asPlayer(), source.asPlayer().getHeldItemMainhand());
+			RegionUtils.createRegion(region, source.asPlayer(), source.asPlayer().getHeldItemMainhand());
 		} catch (CommandSyntaxException e) {
 			e.printStackTrace();
 		}
@@ -119,7 +119,7 @@ public class CommandRegion {
 
 	private static int redefine(CommandSource source, String region) {
 		try {
-			RegionsUtils.redefineRegion(region, source.asPlayer(), source.asPlayer().getHeldItemMainhand());
+			RegionUtils.redefineRegion(region, source.asPlayer(), source.asPlayer().getHeldItemMainhand());
 		} catch (CommandSyntaxException e) {
 			e.printStackTrace();
 		}
@@ -128,7 +128,7 @@ public class CommandRegion {
 
 	private static int remove(CommandSource source, String region) {
 		try {
-			RegionsUtils.removeRegion(region, source.asPlayer());
+			RegionUtils.removeRegion(region, source.asPlayer());
 		} catch (CommandSyntaxException e) {
 			e.printStackTrace();
 		}
@@ -137,7 +137,7 @@ public class CommandRegion {
 
 	private static int teleport(CommandSource source, String region) {
 		try {
-			RegionsUtils.teleportRegion(region, source.asPlayer());
+			RegionUtils.teleportRegion(region, source.asPlayer());
 		} catch (CommandSyntaxException e) {
 			e.printStackTrace();
 		}
@@ -146,7 +146,7 @@ public class CommandRegion {
 
 	private static int getpriority(CommandSource source, String region) {
 		try {
-			RegionsUtils.getPriority(region, source.asPlayer());
+			RegionUtils.getPriority(region, source.asPlayer());
 		} catch (CommandSyntaxException e) {
 			e.printStackTrace();
 		}
@@ -155,7 +155,7 @@ public class CommandRegion {
 
 	private static int setpriority(CommandSource source, String region, int priority) {
 		try {
-			RegionsUtils.setPriorityRegion(region, priority, source.asPlayer());
+			RegionUtils.setPriorityRegion(region, priority, source.asPlayer());
 		} catch (CommandSyntaxException e) {
 			e.printStackTrace();
 		}

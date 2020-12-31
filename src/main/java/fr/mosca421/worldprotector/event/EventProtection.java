@@ -1,4 +1,4 @@
-package fr.mosca421.worldprotector.events;
+package fr.mosca421.worldprotector.event;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 import fr.mosca421.worldprotector.WorldProtector;
 import fr.mosca421.worldprotector.core.Region;
 import fr.mosca421.worldprotector.core.RegionFlag;
-import fr.mosca421.worldprotector.utils.RegionsUtils;
+import fr.mosca421.worldprotector.util.RegionUtils;
 import net.minecraft.entity.monster.CreeperEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
@@ -27,7 +27,7 @@ public class EventProtection {
 	@SubscribeEvent
 	public static void onPlayerBreakBlock(BreakEvent event) {
 		PlayerEntity player = event.getPlayer();
-		List<Region> regions = RegionsUtils.getHandlingRegionsFor(event.getPos(), RegionsUtils.getDimension(player.world));
+		List<Region> regions = RegionUtils.getHandlingRegionsFor(event.getPos(), RegionUtils.getDimension(player.world));
 		for (Region region : regions) {
 			if (region.getFlags().contains(RegionFlag.BREAK.toString()) && !region.permits(player)) {
 				player.sendMessage(new TranslationTextComponent("world.protection.break"), player.getUniqueID());
@@ -39,7 +39,7 @@ public class EventProtection {
 
 	@SubscribeEvent
 	public static void onPlayerPlaceBlock(EntityPlaceEvent event) {
-		List<Region> regions = RegionsUtils.getHandlingRegionsFor(event.getPos(), RegionsUtils.getDimension((World) event.getWorld()));
+		List<Region> regions = RegionUtils.getHandlingRegionsFor(event.getPos(), RegionUtils.getDimension((World) event.getWorld()));
 		for (Region region : regions) {
 			if (region.getFlags().contains(RegionFlag.PLACE.toString())) {
 				if (event.getEntity() instanceof PlayerEntity) {
@@ -76,7 +76,7 @@ public class EventProtection {
 	private static List<BlockPos> filterExplosionAffectedBlocks(ExplosionEvent.Detonate event, String flag){
 		return event.getAffectedBlocks().stream()
 				.filter(blockPos -> anyRegionContainsFlag(
-						RegionsUtils.getHandlingRegionsFor(blockPos, RegionsUtils.getDimension(event.getWorld())),
+						RegionUtils.getHandlingRegionsFor(blockPos, RegionUtils.getDimension(event.getWorld())),
 						flag))
 				.collect(Collectors.toList());
 	}
@@ -98,7 +98,7 @@ public class EventProtection {
 	public static void onBucketFill(FillBucketEvent event) {
 		PlayerEntity player = event.getPlayer();
 		if (event.getTarget() != null) {
-			List<Region> regions = RegionsUtils.getHandlingRegionsFor(new BlockPos(event.getTarget().getHitVec()), RegionsUtils.getDimension(event.getWorld()));
+			List<Region> regions = RegionUtils.getHandlingRegionsFor(new BlockPos(event.getTarget().getHitVec()), RegionUtils.getDimension(event.getWorld()));
 			for (Region region : regions) {
 				if (region.getFlags().contains(RegionFlag.PLACE.toString()) && !region.permits(player)) {
 					player.sendMessage(new TranslationTextComponent("world.protection.place"), player.getUniqueID());

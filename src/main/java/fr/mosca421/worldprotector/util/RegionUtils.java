@@ -1,4 +1,4 @@
-package fr.mosca421.worldprotector.utils;
+package fr.mosca421.worldprotector.util;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,7 +7,7 @@ import com.google.common.base.Joiner;
 
 import fr.mosca421.worldprotector.core.Region;
 import fr.mosca421.worldprotector.core.RegionSaver;
-import fr.mosca421.worldprotector.items.RegionStick;
+import fr.mosca421.worldprotector.item.RegionStick;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -20,11 +20,11 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 
-import static fr.mosca421.worldprotector.utils.MessageUtils.*;
+import static fr.mosca421.worldprotector.util.MessageUtils.*;
 
-public class RegionsUtils {
+public class RegionUtils {
 
-	private RegionsUtils(){}
+	private RegionUtils(){}
 
 	public static void teleportRegion(String regionName, ServerPlayerEntity player) {
 		if (RegionSaver.containsRegion(regionName)) {

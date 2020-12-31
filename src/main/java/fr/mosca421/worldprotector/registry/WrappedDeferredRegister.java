@@ -1,4 +1,4 @@
-package fr.mosca421.worldprotector.utils;
+package fr.mosca421.worldprotector.registry;
 
 import java.util.function.Function;
 import java.util.function.Supplier;

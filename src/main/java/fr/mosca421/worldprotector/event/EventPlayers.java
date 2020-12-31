@@ -1,10 +1,10 @@
-package fr.mosca421.worldprotector.events;
+package fr.mosca421.worldprotector.event;
 
 import fr.mosca421.worldprotector.WorldProtector;
 import fr.mosca421.worldprotector.core.Region;
 import fr.mosca421.worldprotector.core.RegionFlag;
-import fr.mosca421.worldprotector.utils.RegionFlagUtils;
-import fr.mosca421.worldprotector.utils.RegionsUtils;
+import fr.mosca421.worldprotector.util.RegionFlagUtils;
+import fr.mosca421.worldprotector.util.RegionUtils;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.event.ServerChatEvent;
@@ -27,7 +27,7 @@ public class EventPlayers {
 	public static void onAttackEntity(AttackEntityEvent event) {
 		if (event.getTarget() instanceof ServerPlayerEntity) {
 			ServerPlayerEntity player = (ServerPlayerEntity) event.getTarget();
-			List<Region> regions = RegionsUtils.getHandlingRegionsFor(player.getPosition(), RegionsUtils.getDimension(player.world));
+			List<Region> regions = RegionUtils.getHandlingRegionsFor(player.getPosition(), RegionUtils.getDimension(player.world));
 			for (Region region : regions) {
 				if (region.getFlags().contains(RegionFlag.DAMAGE_PLAYERS.toString()) && RegionFlagUtils.isOp(player)) {
 					event.getPlayer().sendMessage(new TranslationTextComponent("world.pvp.player"), event.getPlayer().getUniqueID());
@@ -40,9 +40,9 @@ public class EventPlayers {
 
 	@SubscribeEvent
 	public static void onPickupItem(ItemPickupEvent event) {
-		List<Region> regions = RegionsUtils.getHandlingRegionsFor(event.getPlayer().getPosition(), RegionsUtils.getDimension(event.getPlayer().world));
+		List<Region> regions = RegionUtils.getHandlingRegionsFor(event.getPlayer().getPosition(), RegionUtils.getDimension(event.getPlayer().world));
 		for (Region region : regions) {
-			if (region.getFlags().contains(RegionFlag.ITEM_PICKUP.toString()) && !RegionsUtils.isInRegion(region.getName(), event.getPlayer())) {
+			if (region.getFlags().contains(RegionFlag.ITEM_PICKUP.toString()) && !RegionUtils.isInRegion(region.getName(), event.getPlayer())) {
 				event.getPlayer().sendMessage(new TranslationTextComponent("world.pickup.player"), event.getPlayer().getUniqueID());
 				event.setCanceled(true);
 			}
@@ -54,7 +54,7 @@ public class EventPlayers {
 	public static void onHurt(LivingHurtEvent event) {
 		if (event.getEntityLiving() instanceof ServerPlayerEntity) {
 			ServerPlayerEntity player = (ServerPlayerEntity) event.getEntityLiving();
-			List<Region> regions = RegionsUtils.getHandlingRegionsFor(player.getPosition(), RegionsUtils.getDimension(player.world));
+			List<Region> regions = RegionUtils.getHandlingRegionsFor(player.getPosition(), RegionUtils.getDimension(player.world));
 			for (Region region : regions) {
 				if (region.getFlags().contains(RegionFlag.INVINCIBLE.toString())) {
 					event.setCanceled(true);
@@ -69,7 +69,7 @@ public class EventPlayers {
 	public static void onFall(LivingFallEvent event) {
 		if (event.getEntityLiving() instanceof ServerPlayerEntity) {
 			ServerPlayerEntity player = (ServerPlayerEntity) event.getEntityLiving();
-			List<Region> regions = RegionsUtils.getHandlingRegionsFor(player.getPosition(), RegionsUtils.getDimension(player.world));
+			List<Region> regions = RegionUtils.getHandlingRegionsFor(player.getPosition(), RegionUtils.getDimension(player.world));
 			for (Region region : regions) {
 				if (region.getFlags().contains(RegionFlag.FALL_DAMAGE.toString())) {
 					event.setCanceled(true);
@@ -83,9 +83,9 @@ public class EventPlayers {
 	public static void onSendChat(ServerChatEvent event) {
 		if (event.getPlayer() != null) {
 			ServerPlayerEntity player = event.getPlayer();
-			List<Region> regions = RegionsUtils.getHandlingRegionsFor(player.getPosition(), RegionsUtils.getDimension(player.world));
+			List<Region> regions = RegionUtils.getHandlingRegionsFor(player.getPosition(), RegionUtils.getDimension(player.world));
 			for (Region region : regions) {
-				if (region.getFlags().contains(RegionFlag.SEND_MESSAGE.toString()) && !RegionsUtils.isInRegion(region.getName(), player)) {
+				if (region.getFlags().contains(RegionFlag.SEND_MESSAGE.toString()) && !RegionUtils.isInRegion(region.getName(), player)) {
 					event.setCanceled(true);
 					event.getPlayer().sendMessage(new TranslationTextComponent("world.speak.player"), event.getPlayer().getUniqueID());
 				}
@@ -95,9 +95,9 @@ public class EventPlayers {
 
 	@SubscribeEvent
 	public static void playerDropItem(ItemTossEvent event) {
-		List<Region> regions = RegionsUtils.getHandlingRegionsFor(event.getPlayer().getPosition(), RegionsUtils.getDimension(event.getPlayer().world));
+		List<Region> regions = RegionUtils.getHandlingRegionsFor(event.getPlayer().getPosition(), RegionUtils.getDimension(event.getPlayer().world));
 		for (Region region : regions) {
-			if (region.getFlags().contains(RegionFlag.ITEM_DROP.toString()) && !RegionsUtils.isInRegion(region.getName(), event.getPlayer())) {
+			if (region.getFlags().contains(RegionFlag.ITEM_DROP.toString()) && !RegionUtils.isInRegion(region.getName(), event.getPlayer())) {
 				event.setCanceled(true);
 				event.getPlayer().inventory.addItemStackToInventory(event.getEntityItem().getItem());
 				event.getPlayer().sendMessage(new TranslationTextComponent("world.drop.player"), event.getPlayer().getUniqueID());

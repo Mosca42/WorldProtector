@@ -4,7 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import fr.mosca421.worldprotector.utils.RegionFlagUtils;
+import fr.mosca421.worldprotector.util.RegionFlagUtils;
 import joptsimple.internal.Strings;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;

@@ -2,6 +2,8 @@ package fr.mosca421.worldprotector.items;
 
 import java.util.List;
 
+import fr.mosca421.worldprotector.WorldProtector;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -22,13 +24,25 @@ import net.minecraft.world.World;
 public class RegionStick extends Item {
 
 	public RegionStick() {
-		super(new Item.Properties().maxStackSize(1).group(ItemGroup.MISC));
+		super(new Item.Properties()
+				.maxStackSize(1)
+				.group(WorldProtector.WORLD_PROTECTOR_TAB));
 	}
 	
 	@Override
 	public void addInformation(ItemStack stack, World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
-		tooltip.add(new TranslationTextComponent("help.regionstick.1"));
-		tooltip.add(new TranslationTextComponent("help.regionstick.2"));
+		if(Screen.hasShiftDown()) {
+			tooltip.add(new TranslationTextComponent("help.regionstick.detail.1"));
+			tooltip.add(new TranslationTextComponent("help.regionstick.detail.2"));
+			tooltip.add(new TranslationTextComponent("help.regionstick.optional").mergeStyle(TextFormatting.GRAY));
+			tooltip.add(new TranslationTextComponent("help.regionstick.detail.3"));
+			tooltip.add(new TranslationTextComponent("help.regionstick.detail.4").mergeStyle(TextFormatting.RED));
+		} else {
+			tooltip.add(new TranslationTextComponent("help.regionstick.simple.1"));
+			tooltip.add(new TranslationTextComponent("help.regionstick.simple.2"));
+			tooltip.add(new StringTextComponent( "Hold " + TextFormatting.DARK_BLUE + TextFormatting.ITALIC + "SHIFT" + TextFormatting.RESET + " for more details."));
+		}
+
 	}
 	@Override
 	public ActionResultType onItemUse(ItemUseContext context) {

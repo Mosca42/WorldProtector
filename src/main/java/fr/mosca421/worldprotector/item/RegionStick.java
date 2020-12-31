@@ -44,23 +44,6 @@ public class RegionStick extends Item {
 		}
 	}
 
-	private void printMarkedPosition(PlayerEntity player, ItemStack playerHeldItem, int posNo) {
-		MessageUtils.sendMessage(player, new StringTextComponent(TextFormatting.DARK_RED + "Position " + posNo + ": " +
-				"x=" + playerHeldItem.getTag().getInt("x1") +
-				", y=" + playerHeldItem.getTag().getInt("y1") +
-				", z=" + playerHeldItem.getTag().getInt("z1")));
-	}
-
-	private void saveMarkedBlockInfo(CompoundNBT playerItemTag, BlockPos pos, int posToggle){
-		playerItemTag.putInt("x1", pos.getX());
-		playerItemTag.putInt("y1", pos.getY());
-		playerItemTag.putInt("z1", pos.getZ());
-		playerItemTag.putInt("id", posToggle);
-		if (posToggle == 0) {
-			playerItemTag.putBoolean("valide", true);
-		}
-	}
-
 	@Override
 	public ActionResultType onItemUse(ItemUseContext context) {
 		World world = context.getWorld();
@@ -73,12 +56,19 @@ public class RegionStick extends Item {
 				CompoundNBT playerItemTag = playerHeldItem.getTag();
 				switch (playerItemTag.getInt("id")) {
 					case 0:
-						saveMarkedBlockInfo(playerItemTag, pos, 1);
-						printMarkedPosition(player, playerHeldItem, 1);
+						playerItemTag.putInt("x1", pos.getX());
+						playerItemTag.putInt("y1", pos.getY());
+						playerItemTag.putInt("z1", pos.getZ());
+						playerItemTag.putInt("id", 1);
+						MessageUtils.sendMessage(player, new StringTextComponent(TextFormatting.DARK_RED + "Position 1 : x=" + player.getHeldItem(hand).getTag().getInt("x1") + ", y=" + player.getHeldItem(hand).getTag().getInt("y1") + ", z=" + player.getHeldItem(hand).getTag().getInt("z1")));
 						break;
 					case 1:
-						saveMarkedBlockInfo(playerItemTag, pos, 0);
-						printMarkedPosition(player, playerHeldItem, 2);
+						playerItemTag.putInt("x2", pos.getX());
+						playerItemTag.putInt("y2", pos.getY());
+						playerItemTag.putInt("z2", pos.getZ());
+						playerItemTag.putInt("id", 0);
+						playerItemTag.putBoolean("valide", true);
+						MessageUtils.sendMessage(player, new StringTextComponent(TextFormatting.DARK_RED + "Position 2 : x=" + player.getHeldItem(hand).getTag().getInt("x2") + ", y=" + player.getHeldItem(hand).getTag().getInt("y2") + ", z=" + player.getHeldItem(hand).getTag().getInt("z2")));
 						break;
 					default:
 						// Never reached

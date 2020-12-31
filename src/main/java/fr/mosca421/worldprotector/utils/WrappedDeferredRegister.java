@@ -14,7 +14,6 @@ public class WrappedDeferredRegister<T extends IForgeRegistryEntry<T>> {
     protected final DeferredRegister<T> internal;
 
     public WrappedDeferredRegister(String modid, IForgeRegistry<T> registry) {
-        // Changed: new DeferredRegister<>(registry, modid); -> DeferredRegister.create(registry, modid);
         internal = DeferredRegister.create(registry, modid);
     }
 

@@ -5,9 +5,9 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import fr.mosca421.worldprotector.WorldProtector;
 import fr.mosca421.worldprotector.items.ItemRegistryObject;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
 import net.minecraft.util.IItemProvider;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -19,16 +19,16 @@ public class ItemDeferredRegister extends WrappedDeferredRegister<Item> {
         super(modid, ForgeRegistries.ITEMS);
     }
 
-    public static Item.Properties getMekBaseProperties() {
-        return new Item.Properties().group(ItemGroup.MISC);
+    public static Item.Properties getWPBaseProperties() {
+        return new Item.Properties().group(WorldProtector.WORLD_PROTECTOR_TAB);
     }
 
     public ItemRegistryObject<Item> register(String name) {
-        return register(name, () -> new Item(getMekBaseProperties()));
+        return register(name, () -> new Item(getWPBaseProperties()));
     }
 
     public <ITEM extends Item> ItemRegistryObject<ITEM> register(String name, Function<Item.Properties, ITEM> sup) {
-        return register(name, () -> sup.apply(getMekBaseProperties()));
+        return register(name, () -> sup.apply(getWPBaseProperties()));
     }
 
     public <ITEM extends Item> ItemRegistryObject<ITEM> register(String name, Supplier<? extends ITEM> sup) {

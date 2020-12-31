@@ -43,6 +43,10 @@ public class RegionSaver extends WorldSavedData {
 		return Regions.remove(regionName);
 	}
 
+	public static void clearRegions(){
+		Regions.clear();
+	}
+
 	public static void replaceRegion(Region newRegion){
 		Region oldRegion = Regions.get(newRegion.getName());
 		oldRegion.getFlags().forEach(newRegion::addFlag);

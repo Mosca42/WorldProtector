@@ -38,7 +38,8 @@ public class CommandRegion {
                 .then(Commands.literal(Command.REMOVE.toString())
                         .then(Commands.argument(Command.REGION.toString(), StringArgumentType.string())
 								.suggests((ctx, builder) -> ISuggestionProvider.suggest(RegionSaver.getRegionNames(), builder))
-                                .executes(ctx -> remove(ctx.getSource(), StringArgumentType.getString(ctx, Command.REGION.toString())))))
+                                .executes(ctx -> remove(ctx.getSource(), StringArgumentType.getString(ctx, Command.REGION.toString()))))
+						.then(Commands.literal("all").executes(ctx -> removeAll(ctx.getSource()))))
                 .then(Commands.literal(Command.TELEPORT.toString())
                         .then(Commands.argument(Command.REGION.toString(), StringArgumentType.string())
 								.suggests((ctx, builder) -> ISuggestionProvider.suggest(RegionSaver.getRegionNames(), builder))
@@ -130,6 +131,16 @@ public class CommandRegion {
 	private static int remove(CommandSource source, String region) {
 		try {
 			RegionUtils.removeRegion(region, source.asPlayer());
+		} catch (CommandSyntaxException e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+
+
+	private static int removeAll(CommandSource source) {
+		try {
+			RegionUtils.removeAllRegions(source.asPlayer());
 		} catch (CommandSyntaxException e) {
 			e.printStackTrace();
 		}

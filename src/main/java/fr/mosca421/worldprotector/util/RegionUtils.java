@@ -77,6 +77,12 @@ public class RegionUtils {
 		}
 	}
 
+	public static void removeAllRegions(ServerPlayerEntity player) {
+		RegionSaver.clearRegions();
+		sendMessage(player, new TranslationTextComponent("message.region.removeall"));
+		RegionSaver.save();
+	}
+
 	private static AxisAlignedBB getRegionFromNBT(CompoundNBT nbtTag){
 		return new AxisAlignedBB(
 				nbtTag.getInt("x1"), nbtTag.getInt("y1"), nbtTag.getInt("z1"),

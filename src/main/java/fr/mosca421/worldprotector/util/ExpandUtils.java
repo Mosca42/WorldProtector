@@ -20,18 +20,18 @@ public class ExpandUtils {
 		sendMessage(player, new TranslationTextComponent(TextFormatting.BLUE + "==WorldProtector Help=="));
 	}
 
-	public static void expandVert(ServerPlayerEntity player, ItemStack item) {
+	public static void expandVert(ServerPlayerEntity player, ItemStack item, int y1, int y2) {
+		if (y1 > y2) {
+			sendMessage(player, "help.expand.error");
+			return;
+		}
 		if (item.getItem() instanceof RegionStick) {
 			if (item.getTag() != null) {
 				CompoundNBT itemTag = item.getTag();
-				if (item.hasTag()) {
-					if (itemTag.getBoolean("valide")) {
-						itemTag.putDouble("y1", 0);
-						itemTag.putDouble("y2", 255);
-						sendMessage(player, "message.itemhand.expand");
-					} else {
-						sendMessage(player, "message.itemhand.choose");
-					}
+				if (item.hasTag() && itemTag.getBoolean("valide")) {
+					itemTag.putDouble("y1", y1);
+					itemTag.putDouble("y2", y2);
+					sendMessage(player, new TranslationTextComponent("message.itemhand.expand", y1, y2));
 				} else {
 					sendMessage(player, "message.itemhand.choose");
 				}

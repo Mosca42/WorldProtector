@@ -9,9 +9,7 @@ public class CommandsRegister {
 	private CommandsRegister(){}
 
 	public static void init(CommandDispatcher<CommandSource> commandDispatcher) {
-		commandDispatcher.register(CommandExpand.register());
-		commandDispatcher.register(CommandFlag.register());
-		commandDispatcher.register(CommandRegion.register());
+		commandDispatcher.register(CommandWorldProtector.register());
 	}
 
 }

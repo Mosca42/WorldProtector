@@ -18,9 +18,10 @@ public class CommandRegion {
 
 	private CommandRegion(){}
 
+	public static final LiteralArgumentBuilder<CommandSource> REGION_COMMAND = register();
+
     public static LiteralArgumentBuilder<CommandSource> register() {
         return Commands.literal(Command.REGION.toString())
-                .requires(cs -> cs.hasPermissionLevel(4))
                 .executes(ctx -> giveHelp(ctx.getSource()))
                 .then(Commands.literal(Command.HELP.toString())
                         .executes(ctx -> giveHelp(ctx.getSource())))

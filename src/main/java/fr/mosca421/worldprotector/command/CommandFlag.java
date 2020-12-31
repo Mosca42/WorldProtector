@@ -16,9 +16,10 @@ public class CommandFlag {
 
 	private CommandFlag(){}
 
+	public static final LiteralArgumentBuilder<CommandSource> FLAG_COMMAND = register();
+
 	public static LiteralArgumentBuilder<CommandSource> register() {
 		return Commands.literal(Command.FLAG.toString())
-				.requires(cs -> cs.hasPermissionLevel(4))
 				.executes(ctx -> giveHelp(ctx.getSource()))
 				.then(Commands.literal(Command.HELP.toString())
 						.executes(ctx -> giveHelp(ctx.getSource())))
@@ -67,24 +68,24 @@ public class CommandFlag {
 		return 0;
 	}
 
-	private static int add(CommandSource source, String region, String flag, String name) {
+	private static int add(CommandSource source, String region, String flag, String enterOrExitFlagMsg) {
 		try {
 			boolean regionsContain = RegionSaver.containsRegion(region);
 			if (flag.equalsIgnoreCase(RegionFlag.ENTER_MESSAGE_TITLE.toString()) && regionsContain) {
 				Region regions = RegionSaver.getRegion(region);
-				regions.setEnterMessage(name);
+				regions.setEnterMessage(enterOrExitFlagMsg);
 			}
 			if (flag.equalsIgnoreCase(RegionFlag.EXIT_MESSAGE_TITLE.toString()) && regionsContain) {
 				Region regions = RegionSaver.getRegion(region);
-				regions.setExitMessage(name);
+				regions.setExitMessage(enterOrExitFlagMsg);
 			}
 			if (flag.equalsIgnoreCase(RegionFlag.ENTER_MESSAGE_SUBTITLE.toString()) && regionsContain) {
 				Region regions = RegionSaver.getRegion(region);
-				regions.setEnterMessageSmall(name);
+				regions.setEnterMessageSmall(enterOrExitFlagMsg);
 			}
 			if (flag.equalsIgnoreCase(RegionFlag.EXIT_MESSAGE_SUBTITLE.toString()) && regionsContain) {
 				Region regions = RegionSaver.getRegion(region);
-				regions.setExitMessageSmall(name);
+				regions.setExitMessageSmall(enterOrExitFlagMsg);
 			}
 			RegionFlagUtils.addFlag(region, source.asPlayer(), flag);
 

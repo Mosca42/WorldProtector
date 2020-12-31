@@ -135,7 +135,7 @@ public class RegionUtils {
 						RegionSaver.replaceRegion(region);
 						RegionSaver.save();
 						regionValidTag.putBoolean("valide", false); // reset flag for consistent command behaviour
-						sendMessage(player, "message.region.redefine");}
+						sendMessage(player, new TranslationTextComponent("message.region.redefine", regionName));}
 					else {
 						sendMessage(player, new TranslationTextComponent("message.region.unknown", regionName));
 					}

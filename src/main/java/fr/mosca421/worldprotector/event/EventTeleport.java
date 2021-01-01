@@ -24,7 +24,7 @@ public class EventTeleport {
 			ServerPlayerEntity player = (ServerPlayerEntity) event.getEntityLiving();
 			List<Region> regions = RegionUtils.getHandlingRegionsFor(player.getPosition(), RegionUtils.getDimension(player.world));
 			for (Region region : regions) {
-				if (region.getFlags().contains(RegionFlag.ENDERPEARL_TELEPORTATION.toString()) && !region.permits(player)) {
+				if (region.containsFlag(RegionFlag.ENDERPEARL_TELEPORTATION.toString()) && !region.permits(player)) {
 					event.setCanceled(true);
 					player.sendMessage(new TranslationTextComponent("world.ender.player"), player.getUniqueID());
 				}

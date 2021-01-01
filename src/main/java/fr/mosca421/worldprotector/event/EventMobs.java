@@ -35,16 +35,17 @@ public class EventMobs {
 		Entity eventEntity = event.getEntity();
 		for (Region region : RegionSaver.getRegions()) {
 			if (regionContainsEntity(region, eventEntity)) {
-				if (region.getFlags().contains(RegionFlag.SPAWNING_ALL.toString()) && eventEntity instanceof MobEntity) {
+				if (region.containsFlag(RegionFlag.SPAWNING_ALL.toString()) && eventEntity instanceof MobEntity) {
 					event.setCanceled(true);
 				}
-				if (region.getFlags().contains(RegionFlag.SPAWNING_ANIMAL.toString()) && isAnimal(eventEntity)) {
+				if (region.containsFlag(RegionFlag.SPAWNING_ANIMAL.toString()) && isAnimal(eventEntity)) {
 					event.setCanceled(true);
 				}
-				if (region.getFlags().contains(RegionFlag.SPAWNING_MONSTERS.toString()) && isMonster(eventEntity)) {
+
+				if (region.containsFlag(RegionFlag.SPAWNING_MONSTERS.toString()) && isMonster(eventEntity)) {
 					event.setCanceled(true);
 				}
-				if (region.getFlags().contains(RegionFlag.EXP_DROP.toString()) && eventEntity instanceof ExperienceOrbEntity) {
+				if (region.containsFlag(RegionFlag.EXP_DROP.toString()) && eventEntity instanceof ExperienceOrbEntity) {
 					event.setCanceled(true);
 				}
 			}
@@ -76,7 +77,7 @@ public class EventMobs {
 			if (event.getTarget() instanceof AnimalEntity) {
 				AnimalEntity animal = (AnimalEntity) event.getTarget();
 				for (Region region : affectedRegions) {
-					boolean flagDamageAnimals = region.contains(RegionFlag.DAMAGE_ANIMALS.toString());
+					boolean flagDamageAnimals = region.containsFlag(RegionFlag.DAMAGE_ANIMALS.toString());
 					boolean isInPlayerList = RegionUtils.isInRegion(region.getName(), player);
 					if (flagDamageAnimals && regionContainsEntity(region, animal) && !isInPlayerList) {
 						player.sendMessage(new TranslationTextComponent("world.hurt.animal"), player.getUniqueID());
@@ -88,7 +89,7 @@ public class EventMobs {
 			if (isMonster(eventEntity)) {
 				Entity monster = event.getTarget();
 				for (Region region : affectedRegions) {
-					boolean flagDamageMonsters = region.contains(RegionFlag.DAMAGE_MONSTERS.toString());
+					boolean flagDamageMonsters = region.containsFlag(RegionFlag.DAMAGE_MONSTERS.toString());
 					boolean isInPlayerList = RegionUtils.isInRegion(region.getName(), player);
 					if (flagDamageMonsters && regionContainsEntity(region, monster) && !isInPlayerList) {
 						player.sendMessage(new TranslationTextComponent("world.hurt.mob"), player.getUniqueID());
@@ -100,7 +101,7 @@ public class EventMobs {
 			if (event.getTarget() instanceof VillagerEntity) { // exclude pesky wandering trader >:-)
 				VillagerEntity villager = (VillagerEntity) event.getTarget();
 				for (Region region : affectedRegions) {
-					boolean flagDamageMonsters = region.contains(RegionFlag.DAMAGE_VILLAGERS.toString());
+					boolean flagDamageMonsters = region.containsFlag(RegionFlag.DAMAGE_VILLAGERS.toString());
 					boolean isInPlayerList = RegionUtils.isInRegion(region.getName(), player);
 					if (flagDamageMonsters && regionContainsEntity(region, villager) && !isInPlayerList) {
 						player.sendMessage(new TranslationTextComponent("world.hurt.villager"), player.getUniqueID());

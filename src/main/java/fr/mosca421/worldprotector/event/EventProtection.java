@@ -29,7 +29,7 @@ public class EventProtection {
 		PlayerEntity player = event.getPlayer();
 		List<Region> regions = RegionUtils.getHandlingRegionsFor(event.getPos(), RegionUtils.getDimension(player.world));
 		for (Region region : regions) {
-			if (region.getFlags().contains(RegionFlag.BREAK.toString()) && !region.permits(player)) {
+			if (region.containsFlag(RegionFlag.BREAK.toString()) && !region.permits(player)) {
 				player.sendMessage(new TranslationTextComponent("world.protection.break"), player.getUniqueID());
 				event.setCanceled(true);
 				return;
@@ -41,7 +41,7 @@ public class EventProtection {
 	public static void onPlayerPlaceBlock(EntityPlaceEvent event) {
 		List<Region> regions = RegionUtils.getHandlingRegionsFor(event.getPos(), RegionUtils.getDimension((World) event.getWorld()));
 		for (Region region : regions) {
-			if (region.getFlags().contains(RegionFlag.PLACE.toString())) {
+			if (region.containsFlag(RegionFlag.PLACE.toString())) {
 				if (event.getEntity() instanceof PlayerEntity) {
 					if (!region.permits(((PlayerEntity)event.getEntity()))) {
 						event.getEntity().sendMessage(new TranslationTextComponent("world.protection.place"), event.getEntity().getUniqueID());
@@ -64,7 +64,7 @@ public class EventProtection {
 	 */
 	private static boolean anyRegionContainsFlag(List<Region> regions, String flag){
 		return regions.stream()
-				.anyMatch(region -> region.getFlags().contains(flag));
+				.anyMatch(region -> region.containsFlag(flag));
 	}
 
 	/**
@@ -100,7 +100,7 @@ public class EventProtection {
 		if (event.getTarget() != null) {
 			List<Region> regions = RegionUtils.getHandlingRegionsFor(new BlockPos(event.getTarget().getHitVec()), RegionUtils.getDimension(event.getWorld()));
 			for (Region region : regions) {
-				if (region.getFlags().contains(RegionFlag.PLACE.toString()) && !region.permits(player)) {
+				if (region.containsFlag(RegionFlag.PLACE.toString()) && !region.permits(player)) {
 					player.sendMessage(new TranslationTextComponent("world.protection.place"), player.getUniqueID());
 					event.setCanceled(true);
 					return;

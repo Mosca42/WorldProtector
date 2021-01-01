@@ -199,7 +199,7 @@ public class Region implements INBTSerializable<CompoundNBT> {
 		}
 	}
 
-    public boolean contains(String flag) {
+    public boolean containsFlag(String flag) {
 		return flags.contains(flag);
     }
 }

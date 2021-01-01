@@ -28,8 +28,8 @@ public class EventInteract {
 		if (!event.getWorld().isRemote) {
 			for (Region region : regions) {
 				PlayerEntity player = event.getPlayer();
-				boolean containsUse = region.getFlags().contains(RegionFlag.USE.toString());
-				boolean containsChestAccess = region.getFlags().contains(RegionFlag.CHEST_ACCESS.toString());
+				boolean containsUse = region.containsFlag(RegionFlag.USE.toString());
+				boolean containsChestAccess = region.containsFlag(RegionFlag.CHEST_ACCESS.toString());
 				boolean isLockableTileEntity = (event.getWorld().getTileEntity(event.getPos()) instanceof LockableTileEntity);
 				boolean isEnderChest = (event.getWorld().getTileEntity(event.getPos()) instanceof EnderChestTileEntity);
 				boolean isLectern = (event.getWorld().getTileEntity(event.getPos()) instanceof LecternTileEntity);
@@ -60,7 +60,7 @@ public class EventInteract {
 		if (!event.getWorld().isRemote) {
 			for (Region region : regions) {
 				PlayerEntity player = event.getPlayer();
-				boolean containsChestAccess = region.getFlags().contains(RegionFlag.CHEST_ACCESS.toString());
+				boolean containsChestAccess = region.containsFlag(RegionFlag.CHEST_ACCESS.toString());
 				boolean playerHasPermission = region.permits(player);
 				boolean isMinecartContainer = event.getTarget() instanceof ContainerMinecartEntity;
 

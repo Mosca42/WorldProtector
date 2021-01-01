@@ -6,7 +6,7 @@ it's based on the same principle as the plugin WorldGuard but with several diffe
 
 # Features
 
-The Region Stick allows you to mark an area (cube) for which you can then specify a name.
+The Region Stick allows you to mark an area (cuboid) for which you can then specify a name.
 For this region it is possible to apply flags that prevent certain actions/events to protect it.
 
 ## Commands
@@ -20,47 +20,49 @@ Currently, there are three types of commands :
 - /wp flag: allows to define one or several flags (rules) for a region to protect it.
 
 ## Flags
-Currently, there are twenty flags :
+Currently, there are twenty one flags :
 
-- break : if active, it forbids players to break the region's blocks.
+- break: if active, it forbids players to break the region's blocks.
 
-- place : if active, it forbids players to put on.
+- place: if active, it forbids players to put on.
 
-- explosions : if active, all explosions will be blocked in the region (doesn't work under Sponge).
+- explosions: if active, all explosions will be blocked in the region (doesn't work under Sponge).
 
-- mob-spawning-monsters : if active, it forbids monsters to spawn in the region.
+- mob-spawning-monsters: if active, it forbids monsters to spawn in the region.
 
-- mob-spawning-animal : if active, it forbids animals to spawn in the region.
+- mob-spawning-animal: if active, it forbids animals to spawn in the region.
 
-- mob-spawning-all : if active, it forbids mobs to spawn in the region.
+- mob-spawning-all: if active, it forbids mobs to spawn in the region.
 
-- use : if active, it forbids all player's interactions on all containers in the region.
+- use: if active, it forbids all player's interactions on all containers in the region.
 
-- chest-access : if active, it forbids all player's interactions on chest containers in the region.
+- chest-access: if active, it forbids all player's interactions on chest containers in the region.
 
-- invincible : if active, all players become invincible in the region.
+- invincible: if active, all players become invincible in the region.
 
-- damage-players : if active, players can't be strike down in the region.
+- damage-players: if active, players can't be strike down in the region.
 
-- enderpearls : if active, it forbids teleportation in the region thanks to a enderpearls.
+- enderpearls: if active, it forbids teleportation in the region thanks to a enderpearls.
 
-- item-drop : if active, it forbids to drop items
+- item-drop: if active, it forbids to drop items
 
-- exp-drop : if active, it forbids to drop experience
+- exp-drop: if active, it forbids to drop experience
 
-- creeper-explosions : if active, the Creeper explosions will be blocked in the region (doesn't work under Sponge).
+- creeper-explosions: if active, the Creeper explosions will be blocked in the region (doesn't work under Sponge).
 
-- other-explosions : if active, explosions outside Creeper will be blocked in the region (doesn't work under Sponge).
+- other-explosions: if active, explosions outside Creeper will be blocked in the region (doesn't work under Sponge).
 
-- damage-animals : if active, animals can't be hit in the region.
+- damage-animals: if active, animals can't be hit in the region.
 
-- damage-monsters : if active, monsters can't be hit in the region.
+- damage-villagers: if active, villagers can't be hit in the region.
 
-- send-chat : if active, it forbids players in the region to send messages in the chat (doesn't block the commands).
+- damage-monsters: if active, monsters can't be hit in the region.
 
-- fall-damage : if active, players don't have fall damage in the region.
+- send-chat: if active, it forbids players in the region to send messages in the chat (doesn't block the commands).
 
-- pickup-item : if active, players can't pick up items on the ground in the region.
+- fall-damage: if active, players don't have fall damage in the region.
+
+- pickup-item: if active, players can't pick up items on the ground in the region.
 
 If you have any ideas about flags, don't hesitate to propose it to me.
 

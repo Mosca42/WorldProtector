@@ -1,3 +1,6 @@
+1.16.4-2.1.0.1
+* Fix check for hurting animals and mobs
+* Add flag 'damage-villagers' to protect villagers to be hurt by players
 1.16.4-2.0.0.0
 * Ported WorldProtector to 1.16.4!
 * Fix players not saved properly in regions

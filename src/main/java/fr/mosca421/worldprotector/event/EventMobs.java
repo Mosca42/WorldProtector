@@ -74,12 +74,11 @@ public class EventMobs {
 		Entity eventEntity = event.getTarget();
 		List<Region> affectedRegions = RegionUtils.getHandlingRegionsFor(event.getTarget().getPosition(), RegionUtils.getDimension(event.getTarget().world));
 		if (!event.getTarget().world.isRemote) {
-			if (event.getTarget() instanceof AnimalEntity) {
-				AnimalEntity animal = (AnimalEntity) event.getTarget();
+			if (isAnimal(eventEntity)) {
 				for (Region region : affectedRegions) {
 					boolean flagDamageAnimals = region.containsFlag(RegionFlag.DAMAGE_ANIMALS.toString());
 					boolean isInPlayerList = RegionUtils.isInRegion(region.getName(), player);
-					if (flagDamageAnimals && regionContainsEntity(region, animal) && !isInPlayerList) {
+					if (flagDamageAnimals && regionContainsEntity(region, eventEntity) && !isInPlayerList) {
 						player.sendMessage(new TranslationTextComponent("world.hurt.animal"), player.getUniqueID());
 						event.setCanceled(true);
 					}
@@ -87,11 +86,10 @@ public class EventMobs {
 			}
 
 			if (isMonster(eventEntity)) {
-				Entity monster = event.getTarget();
 				for (Region region : affectedRegions) {
 					boolean flagDamageMonsters = region.containsFlag(RegionFlag.DAMAGE_MONSTERS.toString());
 					boolean isInPlayerList = RegionUtils.isInRegion(region.getName(), player);
-					if (flagDamageMonsters && regionContainsEntity(region, monster) && !isInPlayerList) {
+					if (flagDamageMonsters && regionContainsEntity(region, eventEntity) && !isInPlayerList) {
 						player.sendMessage(new TranslationTextComponent("world.hurt.mob"), player.getUniqueID());
 						event.setCanceled(true);
 					}

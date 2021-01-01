@@ -5,6 +5,7 @@
   "world.protection.place": "Du hast keine Berechtigung diesen Block hier zu platzieren!",
   "world.protection.break": "Du hast keine Berechtigung diesen Block zu zerstören!",
   "world.interact.use": "Du hast keine Berechtigung diesen Block zu benutzen!",
+  "world.interact.container": "Du hast keine Berechtigung dieses Inventar zu öffnen!",
   "world.hurt.mob": "Du hast keine Berechtigung hier Monster zu verletzen!",
   "world.pvp.player": "Du hast keine Berechtigung hier and PvP teilzunehmen!",
   "world.pickup.player": "Du hast keine Berechtigung hier Gegenstände aufzunehmen!",

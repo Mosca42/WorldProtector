@@ -32,6 +32,7 @@
   "message.region.info.priority": "Regionspriorität: %s",
   "message.flags.add": "Regel '%s' zur Region '%s' hinzugefügt!",
   "message.flags.remove": "Regel '%s' von Region '%s' entfernt!",
+  "message.flag.unknown": "Unbekannte Regel '%s'!",
   "message.flags.unknown": "Unbekannte Regel '%s' in der Region '%s'!",
   "message.region.define": "Region '%s' erfolgreich erstellt!",
   "message.region.redefine": "Region '%s' erfolgreich geändert!",

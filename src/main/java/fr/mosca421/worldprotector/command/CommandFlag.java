@@ -7,10 +7,13 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import fr.mosca421.worldprotector.core.Region;
 import fr.mosca421.worldprotector.core.RegionFlag;
 import fr.mosca421.worldprotector.core.RegionSaver;
+import fr.mosca421.worldprotector.util.MessageUtils;
 import fr.mosca421.worldprotector.util.RegionFlagUtils;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.command.ISuggestionProvider;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 
 public class CommandFlag {
 
@@ -68,27 +71,35 @@ public class CommandFlag {
 		return 0;
 	}
 
-	private static int add(CommandSource source, String region, String flag, String enterOrExitFlagMsg) {
+	private static int add(CommandSource source, String regionName, String flag, String enterOrExitFlagMsg) {
 		try {
-			boolean regionsContain = RegionSaver.containsRegion(region);
-			if (flag.equalsIgnoreCase(RegionFlag.ENTER_MESSAGE_TITLE.toString()) && regionsContain) {
-				Region regions = RegionSaver.getRegion(region);
-				regions.setEnterMessage(enterOrExitFlagMsg);
+			ServerPlayerEntity player = source.asPlayer();
+			if (RegionSaver.containsRegion(regionName)) {
+				Region region = RegionSaver.getRegion(regionName);
+				if (RegionFlag.contains(flag)) {
+					RegionFlag regionFlag = RegionFlag.valueOf(flag.trim().toLowerCase());
+					switch (regionFlag) {
+						case ENTER_MESSAGE_TITLE:
+							region.setEnterMessage(enterOrExitFlagMsg);
+							break;
+						case ENTER_MESSAGE_SUBTITLE:
+							region.setEnterMessageSmall(enterOrExitFlagMsg);
+							break;
+						case EXIT_MESSAGE_TITLE:
+							region.setExitMessage(enterOrExitFlagMsg);
+							break;
+						case EXIT_MESSAGE_SUBTITLE:
+							region.setExitMessageSmall(enterOrExitFlagMsg);
+							break;
+						default:
+							RegionFlagUtils.addFlag(region, player, flag);
+							break;
+					}
+				}
+				MessageUtils.sendMessage(player, "message.flag.unknown");
+			} else {
+				MessageUtils.sendMessage(player, "message.region.unknown");
 			}
-			if (flag.equalsIgnoreCase(RegionFlag.EXIT_MESSAGE_TITLE.toString()) && regionsContain) {
-				Region regions = RegionSaver.getRegion(region);
-				regions.setExitMessage(enterOrExitFlagMsg);
-			}
-			if (flag.equalsIgnoreCase(RegionFlag.ENTER_MESSAGE_SUBTITLE.toString()) && regionsContain) {
-				Region regions = RegionSaver.getRegion(region);
-				regions.setEnterMessageSmall(enterOrExitFlagMsg);
-			}
-			if (flag.equalsIgnoreCase(RegionFlag.EXIT_MESSAGE_SUBTITLE.toString()) && regionsContain) {
-				Region regions = RegionSaver.getRegion(region);
-				regions.setExitMessageSmall(enterOrExitFlagMsg);
-			}
-			RegionFlagUtils.addFlag(region, source.asPlayer(), flag);
-
 		} catch (CommandSyntaxException e) {
 			e.printStackTrace();
 		}

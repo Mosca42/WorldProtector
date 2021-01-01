@@ -29,12 +29,14 @@ public class RegionFlagUtils {
 	public static void addFlag(String regionName, ServerPlayerEntity player, String flag) {
 		if (RegionSaver.containsRegion(regionName)) {
 			Region region = RegionSaver.getRegion(regionName);
-			if (RegionFlag.contains(flag)) {
-				region.addFlag(flag);
-				sendMessage(player, new TranslationTextComponent("message.flags.add", flag, regionName));
-				RegionSaver.save();
-			}
+			addFlag(region, player, flag);
 		}
+	}
+
+	public static void addFlag(Region region, ServerPlayerEntity player, String flag) {
+		region.addFlag(flag);
+		sendMessage(player, new TranslationTextComponent("message.flags.add", flag, region.getName()));
+		RegionSaver.save();
 	}
 
 	public static void removeFlag(String regionName, ServerPlayerEntity player, String flag) {

@@ -1,21 +1,23 @@
 
 # Introduction
 
-WorldProtector is a mod allows you to protect your constructions on your servers, it's based on the same principle as the plugin WorldGuard but with several differences at commands level.
+WorldProtector is a mod allows you to protect your constructions on your servers, 
+it's based on the same principle as the plugin WorldGuard but with several differences at command level.
 
 # Features
 
-Thanks to the “regions stick” items, you can select the size you want and save it to define protection flags to it.
+The Region Stick allows you to mark an area (cube) for which you can then specify a name.
+For this region it is possible to apply flags that prevent certain actions/events to protect it.
 
 ## Commands
 
 Currently, there are three types of commands :
 
-- /region : allows to define, edit, cancel a region.
+- /wp region: allows to define, edit, remove a region.
 
-- /expand : allows to modify the different select points with the stick (height).
+- /wp expand: allows to modify the Y level (height) of the marked region.
 
-- /flag : allows to define one or several flags to a region to protect it (the region).
+- /wp flag: allows to define one or several flags (rules) for a region to protect it.
 
 ## Flags
 Currently, there are twenty flags :
@@ -24,7 +26,7 @@ Currently, there are twenty flags :
 
 - place : if active, it forbids players to put on.
 
-- explosions : if active, all explosions will be block in the region (doesn't work under Sponge).
+- explosions : if active, all explosions will be blocked in the region (doesn't work under Sponge).
 
 - mob-spawning-monsters : if active, it forbids monsters to spawn in the region.
 
@@ -34,21 +36,21 @@ Currently, there are twenty flags :
 
 - use : if active, it forbids all player's interactions on all containers in the region.
 
-- chest-acces : if active, it forbids all player's interactions on chest's containers in the region.
+- chest-access : if active, it forbids all player's interactions on chest containers in the region.
 
-- invincible : if active, all players become invicible in the region.
+- invincible : if active, all players become invincible in the region.
 
 - damage-players : if active, players can't be strike down in the region.
 
 - enderpearls : if active, it forbids teleportation in the region thanks to a enderpearls.
 
-- item-drop : if active, it forbids drop items
+- item-drop : if active, it forbids to drop items
 
-- exp-drop : if active, it forbids drop the experience
+- exp-drop : if active, it forbids to drop experience
 
-- creeper-explosions : if active, the Creeper explosions will be block in the region (doen't work under Sponge).
+- creeper-explosions : if active, the Creeper explosions will be blocked in the region (doesn't work under Sponge).
 
-- other-explosions : if active, explosions outside Creeper will be block in the region (doesn't work under Sponge).
+- other-explosions : if active, explosions outside Creeper will be blocked in the region (doesn't work under Sponge).
 
 - damage-animals : if active, animals can't be hit in the region.
 
@@ -63,42 +65,42 @@ Currently, there are twenty flags :
 If you have any ideas about flags, don't hesitate to propose it to me.
 
 
-
 ## Create a region
 
 To create your region, follow these instructions :
 
-1. Select two points thanks to regions sticks,
+1. Use the region stick to mark the two blocks which define the area of the region
 
-2. Think to expand your region if you want the region protects from the layer 0 to 255,
+2. [Optional] Expand the Y level (height) of your marked region with the ```/wp expand vert [<Y1>] [<Y2>]``` command (default is 0 to 255).
 
-3. /region define “your region's name”
+3. Define your region: ```/wp region define <your region's name>```
 
-4. /flag add “your region's name” “flag's name”
+4. Add flags to your region: ```/wp flag add <your region's name> <flag name>```
+
 
 ## Region priority
 
-If a region is inside another region you have to use the command : .region setpriority “your region's name” “priority (1,2,3,4,5,6...)”
+If a region is inside another region you have to use the command 
+```/wp region setpriority <your region's name> <priority (1,2,3,4,5,6...)>``` to give a specific region more priority over another.
 
-Let's suppose that there is a arena player vs player in your spawn, it's necessary the arena gains the upper hand on the spawn to activate the flag “player vs player”, if not it will be deactivate.
+Let's suppose that there is a pvp arena in your spawn. Your spawn forbids pvp, but your in your arena you want to have pvp allowed.
+Then it's necessary that the arena gains the upper hand over the spawn to activate, if not pvp will not be possible.
 
-So, you have to put the arena to a priority higher than the spawn to have the “player vs player” activate :
+Therefore, the arena region needs to have a higher priority than the spawn region. The following example show how to achieve this:
 
-/region setpriority spawn 1
+```/wp region setpriority spawn 1```
 
-/region setpriority arena 2
+```/wp region setpriority arena 2```
 
-1 is superior to 2 so the arena gains the upper hand on the spawn region.
-
+2 is superior to 1, so that the arena gains the upper hand over the spawn region and PvP is possible.
 
 # Additional information
 
-- The mod has to be install on the client and on the server too
-- You can use in custom modpack
+- The mod has to be installed on the client and on the server too
+- You can use this mod in a custom modpack
 
 
 # Special thanks
-
 
 Thanks to BrokenSwing for his help about regions and safeguard in the world.
 
@@ -107,6 +109,7 @@ Thanks to TheBossMax2 for the mod logo.
 DISCORD: [WorldProtector Discord](https://discord.gg/MsA8XPc)
 
 # License
+
 This mod is open sourced under the Creative Commons 3.0 Attribution Non-Commercial License
 https://creativecommons.org/licenses/by-nc/3.0/legalcode
 

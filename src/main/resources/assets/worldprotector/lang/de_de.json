@@ -7,6 +7,8 @@
   "world.interact.use": "Du hast keine Berechtigung diesen Block zu benutzen!",
   "world.interact.container": "Du hast keine Berechtigung dieses Inventar zu öffnen!",
   "world.hurt.mob": "Du hast keine Berechtigung hier Monster zu verletzen!",
+  "world.hurt.animal": "Du hast keine Berechtigung hier Tiere zu verletzen!",
+  "world.hurt.villager": "Du hast keine Berechtigung hier Dorfbewohner zu verletzen!",
   "world.pvp.player": "Du hast keine Berechtigung hier and PvP teilzunehmen!",
   "world.pickup.player": "Du hast keine Berechtigung hier Gegenstände aufzunehmen!",
   "world.speak.player": "Du hast keine Berechtigung hier Nachrichten zu senden!",

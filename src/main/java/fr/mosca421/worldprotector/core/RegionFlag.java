@@ -22,6 +22,7 @@ public enum RegionFlag {
     DAMAGE_PLAYERS("damage-players"),
     DAMAGE_ANIMALS("damage-animals"),
     DAMAGE_MONSTERS("damage-monsters"),
+    DAMAGE_VILLAGERS("damage-villagers"),
     SEND_MESSAGE("send-chat"),
     FALL_DAMAGE("fall-damage"),
     ITEM_PICKUP("pickup-item"),

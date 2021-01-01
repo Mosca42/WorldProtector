@@ -47,10 +47,11 @@ public class RegionUtils {
 			if (!region.addPlayer(playerToAdd.getUniqueID().toString())) {
 				// Player already defined in this region -> Message needed or silent acknowledgement?
 				sendMessage(sourcePlayer, new TranslationTextComponent("message.region.errorplayer", regionName, playerToAddName));
+			} else {
+				sendMessage(sourcePlayer, new TranslationTextComponent("message.region.addplayer", playerToAddName, regionName));
+				sendMessage(playerToAdd, new TranslationTextComponent("message.player.regionadded", regionName));
+				RegionSaver.save();
 			}
-			sendMessage(sourcePlayer, new TranslationTextComponent("message.region.addplayer", playerToAddName, regionName));
-			sendMessage(playerToAdd, new TranslationTextComponent("message.player.regionadded", regionName));
-			RegionSaver.save();
 		} else {
 			sendMessage(sourcePlayer,  new TranslationTextComponent("message.region.unknown", regionName));
 		}
@@ -63,10 +64,11 @@ public class RegionUtils {
 			if (!region.removePlayer(playerToRemove.getUniqueID().toString())) {
 				// Player was not present in this region -> Message needed or silent acknowledgement?
 				sendMessage(sourcePlayer, new TranslationTextComponent("message.region.unknownplayer", regionName, playerToRemoveName));
+			} else {
+				sendMessage(sourcePlayer, new TranslationTextComponent("message.region.removeplayer", playerToRemoveName, regionName));
+				sendMessage(playerToRemove, new TranslationTextComponent("message.player.regionremoved", regionName));
+				RegionSaver.save();
 			}
-			sendMessage(sourcePlayer, new TranslationTextComponent("message.region.removeplayer", playerToRemoveName, regionName));
-			sendMessage(playerToRemove, new TranslationTextComponent("message.player.regionremoved", regionName));
-			RegionSaver.save();
 		} else {
 			sendMessage(sourcePlayer, new TranslationTextComponent("message.region.unknown", regionName));
 		}

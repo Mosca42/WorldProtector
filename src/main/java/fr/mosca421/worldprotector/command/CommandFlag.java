@@ -82,7 +82,7 @@ public class CommandFlag {
 				Region region = RegionSaver.getRegion(regionName);
 				if (RegionFlag.contains(flag)) {
 					RegionFlag regionFlag = RegionFlag.fromString(flag)
-							.orElseThrow( () -> new IllegalArgumentException("Flag could not be converted to enum counterpart"));
+							.orElseThrow(() -> new IllegalArgumentException("Flag could not be converted to enum counterpart"));
 					switch (regionFlag) {
 						case ENTER_MESSAGE_TITLE:
 							region.setEnterMessage(enterOrExitFlagMsg);
@@ -96,6 +96,10 @@ public class CommandFlag {
 						case EXIT_MESSAGE_SUBTITLE:
 							region.setExitMessageSmall(enterOrExitFlagMsg);
 							break;
+						case BLOCK_ENTER:
+						case BLOCK_EXIT:
+							sendMessage(player, "This flag is not yet implemented, sorry!");
+							return 0;
 						default:
 							RegionFlagUtils.addFlag(region, player, flag);
 							break;

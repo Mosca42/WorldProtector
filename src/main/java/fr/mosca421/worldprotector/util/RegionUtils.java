@@ -2,9 +2,12 @@ package fr.mosca421.worldprotector.util;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 import com.google.common.base.Joiner;
 
+import com.mojang.authlib.GameProfile;
 import fr.mosca421.worldprotector.core.Region;
 import fr.mosca421.worldprotector.core.RegionSaver;
 import fr.mosca421.worldprotector.item.RegionStick;
@@ -12,6 +15,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.server.management.PlayerList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
@@ -123,6 +127,25 @@ public class RegionUtils {
 		sendMessage(player,"help.region.8");
 		sendMessage(player,"help.region.9");
 		sendMessage(player, new TranslationTextComponent(TextFormatting.BLUE + "==WorldProtector Help=="));
+	}
+
+	public static void giveRegionInfo(ServerPlayerEntity player, String regionName) {
+		if (RegionSaver.containsRegion(regionName)) {
+			Region region = RegionSaver.getRegion(regionName);
+			String noFlagsText = new TranslationTextComponent("message.region.info.noflags").getString();
+			String noPlayersText = new TranslationTextComponent("message.region.info.noplayers").getString();
+			String regionFlags = region.getFlags().isEmpty() ? noFlagsText : String.join(", ", region.getFlags());
+			String regionPlayers = region.getPlayers().isEmpty() ? noPlayersText : String.join(",\n", region.getPlayers());
+			sendMessage(player, new StringTextComponent(TextFormatting.BLUE + "==Region '" + regionName + "' information=="));
+			sendMessage(player, new TranslationTextComponent("message.region.info.area", region.getArea().toString().substring(4)));
+			sendMessage(player, new TranslationTextComponent("message.region.info.priority", region.getPriority()));
+			sendMessage(player, new TranslationTextComponent("message.region.info.flags", regionFlags));
+			sendMessage(player, new TranslationTextComponent("message.region.info.players", regionPlayers));
+			sendMessage(player, new StringTextComponent(TextFormatting.BLUE + "==Region '" + regionName + "' information=="));
+		}
+		else {
+			sendMessage(player, new TranslationTextComponent("message.region.unknown", regionName));
+		}
 
 	}
 

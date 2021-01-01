@@ -27,7 +27,12 @@ public class CommandRegion {
                         .executes(ctx -> giveHelp(ctx.getSource())))
                 .then(Commands.literal(Command.LIST.toString())
                         .executes(ctx -> giveList(ctx.getSource())))
-                .then(Commands.literal(Command.DEFINE.toString())
+				.then(Commands.literal(Command.INFO.toString())
+						.executes(ctx -> giveHelp(ctx.getSource()))
+						.then(Commands.argument(Command.REGION.toString(), StringArgumentType.string())
+								.suggests((ctx, builder) -> ISuggestionProvider.suggest(RegionSaver.getRegionNames(), builder))
+								.executes(ctx -> info(ctx.getSource(), StringArgumentType.getString(ctx, Command.REGION.toString())))))
+				.then(Commands.literal(Command.DEFINE.toString())
                         .executes(ctx -> giveHelp(ctx.getSource()))
                         .then(Commands.argument(Command.REGION.toString(), StringArgumentType.string())
                                 .executes(ctx -> define(ctx.getSource(), StringArgumentType.getString(ctx, Command.REGION.toString())))))
@@ -68,6 +73,15 @@ public class CommandRegion {
                                 .then(Commands.argument(Command.PRIORITY.toString(), IntegerArgumentType.integer())
                                         .executes(ctx -> setpriority(ctx.getSource(), StringArgumentType.getString(ctx, Command.REGION.toString()), IntegerArgumentType.getInteger(ctx, Command.PRIORITY.toString()))))));
     }
+
+	private static int info(CommandSource source, String regionName) {
+		try {
+			RegionUtils.giveRegionInfo(source.asPlayer(), regionName);
+		} catch (CommandSyntaxException e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
 
 	private static int addPlayer(CommandSource source, String region, Collection<ServerPlayerEntity> players) {
 		try {

@@ -60,6 +60,9 @@ public class RegionStick extends Item {
 						playerItemTag.putInt("y1", pos.getY());
 						playerItemTag.putInt("z1", pos.getZ());
 						playerItemTag.putInt("id", 1);
+						if (playerItemTag.getBoolean("valide")) {
+							playerItemTag.putBoolean("valide", false);
+						}
 						MessageUtils.sendMessage(player, new StringTextComponent(TextFormatting.DARK_RED + "Position 1 : x=" + player.getHeldItem(hand).getTag().getInt("x1") + ", y=" + player.getHeldItem(hand).getTag().getInt("y1") + ", z=" + player.getHeldItem(hand).getTag().getInt("z1")));
 						break;
 					case 1:

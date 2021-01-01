@@ -1,6 +1,7 @@
 package fr.mosca421.worldprotector.core;
 
 import java.util.Arrays;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -65,5 +66,9 @@ public enum RegionFlag {
                 .collect(Collectors.toSet());
     }
 
-
+    public static Optional<RegionFlag> fromString(String flagIdentifier){
+        return Arrays.stream(values())
+                .filter(flag -> flag.flagIdentifier.equals(flagIdentifier))
+                .findFirst();
+    }
 }

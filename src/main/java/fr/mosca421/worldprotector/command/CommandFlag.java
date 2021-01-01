@@ -4,6 +4,7 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
+import fr.mosca421.worldprotector.WorldProtector;
 import fr.mosca421.worldprotector.core.Region;
 import fr.mosca421.worldprotector.core.RegionFlag;
 import fr.mosca421.worldprotector.core.RegionSaver;
@@ -80,7 +81,8 @@ public class CommandFlag {
 			if (RegionSaver.containsRegion(regionName)) {
 				Region region = RegionSaver.getRegion(regionName);
 				if (RegionFlag.contains(flag)) {
-					RegionFlag regionFlag = RegionFlag.valueOf(flag.trim().toLowerCase());
+					RegionFlag regionFlag = RegionFlag.fromString(flag)
+							.orElseThrow( () -> new IllegalArgumentException("Flag could not be converted to enum counterpart"));
 					switch (regionFlag) {
 						case ENTER_MESSAGE_TITLE:
 							region.setEnterMessage(enterOrExitFlagMsg);
@@ -98,12 +100,13 @@ public class CommandFlag {
 							RegionFlagUtils.addFlag(region, player, flag);
 							break;
 					}
+				} else {
+					sendMessage(player, new TranslationTextComponent("message.flags.unknown", flag));
 				}
-				sendMessage(player, new TranslationTextComponent("message.flags.unknown", flag));
 			} else {
 				sendMessage(player, new TranslationTextComponent("message.region.unknown", regionName));
 			}
-		} catch (CommandSyntaxException e) {
+		} catch (CommandSyntaxException | IllegalArgumentException e) {
 			e.printStackTrace();
 		}
 		return 0;

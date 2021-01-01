@@ -3,6 +3,7 @@ package fr.mosca421.worldprotector.event;
 import fr.mosca421.worldprotector.WorldProtector;
 import fr.mosca421.worldprotector.core.Region;
 import fr.mosca421.worldprotector.core.RegionFlag;
+import fr.mosca421.worldprotector.util.MessageUtils;
 import fr.mosca421.worldprotector.util.RegionUtils;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.tileentity.LockableTileEntity;
@@ -29,16 +30,18 @@ public class EventInteract {
 			boolean isLockableTileEntity = (event.getWorld().getTileEntity(event.getPos()) instanceof LockableTileEntity);
 			boolean playerHasPermission = region.permits(player);
 
-			if (containsUse && !isLockableTileEntity && !region.permits(player)) {
+			if (containsUse && !isLockableTileEntity && !playerHasPermission) {
 				event.setCanceled(true);
-				player.sendMessage(new TranslationTextComponent("world.interact.use"), player.getUniqueID());
+				MessageUtils.sendMessage(player, "world.interact.use");
 				return;
 			}
 
 			if (containsChestAccess && !playerHasPermission) {
 				event.setCanceled(true);
-				if (event.getHand() == Hand.MAIN_HAND)
-					player.sendMessage(new TranslationTextComponent("world.interact.use"), player.getUniqueID());
+				if (event.getHand() == Hand.MAIN_HAND) {
+					// FIXME: message is send twice for unknown reason
+					MessageUtils.sendMessage(player, "world.interact.use");
+				}
 				return;
 
 			}

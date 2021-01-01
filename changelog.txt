@@ -1,0 +1,25 @@
+1.16.4-2.0.0.0
+* Ported WorldProtector to 1.16.4!
+* Fix players not saved properly in regions
+* Add missing english localization key for 'message.region.errorplayer'
+* Add missing english localization key for 'message.region.addplayer'
+* Add missing english localization key for 'message.region.removeplayer'
+* Add missing english localization key for 'message.region.unknownplayer'
+* Add new english localization key 'message.player.regionremoved'
+* Add new english localization key 'message.player.regionadded'
+* Fix typos in english localization
+* Add german localization
+* Commands now show all already defined regions for completion
+* Commands only show existing flags for regions when removing
+* Add command to remove all regions
+* Add command to view region info
+* Flag 'chest-access' now works for all blocks and entites with permanent inventory
+* Unified command structure. All commands now starting with /wp <command>. Type /wp help for more info.
+* Enhanced expand vert command. You are now able to supply the y levels for a custom expanding the region more flexible. This is optional, the defaults values are still 0 - 255.
+* Add more detailed tooltip for Region Stick (explaining the process of defining a region)
+* Add WorldProtector ItemGroup (Creative Inventory Tab) with WP Logo
+* Fix various small bugs and enhanced code for future maintainability
+1.15.2-1.4.0.1
+* Fix mob-spawning-monster flag preventing all mobs to spawn (issue #9)
+1.15.2-1.4.0.0
+* Changes not documented

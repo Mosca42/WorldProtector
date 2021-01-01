@@ -14,6 +14,9 @@ import net.minecraft.command.Commands;
 import net.minecraft.command.ISuggestionProvider;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.util.text.TranslationTextComponent;
+
+import static fr.mosca421.worldprotector.util.MessageUtils.*;
 
 public class CommandFlag {
 
@@ -96,9 +99,9 @@ public class CommandFlag {
 							break;
 					}
 				}
-				MessageUtils.sendMessage(player, "message.flag.unknown");
+				sendMessage(player, new TranslationTextComponent("message.flags.unknown", flag));
 			} else {
-				MessageUtils.sendMessage(player, "message.region.unknown");
+				sendMessage(player, new TranslationTextComponent("message.region.unknown", regionName));
 			}
 		} catch (CommandSyntaxException e) {
 			e.printStackTrace();

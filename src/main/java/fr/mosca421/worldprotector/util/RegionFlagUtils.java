@@ -47,7 +47,7 @@ public class RegionFlagUtils {
 					sendMessage(player, new TranslationTextComponent("message.flags.remove", flag, regionName));
 					RegionSaver.save();
 				} else {
-					sendMessage(player, new TranslationTextComponent("message.flags.unknown", flag, regionName));
+					sendMessage(player, new TranslationTextComponent("message.flags.unknown", flag));
 				}
 			}
 		}

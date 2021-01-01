@@ -1,3 +1,5 @@
+1.16.4-2.1.0.3
+* Fix region stick valid tag not set correctly after setting two positions and clicking again to set another position
 1.16.4-2.1.0.2
 * Add check for unknown flag in command line
 * Add translation key for an unknown flag

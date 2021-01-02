@@ -39,14 +39,14 @@ public class EventPlayers {
 	}
 
 	@SubscribeEvent
+	// FIXME: Event not cancelable
 	public static void onPickupItem(ItemPickupEvent event) {
 		List<Region> regions = RegionUtils.getHandlingRegionsFor(event.getPlayer().getPosition(), RegionUtils.getDimension(event.getPlayer().world));
 		for (Region region : regions) {
 			if (region.containsFlag(RegionFlag.ITEM_PICKUP.toString()) && !RegionUtils.isInRegion(region.getName(), event.getPlayer())) {
 				event.getPlayer().sendMessage(new TranslationTextComponent("world.pickup.player"), event.getPlayer().getUniqueID());
-				event.setCanceled(true);
+				// event.setCanceled(true);
 			}
-
 		}
 	}
 

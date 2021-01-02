@@ -19,6 +19,7 @@ public class EventTeleport {
 	private EventTeleport(){}
 
 	@SubscribeEvent
+	// TODO: maybe better item use and check if it is enderpearl and then cancel it
 	public static void onEnderTeleport(EnderTeleportEvent event) {
 		if (event.getEntityLiving() instanceof ServerPlayerEntity) {
 			ServerPlayerEntity player = (ServerPlayerEntity) event.getEntityLiving();
@@ -26,6 +27,9 @@ public class EventTeleport {
 			for (Region region : regions) {
 				if (region.containsFlag(RegionFlag.ENDERPEARL_TELEPORTATION.toString()) && !region.permits(player)) {
 					event.setCanceled(true);
+					// refund enderpearl
+					int count = player.getHeldItem(player.getActiveHand()).getCount();
+					player.getHeldItem(player.getActiveHand()).setCount(count + 1);
 					player.sendMessage(new TranslationTextComponent("world.ender.player"), player.getUniqueID());
 				}
 			}

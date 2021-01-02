@@ -1,6 +1,6 @@
 package fr.mosca421.worldprotector.util;
 
-import fr.mosca421.worldprotector.item.RegionStick;
+import fr.mosca421.worldprotector.item.ItemRegionStick;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -25,7 +25,7 @@ public class ExpandUtils {
 			sendMessage(player, "help.expand.error");
 			return;
 		}
-		if (item.getItem() instanceof RegionStick) {
+		if (item.getItem() instanceof ItemRegionStick) {
 			if (item.getTag() != null) {
 				CompoundNBT itemTag = item.getTag();
 				if (item.hasTag() && itemTag.getBoolean("valide")) {

@@ -2,20 +2,16 @@ package fr.mosca421.worldprotector.util;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 import com.google.common.base.Joiner;
 
-import com.mojang.authlib.GameProfile;
 import fr.mosca421.worldprotector.core.Region;
 import fr.mosca421.worldprotector.core.RegionSaver;
-import fr.mosca421.worldprotector.item.RegionStick;
+import fr.mosca421.worldprotector.item.ItemRegionStick;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.server.management.PlayerList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
@@ -97,7 +93,7 @@ public class RegionUtils {
 	}
 
 	public static void createRegion(String regionName, ServerPlayerEntity player, ItemStack item) {
-		if (item.getItem() instanceof RegionStick) {
+		if (item.getItem() instanceof ItemRegionStick) {
 			if (item.getTag() != null) {
 				CompoundNBT regionValidTag = item.getTag();
 				if (item.hasTag() && regionValidTag.getBoolean("valide")) {
@@ -156,7 +152,7 @@ public class RegionUtils {
 	}
 
 	public static void redefineRegion(String regionName, ServerPlayerEntity player, ItemStack item) {
-		if (item.getItem() instanceof RegionStick) {
+		if (item.getItem() instanceof ItemRegionStick) {
 			if (item.getTag() != null) {
 				CompoundNBT regionValidTag = item.getTag();
 				if (item.hasTag() && regionValidTag.getBoolean("valide")) {

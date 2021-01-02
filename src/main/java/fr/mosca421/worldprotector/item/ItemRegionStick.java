@@ -21,9 +21,9 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 
-public class RegionStick extends Item {
+public class ItemRegionStick extends Item {
 
-	public RegionStick() {
+	public ItemRegionStick() {
 		super(new Item.Properties()
 				.maxStackSize(1)
 				.group(WorldProtector.WORLD_PROTECTOR_TAB));

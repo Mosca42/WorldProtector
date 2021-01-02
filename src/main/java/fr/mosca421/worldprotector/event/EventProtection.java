@@ -114,6 +114,7 @@ public class EventProtection {
 					event.setCanceled(true);
 					return;
 				}
+				// FIXME: Message is send if target raycast hits a non fluid. Check if event.getTarget hits a fluid
 				if (bucketItemMaxStackCount > 1 && region.containsFlag(RegionFlag.BREAK.toString()) && !region.permits(player)) {
 					sendMessage(player, new TranslationTextComponent("world.protection.scoopfluid"));
 					event.setCanceled(true);

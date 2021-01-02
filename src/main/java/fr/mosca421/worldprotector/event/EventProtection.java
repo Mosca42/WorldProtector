@@ -19,6 +19,8 @@ import net.minecraftforge.event.world.ExplosionEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
+import static fr.mosca421.worldprotector.util.MessageUtils.*;
+
 @Mod.EventBusSubscriber(modid = WorldProtector.MODID)
 public class EventProtection {
 
@@ -26,31 +28,35 @@ public class EventProtection {
 
 	@SubscribeEvent
 	public static void onPlayerBreakBlock(BreakEvent event) {
-		PlayerEntity player = event.getPlayer();
-		List<Region> regions = RegionUtils.getHandlingRegionsFor(event.getPos(), RegionUtils.getDimension(player.world));
-		for (Region region : regions) {
-			if (region.containsFlag(RegionFlag.BREAK.toString()) && !region.permits(player)) {
-				player.sendMessage(new TranslationTextComponent("world.protection.break"), player.getUniqueID());
-				event.setCanceled(true);
-				return;
+		if (!event.getWorld().isRemote()) {
+			PlayerEntity player = event.getPlayer();
+			List<Region> regions = RegionUtils.getHandlingRegionsFor(event.getPos(), RegionUtils.getDimension(player.world));
+			for (Region region : regions) {
+				if (region.containsFlag(RegionFlag.BREAK.toString()) && !region.permits(player)) {
+					player.sendMessage(new TranslationTextComponent("world.protection.break"), player.getUniqueID());
+					event.setCanceled(true);
+					return;
+				}
 			}
 		}
 	}
 
 	@SubscribeEvent
 	public static void onPlayerPlaceBlock(EntityPlaceEvent event) {
-		List<Region> regions = RegionUtils.getHandlingRegionsFor(event.getPos(), RegionUtils.getDimension((World) event.getWorld()));
-		for (Region region : regions) {
-			if (region.containsFlag(RegionFlag.PLACE.toString())) {
-				if (event.getEntity() instanceof PlayerEntity) {
-					if (!region.permits(((PlayerEntity)event.getEntity()))) {
-						event.getEntity().sendMessage(new TranslationTextComponent("world.protection.place"), event.getEntity().getUniqueID());
+		if (!event.getWorld().isRemote()) {
+			List<Region> regions = RegionUtils.getHandlingRegionsFor(event.getPos(), RegionUtils.getDimension((World) event.getWorld()));
+			for (Region region : regions) {
+				if (region.containsFlag(RegionFlag.PLACE.toString())) {
+					if (event.getEntity() instanceof PlayerEntity) {
+						if (!region.permits(((PlayerEntity) event.getEntity()))) {
+							event.getEntity().sendMessage(new TranslationTextComponent("world.protection.place"), event.getEntity().getUniqueID());
+							event.setCanceled(true);
+							return;
+						}
+					} else {
 						event.setCanceled(true);
 						return;
 					}
-				} else {
-					event.setCanceled(true);
-					return;
 				}
 			}
 		}
@@ -95,13 +101,21 @@ public class EventProtection {
 	}
 
 	@SubscribeEvent
+	// Note: Does not prevent from fluids generate additional blocks (cobble generator). Use BlockEvent.FluidPlaceBlockEvent for this
 	public static void onBucketFill(FillBucketEvent event) {
 		PlayerEntity player = event.getPlayer();
-		if (event.getTarget() != null) {
+		if (!event.getWorld().isRemote && event.getTarget() != null) {
 			List<Region> regions = RegionUtils.getHandlingRegionsFor(new BlockPos(event.getTarget().getHitVec()), RegionUtils.getDimension(event.getWorld()));
 			for (Region region : regions) {
-				if (region.containsFlag(RegionFlag.PLACE.toString()) && !region.permits(player)) {
-					player.sendMessage(new TranslationTextComponent("world.protection.place"), player.getUniqueID());
+				int bucketItemMaxStackCount = event.getEmptyBucket().getMaxStackSize();
+				// MaxStackSize: 1 -> full bucket so only placeable; >1 -> empty bucket, only fillable
+				if (bucketItemMaxStackCount == 1 && region.containsFlag(RegionFlag.PLACE.toString()) && !region.permits(player)) {
+					sendMessage(player, new TranslationTextComponent("world.protection.placefluid"));
+					event.setCanceled(true);
+					return;
+				}
+				if (bucketItemMaxStackCount > 1 && region.containsFlag(RegionFlag.BREAK.toString()) && !region.permits(player)) {
+					sendMessage(player, new TranslationTextComponent("world.protection.scoopfluid"));
 					event.setCanceled(true);
 					return;
 				}

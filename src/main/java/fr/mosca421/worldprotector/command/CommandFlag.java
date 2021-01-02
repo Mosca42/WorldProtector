@@ -100,6 +100,9 @@ public class CommandFlag {
 						case BLOCK_EXIT:
 							sendMessage(player, "This flag is not yet implemented, sorry!");
 							return 0;
+						case ITEM_PICKUP:
+							sendMessage(player, "Flag is currently disabled. We are working on a fix, sorry!");
+							return 0;
 						default:
 							RegionFlagUtils.addFlag(region, player, flag);
 							break;

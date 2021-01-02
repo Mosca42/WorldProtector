@@ -7,9 +7,7 @@ import fr.mosca421.worldprotector.util.MessageUtils;
 import fr.mosca421.worldprotector.util.RegionUtils;
 import net.minecraft.entity.item.minecart.ContainerMinecartEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.tileentity.EnderChestTileEntity;
-import net.minecraft.tileentity.LecternTileEntity;
-import net.minecraft.tileentity.LockableTileEntity;
+import net.minecraft.tileentity.*;
 import net.minecraft.util.Hand;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -28,15 +26,18 @@ public class EventInteract {
 		if (!event.getWorld().isRemote) {
 			for (Region region : regions) {
 				PlayerEntity player = event.getPlayer();
+				TileEntity target = event.getWorld().getTileEntity(event.getPos());
 				boolean containsUse = region.containsFlag(RegionFlag.USE.toString());
 				boolean containsChestAccess = region.containsFlag(RegionFlag.CHEST_ACCESS.toString());
-				boolean isLockableTileEntity = (event.getWorld().getTileEntity(event.getPos()) instanceof LockableTileEntity);
-				boolean isEnderChest = (event.getWorld().getTileEntity(event.getPos()) instanceof EnderChestTileEntity);
-				boolean isLectern = (event.getWorld().getTileEntity(event.getPos()) instanceof LecternTileEntity);
+				boolean isLockableTileEntity = target instanceof LockableTileEntity;
+				boolean isEnderChest = target instanceof EnderChestTileEntity;
+				boolean isLectern = target instanceof LecternTileEntity;
+				boolean isTrappedChest = target instanceof TrappedChestTileEntity;
 				boolean isContainer = isLectern || isEnderChest || isLockableTileEntity;
 				boolean playerHasPermission = region.permits(player);
-
-				if (containsUse && !isLockableTileEntity && !playerHasPermission) {
+				// FIXME: Prevents block placement
+				// TODO: use flag not covering tripwire and pressure plate
+				if (containsUse && (!isLockableTileEntity || isTrappedChest) && !playerHasPermission) {
 					event.setCanceled(true);
 					MessageUtils.sendMessage(player, "world.interact.use");
 					return;

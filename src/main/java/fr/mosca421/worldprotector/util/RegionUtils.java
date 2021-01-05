@@ -7,7 +7,7 @@ import com.google.common.base.Joiner;
 
 import fr.mosca421.worldprotector.core.Region;
 import fr.mosca421.worldprotector.core.RegionSaver;
-import fr.mosca421.worldprotector.item.ItemRegionStick;
+import fr.mosca421.worldprotector.item.ItemRegionMarker;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -93,15 +93,15 @@ public class RegionUtils {
 	}
 
 	public static void createRegion(String regionName, ServerPlayerEntity player, ItemStack item) {
-		if (item.getItem() instanceof ItemRegionStick) {
+		if (item.getItem() instanceof ItemRegionMarker) {
 			if (item.getTag() != null) {
 				CompoundNBT regionValidTag = item.getTag();
-				if (item.hasTag() && regionValidTag.getBoolean("valide")) {
+				if (item.hasTag() && regionValidTag.getBoolean("valid")) {
 					AxisAlignedBB regions = getRegionFromNBT(regionValidTag);
 					Region region = new Region(regionName, regions, getDimension(player.world));
 					RegionSaver.addRegion(region);
 					RegionSaver.save();
-					regionValidTag.putBoolean("valide", false); // reset flag for consistent command behaviour
+					regionValidTag.putBoolean("valid", false); // reset flag for consistent command behaviour
 					sendMessage(player, new TranslationTextComponent("message.region.define", regionName));
 				} else {
 					sendMessage(player, "message.itemhand.choose");
@@ -152,16 +152,16 @@ public class RegionUtils {
 	}
 
 	public static void redefineRegion(String regionName, ServerPlayerEntity player, ItemStack item) {
-		if (item.getItem() instanceof ItemRegionStick) {
+		if (item.getItem() instanceof ItemRegionMarker) {
 			if (item.getTag() != null) {
 				CompoundNBT regionValidTag = item.getTag();
-				if (item.hasTag() && regionValidTag.getBoolean("valide")) {
+				if (item.hasTag() && regionValidTag.getBoolean("valid")) {
 					if (RegionSaver.containsRegion(regionName)) {
 						AxisAlignedBB regions = getRegionFromNBT(regionValidTag);
 						Region region = new Region(regionName, regions, getDimension(player.world));
 						RegionSaver.replaceRegion(region);
 						RegionSaver.save();
-						regionValidTag.putBoolean("valide", false); // reset flag for consistent command behaviour
+						regionValidTag.putBoolean("valid", false); // reset flag for consistent command behaviour
 						sendMessage(player, new TranslationTextComponent("message.region.redefine", regionName));}
 					else {
 						sendMessage(player, new TranslationTextComponent("message.region.unknown", regionName));

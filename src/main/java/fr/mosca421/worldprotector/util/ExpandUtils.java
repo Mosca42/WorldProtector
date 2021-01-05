@@ -1,6 +1,7 @@
 package fr.mosca421.worldprotector.util;
 
-import fr.mosca421.worldprotector.item.ItemRegionStick;
+import fr.mosca421.worldprotector.item.ItemRegionMarker;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -20,15 +21,15 @@ public class ExpandUtils {
 		sendMessage(player, new TranslationTextComponent(TextFormatting.BLUE + "==WorldProtector Help=="));
 	}
 
-	public static void expandVert(ServerPlayerEntity player, ItemStack item, int y1, int y2) {
+	public static void expandVert(PlayerEntity player, ItemStack item, int y1, int y2) {
 		if (y1 > y2) {
 			sendMessage(player, "help.expand.error");
 			return;
 		}
-		if (item.getItem() instanceof ItemRegionStick) {
+		if (item.getItem() instanceof ItemRegionMarker) {
 			if (item.getTag() != null) {
 				CompoundNBT itemTag = item.getTag();
-				if (item.hasTag() && itemTag.getBoolean("valide")) {
+				if (item.hasTag() && itemTag.getBoolean("valid")) {
 					itemTag.putDouble("y1", y1);
 					itemTag.putDouble("y2", y2);
 					sendMessage(player, new TranslationTextComponent("message.itemhand.expand", y1, y2));

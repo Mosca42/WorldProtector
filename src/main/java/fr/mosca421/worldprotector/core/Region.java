@@ -54,8 +54,8 @@ public class Region implements INBTSerializable<CompoundNBT> {
 		return flags;
 	}
 
-	public void addFlag(String flag) {
-		this.flags.add(flag);
+	public boolean addFlag(String flag) {
+		return this.flags.add(flag);
 	}
 
 	public boolean removeFlag(String flag) {

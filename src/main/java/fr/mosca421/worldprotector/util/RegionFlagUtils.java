@@ -26,20 +26,27 @@ public class RegionFlagUtils {
 		}
 	}
 
-	public static void addFlag(String regionName, ServerPlayerEntity player, String flag) {
+	public static void addFlag(String regionName, PlayerEntity player, String flag) {
 		if (RegionSaver.containsRegion(regionName)) {
 			Region region = RegionSaver.getRegion(regionName);
 			addFlag(region, player, flag);
+		} else {
+			sendMessage(player, new TranslationTextComponent("message.region.unknown", regionName));
 		}
 	}
 
-	public static void addFlag(Region region, ServerPlayerEntity player, String flag) {
-		region.addFlag(flag);
-		sendMessage(player, new TranslationTextComponent("message.flags.add", flag, region.getName()));
-		RegionSaver.save();
+	public static void addFlag(Region region, PlayerEntity player, String flag) {
+		if (region.addFlag(flag)) {
+			sendMessage(player, new TranslationTextComponent("message.flags.add", flag, region.getName()));
+			RegionSaver.save();
+		} else {
+			sendMessage(player, new StringTextComponent("Flag already defined in region."));
+		}
+
+
 	}
 
-	public static void removeFlag(String regionName, ServerPlayerEntity player, String flag) {
+	public static void removeFlag(String regionName, PlayerEntity player, String flag) {
 		if (RegionSaver.containsRegion(regionName)) {
 			Region region = RegionSaver.getRegion(regionName);
 			if (RegionFlag.contains(flag)) {
@@ -47,9 +54,11 @@ public class RegionFlagUtils {
 					sendMessage(player, new TranslationTextComponent("message.flags.remove", flag, regionName));
 					RegionSaver.save();
 				} else {
-					sendMessage(player, new TranslationTextComponent("message.flags.unknown", flag));
+					sendMessage(player, new StringTextComponent("Flag not defined in region."));
 				}
 			}
+		} else {
+			sendMessage(player, new TranslationTextComponent("message.region.unknown", regionName));
 		}
 	}
 	

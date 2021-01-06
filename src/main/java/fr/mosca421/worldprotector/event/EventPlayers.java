@@ -5,6 +5,7 @@ import fr.mosca421.worldprotector.core.Region;
 import fr.mosca421.worldprotector.core.RegionFlag;
 import fr.mosca421.worldprotector.util.RegionFlagUtils;
 import fr.mosca421.worldprotector.util.RegionUtils;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.event.ServerChatEvent;
@@ -25,14 +26,16 @@ public class EventPlayers {
 
 	@SubscribeEvent
 	public static void onAttackEntity(AttackEntityEvent event) {
-		if (event.getTarget() instanceof ServerPlayerEntity) {
-			ServerPlayerEntity player = (ServerPlayerEntity) event.getTarget();
-			List<Region> regions = RegionUtils.getHandlingRegionsFor(player.getPosition(), RegionUtils.getDimension(player.world));
-			for (Region region : regions) {
-				if (region.containsFlag(RegionFlag.DAMAGE_PLAYERS.toString()) && RegionFlagUtils.isOp(player)) {
-					event.getPlayer().sendMessage(new TranslationTextComponent("world.pvp.player"), event.getPlayer().getUniqueID());
-					event.setCanceled(true);
-					return;
+		if (!event.getPlayer().world.isRemote) {
+			if (event.getTarget() instanceof PlayerEntity) {
+				PlayerEntity player = (PlayerEntity) event.getTarget();
+				List<Region> regions = RegionUtils.getHandlingRegionsFor(player.getPosition(), RegionUtils.getDimension(player.world));
+				for (Region region : regions) {
+					if (region.containsFlag(RegionFlag.DAMAGE_PLAYERS.toString()) && !RegionFlagUtils.isOp(player)) {
+						event.getPlayer().sendMessage(new TranslationTextComponent("world.pvp.player"), event.getPlayer().getUniqueID());
+						event.setCanceled(true);
+						return;
+					}
 				}
 			}
 		}

@@ -3,7 +3,7 @@ package fr.mosca421.worldprotector.util;
 import com.google.common.base.Joiner;
 import fr.mosca421.worldprotector.core.Region;
 import fr.mosca421.worldprotector.core.RegionFlag;
-import fr.mosca421.worldprotector.core.RegionSaver;
+import fr.mosca421.worldprotector.data.RegionSaver;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.server.management.OpEntry;

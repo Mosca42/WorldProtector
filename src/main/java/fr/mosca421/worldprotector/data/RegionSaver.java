@@ -1,8 +1,9 @@
-package fr.mosca421.worldprotector.core;
+package fr.mosca421.worldprotector.data;
 
 import java.util.*;
 
 import fr.mosca421.worldprotector.WorldProtector;
+import fr.mosca421.worldprotector.core.Region;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.world.World;

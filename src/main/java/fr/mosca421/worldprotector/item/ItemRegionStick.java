@@ -2,7 +2,7 @@ package fr.mosca421.worldprotector.item;
 
 import fr.mosca421.worldprotector.WorldProtector;
 import fr.mosca421.worldprotector.core.Region;
-import fr.mosca421.worldprotector.core.RegionSaver;
+import fr.mosca421.worldprotector.data.RegionSaver;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;

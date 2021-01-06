@@ -10,7 +10,6 @@ import fr.mosca421.worldprotector.core.Region;
 import fr.mosca421.worldprotector.item.ItemRegionMarker;
 import fr.mosca421.worldprotector.data.RegionSaver;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -27,7 +26,7 @@ public class RegionUtils {
 
 	private RegionUtils(){}
 
-	public static void teleportRegion(String regionName, ServerPlayerEntity player) {
+	public static void teleportRegion(String regionName, PlayerEntity player) {
 		if (RegionSaver.containsRegion(regionName)) {
 			Region region = RegionSaver.getRegion(regionName);
 			sendMessage(player, new TranslationTextComponent("message.region.teleport", regionName));
@@ -37,7 +36,7 @@ public class RegionUtils {
 		}
 	}
 
-	public static void addPlayer(String regionName, ServerPlayerEntity sourcePlayer, ServerPlayerEntity playerToAdd) {
+	public static void addPlayer(String regionName, PlayerEntity sourcePlayer, PlayerEntity playerToAdd) {
 		if (RegionSaver.containsRegion(regionName)) {
 			Region region = RegionSaver.getRegion(regionName);
 			String playerToAddName = playerToAdd.getName().getString();
@@ -54,7 +53,7 @@ public class RegionUtils {
 		}
 	}
 
-	public static void removePlayer(String regionName, ServerPlayerEntity sourcePlayer, ServerPlayerEntity playerToRemove) {
+	public static void removePlayer(String regionName, PlayerEntity sourcePlayer, PlayerEntity playerToRemove) {
 		if (RegionSaver.containsRegion(regionName)) {
 			Region region = RegionSaver.getRegion(regionName);
 			String playerToRemoveName = playerToRemove.getName().getString();
@@ -71,7 +70,7 @@ public class RegionUtils {
 		}
 	}
 
-	public static void removeRegion(String regionName, ServerPlayerEntity player) {
+	public static void removeRegion(String regionName, PlayerEntity player) {
 		if (RegionSaver.removeRegion(regionName) != null) {
 			sendMessage(player, new TranslationTextComponent("message.region.remove", regionName));
 			RegionSaver.save();
@@ -80,7 +79,7 @@ public class RegionUtils {
 		}
 	}
 
-	public static void removeAllRegions(ServerPlayerEntity player) {
+	public static void removeAllRegions(PlayerEntity player) {
 		RegionSaver.clearRegions();
 		sendMessage(player, new TranslationTextComponent("message.region.removeall"));
 		RegionSaver.save();
@@ -93,7 +92,7 @@ public class RegionUtils {
 				.grow(1);
 	}
 
-	public static void createRegion(String regionName, ServerPlayerEntity player, ItemStack item) {
+	public static void createRegion(String regionName, PlayerEntity player, ItemStack item) {
 		if (item.getItem() instanceof ItemRegionMarker) {
 			if (item.getTag() != null) {
 				CompoundNBT regionValidTag = item.getTag();
@@ -113,7 +112,7 @@ public class RegionUtils {
 		}
 	}
 
-	public static void giveHelpMessage(ServerPlayerEntity player) {
+	public static void giveHelpMessage(PlayerEntity player) {
 		sendMessage(player, "");
 		sendMessage(player, new TranslationTextComponent(TextFormatting.BLUE + "==WorldProtector Help=="));
 		sendMessage(player,"help.region.1");
@@ -128,7 +127,7 @@ public class RegionUtils {
 		sendMessage(player, new TranslationTextComponent(TextFormatting.BLUE + "==WorldProtector Help=="));
 	}
 
-	public static void giveRegionInfo(ServerPlayerEntity player, String regionName) {
+	public static void giveRegionInfo(PlayerEntity player, String regionName) {
 		if (RegionSaver.containsRegion(regionName)) {
 			Region region = RegionSaver.getRegion(regionName);
 			String noFlagsText = new TranslationTextComponent("message.region.info.noflags").getString();
@@ -148,11 +147,11 @@ public class RegionUtils {
 
 	}
 
-	public static void giveRegionList(ServerPlayerEntity player) {
+	public static void giveRegionList(PlayerEntity player) {
 		player.sendMessage(new StringTextComponent(TextFormatting.DARK_RED + "Region : " + Joiner.on(", ").join(RegionSaver.getRegionNames())), player.getUniqueID());
 	}
 
-	public static void redefineRegion(String regionName, ServerPlayerEntity player, ItemStack item) {
+	public static void redefineRegion(String regionName, PlayerEntity player, ItemStack item) {
 		if (item.getItem() instanceof ItemRegionMarker) {
 			if (item.getTag() != null) {
 				CompoundNBT regionValidTag = item.getTag();
@@ -195,7 +194,7 @@ public class RegionUtils {
 		return handlers;
 	}
 
-	public static void setPriorityRegion(String regionName, int priority, ServerPlayerEntity player) {
+	public static void setPriorityRegion(String regionName, int priority, PlayerEntity player) {
 		if (RegionSaver.containsRegion(regionName)) {
 			Region region = RegionSaver.getRegion(regionName);
 			if (priority >= 1) {
@@ -209,7 +208,7 @@ public class RegionUtils {
 		}
 	}
 
-	public static void getPriority(String regionName, ServerPlayerEntity player) {
+	public static void getPriority(String regionName, PlayerEntity player) {
 		if (RegionSaver.containsRegion(regionName)) {
 			Region region = RegionSaver.getRegion(regionName);
 			String priority = "" + region.getPriority();

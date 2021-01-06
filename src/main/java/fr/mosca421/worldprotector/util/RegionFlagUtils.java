@@ -18,7 +18,7 @@ public class RegionFlagUtils {
 
 	private RegionFlagUtils(){}
 
-	public static void getRegionFlags(String regionName, ServerPlayerEntity player) {
+	public static void getRegionFlags(String regionName, PlayerEntity player) {
 		if (RegionSaver.containsRegion(regionName)) {
 			Region region = RegionSaver.getRegion(regionName);
 			String regionFlags = Joiner.on(", ").join(region.getFlags());
@@ -62,7 +62,7 @@ public class RegionFlagUtils {
 		}
 	}
 	
-	public static void giveHelpMessage(ServerPlayerEntity player) {
+	public static void giveHelpMessage(PlayerEntity player) {
 		sendMessage(player, "");
 		sendMessage(player, new TranslationTextComponent(TextFormatting.BLUE + "==WorldProtector Help=="));
 		sendMessage(player, "help.flags.1");
@@ -72,7 +72,7 @@ public class RegionFlagUtils {
 		sendMessage(player, new TranslationTextComponent(TextFormatting.BLUE + "==WorldProtector Help=="));
 	}
 	
-	public static void listAvailableFlags(ServerPlayerEntity player){
+	public static void listAvailableFlags(PlayerEntity player){
 		String flags = Joiner.on(", ").join(RegionFlag.getFlags());
 		sendMessage(player, new StringTextComponent(TextFormatting.DARK_RED + "Flags: " + flags));
 	}

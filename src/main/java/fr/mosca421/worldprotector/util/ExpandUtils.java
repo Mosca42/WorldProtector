@@ -2,7 +2,7 @@ package fr.mosca421.worldprotector.util;
 
 import fr.mosca421.worldprotector.item.ItemRegionMarker;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.text.TextFormatting;
@@ -14,7 +14,7 @@ public class ExpandUtils {
 
 	private ExpandUtils() {}
 	
-	public static void giveHelpMessage(ServerPlayerEntity player) {
+	public static void giveHelpMessage(PlayerEntity player) {
 		sendMessage(player, "");
 		sendMessage(player, new TranslationTextComponent(TextFormatting.BLUE + "==WorldProtector Help=="));
 		sendMessage(player,"help.expand.1");

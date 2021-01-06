@@ -1,3 +1,5 @@
+1.16.4-2.1.0.6
+* Fix pvp protection flag not working properly
 1.16.4-2.1.0.5
 * Disable 'item-pickup' flag -> Event is not cancelable and crashes game. We are working on a fix
 * Refund enderpearl if flag 'enderpearls' is active and pearl is thrown

@@ -3,7 +3,6 @@ package fr.mosca421.worldprotector.item;
 import fr.mosca421.worldprotector.WorldProtector;
 import fr.mosca421.worldprotector.core.Region;
 import fr.mosca421.worldprotector.core.RegionSaver;
-import fr.mosca421.worldprotector.util.MessageUtils;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
@@ -25,9 +24,8 @@ import net.minecraft.world.World;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static fr.mosca421.worldprotector.item.ItemFlagStick.inMainHand;
-import static fr.mosca421.worldprotector.item.ItemFlagStick.isSneaking;
 import static fr.mosca421.worldprotector.util.MessageUtils.sendMessage;
+import static fr.mosca421.worldprotector.util.PlayerUtils.*;
 
 public class ItemRegionStick extends Item {
 
@@ -42,6 +40,11 @@ public class ItemRegionStick extends Item {
 		this.regionIndex = 0;
 		this.regionCacheInitialized = false; // NBT?
 	}
+
+	public static final String MODE_KEY = "mode";
+	public static final String MODE_ADD = "add";
+	public static final String MODE_REMOVE = "remove";
+	public static final String REGION_KEY = "region";
 
 	private List<String> cachedRegions;
 	private int regionCount;
@@ -63,58 +66,10 @@ public class ItemRegionStick extends Item {
 	}
 
 	@Override
-	public ItemStack onItemUseFinish(ItemStack stack, World worldIn, LivingEntity entityLiving) {
-		if (!worldIn.isRemote) {
-			WorldProtector.LOGGER.debug("Finished");
-		}
-		return stack;
-	}
-
-	private void setDisplayName(ItemStack regionStick, String region){
-		String mode = regionStick.getTag().getString("mode").equals("add_player") ? "add" : "remove";
-		regionStick.setDisplayName(new StringTextComponent(TextFormatting.AQUA + "Region Stick [" + region + ", " + mode + "]"));
-	}
-
-	private boolean cycleRegion(ItemStack regionStick){
-		if (regionCount > 0) {
-			String selectedRegion = cachedRegions.get(regionIndex);
-			setDisplayName(regionStick, selectedRegion);
-			regionStick.getTag().putString("selected_region", selectedRegion);
-			regionIndex = (regionIndex + 1) % (regionCount);
-			return true;
-		} else {
-			return false;
-		}
-	}
-
-	@Override
-	public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn) {
-		if (!worldIn.isRemote) {
-			ItemStack regionStick = playerIn.getHeldItem(handIn);
-			if (!playerIn.hasPermissionLevel(4) || !playerIn.isCreative()) {
-				MessageUtils.sendMessage(playerIn, new StringTextComponent(TextFormatting.RED + "You have not the permission to use this item!"));
-				return ActionResult.resultFail(regionStick);
-			}
-			if (isSneaking() && inMainHand(handIn)) {
-				switchMode(regionStick);
-				return new ActionResult<>(ActionResultType.SUCCESS, playerIn.getHeldItem(handIn));
-			}
-			if (Screen.hasControlDown() && inMainHand(handIn)) {
-				if (cycleRegion(regionStick)) {
-					return new ActionResult<>(ActionResultType.SUCCESS, regionStick);
-				}
-				MessageUtils.sendMessage(playerIn, new StringTextComponent(TextFormatting.RED + "No regions defined yet!"));
-				new ActionResult<>(ActionResultType.FAIL, playerIn.getHeldItem(handIn));
-			}
-		}
-		return new ActionResult<>(ActionResultType.FAIL, playerIn.getHeldItem(handIn));
-	}
-
-	@Override
 	public boolean onLeftClickEntity(ItemStack stack, PlayerEntity player, Entity entity) {
 		if (!player.world.isRemote) {
-			if (!(entity instanceof PlayerEntity)) {
-				sendMessage(player, new StringTextComponent("This is not a player you dum dum."));
+			if ((entity instanceof PlayerEntity)) {
+				// TODO:
 			}
 		}
 		return true; // false will damage entity
@@ -126,61 +81,117 @@ public class ItemRegionStick extends Item {
 	}
 
 	@Override
-	public void onPlayerStoppedUsing(ItemStack stack, World worldIn, LivingEntity entityLiving, int timeLeft) {
-		if(!worldIn.isRemote) {
-			WorldProtector.LOGGER.debug(String.join(", ", cachedRegions));
-		}
-		super.onPlayerStoppedUsing(stack, worldIn, entityLiving, timeLeft);
-	}
-
-	@Override
 	public UseAction getUseAction(ItemStack stack) {
 		return UseAction.BOW;
 	}
 
-	public static String getModeString(ItemStack stack) {
-		return "item.regionstick.mode." + stack.getTag().getString("mode");
+	@Override
+	public ItemStack onItemUseFinish(ItemStack stack, World worldIn, LivingEntity entityLiving) {
+		if (!worldIn.isRemote) {
+			// No functionality yet
+		}
+		return stack;
 	}
 
-	private void switchMode(ItemStack itemStack) {
-		String mode = itemStack.getTag().getString("mode");
-		String region = itemStack.getTag().getString("selected_region");
-		switch(mode){
-			case "add_player":
-				itemStack.getTag().putString("mode", "remove_player");
-				itemStack.setDisplayName(new StringTextComponent(TextFormatting.AQUA + "Region Stick [" + region + ", remove]"));
-				break;
-			case "remove_player":
-				itemStack.getTag().putString("mode", "add_player");
-				itemStack.setDisplayName(new StringTextComponent(TextFormatting.AQUA + "Region Stick [" + region + ", add]"));
-				break;
-			default:
-				/* should not happen */
-				break;
+	@Override
+	public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn) {
+		if (!worldIn.isRemote) {
+			ItemStack regionStick = playerIn.getHeldItem(handIn);
+			if (!playerIn.hasPermissionLevel(4) || !playerIn.isCreative()) {
+				sendMessage(playerIn, new TranslationTextComponent("item.usage.permission")
+						.mergeStyle(TextFormatting.RED));
+				return ActionResult.resultFail(regionStick);
+			}
+			if (isSneaking() && isMainHand(handIn)) {
+				switchMode(regionStick);
+				return new ActionResult<>(ActionResultType.SUCCESS, playerIn.getHeldItem(handIn));
+			}
+			if (isHoldingCtrl() && isMainHand(handIn)) {
+				if (cycleRegion(regionStick)) {
+					return new ActionResult<>(ActionResultType.SUCCESS, regionStick);
+				}
+				sendMessage(playerIn, new StringTextComponent(TextFormatting.RED + "No regions defined yet!"));
+				new ActionResult<>(ActionResultType.FAIL, playerIn.getHeldItem(handIn));
+			}
 		}
+		return new ActionResult<>(ActionResultType.FAIL, playerIn.getHeldItem(handIn));
 	}
 
 	@Override
 	public void inventoryTick(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
 		super.inventoryTick(stack, worldIn, entityIn, itemSlot, isSelected);
+		// init region cache
 		if (!regionCacheInitialized) {
 			cachedRegions = RegionSaver.getRegions().stream().map(Region::getName).collect(Collectors.toList());
 			Collections.sort(cachedRegions);
 			regionCount = cachedRegions.size();
 			regionCacheInitialized = true;
 		}
-		if (regionCount != 0 && regionCount != RegionSaver.getRegions().size()) {
+		// check if region data was changed and update cache
+		if (regionCount != RegionSaver.getRegions().size()) {
 			cachedRegions = RegionSaver.getRegions().stream().map(Region::getName).collect(Collectors.toList());
 			regionCount = cachedRegions.size();
 		}
+		// init nbt tag
 		if (!worldIn.isRemote && !stack.hasTag()) {
 			CompoundNBT nbt = new CompoundNBT();
-			nbt.putString("mode", "add_player");
-			stack.setTag(nbt);
+			nbt.putString(MODE_KEY, MODE_ADD);
 			if (regionCount > 0) {
 				String region = cachedRegions.get(0);
-				nbt.putString("selected_region", region);
+				nbt.putString(REGION_KEY, region);
 			}
+			stack.setTag(nbt);
+		}
+	}
+
+	private void setDisplayName(ItemStack regionStick, String region, String mode){
+		regionStick.setDisplayName(new StringTextComponent(TextFormatting.AQUA + "Region Stick [" + region + ", " + mode + "]"));
+	}
+
+	private String getMode(ItemStack regionStick){
+		return regionStick.getTag().getString(MODE_KEY);
+	}
+
+	private void setMode(ItemStack regionStick, String mode){
+		regionStick.getTag().putString(MODE_KEY, mode);
+	}
+
+	private String getRegion(ItemStack regionStick) {
+		return regionStick.getTag().getString(REGION_KEY);
+	}
+
+	private void setRegion(ItemStack regionStick, String region){
+		regionStick.getTag().putString(REGION_KEY, region);
+	}
+
+	private boolean cycleRegion(ItemStack regionStick){
+		if (regionCount > 0) {
+			String selectedRegion = cachedRegions.get(regionIndex);
+			String mode = getMode(regionStick);
+			setDisplayName(regionStick, selectedRegion, mode);
+			setRegion(regionStick, selectedRegion);
+			regionIndex = (regionIndex + 1) % (regionCount);
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	private void switchMode(ItemStack regionStick) {
+		String mode = getMode(regionStick);
+		String region = getRegion(regionStick);
+		switch(mode){
+			case MODE_ADD:
+				setMode(regionStick, MODE_REMOVE);
+				setDisplayName(regionStick, region, MODE_REMOVE);
+				break;
+			case MODE_REMOVE:
+				setMode(regionStick, MODE_ADD);
+				setDisplayName(regionStick, region, MODE_ADD);
+				break;
+			default:
+				/* should not happen */
+				break;
 		}
 	}
 }

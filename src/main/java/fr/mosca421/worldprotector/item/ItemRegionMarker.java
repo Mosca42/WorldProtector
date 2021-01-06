@@ -5,6 +5,7 @@ import java.util.List;
 import fr.mosca421.worldprotector.WorldProtector;
 import fr.mosca421.worldprotector.util.ExpandUtils;
 import fr.mosca421.worldprotector.util.MessageUtils;
+import fr.mosca421.worldprotector.util.PlayerUtils;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
@@ -26,6 +27,7 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 
 import static fr.mosca421.worldprotector.util.MessageUtils.sendMessage;
+import static fr.mosca421.worldprotector.util.PlayerUtils.*;
 
 public class ItemRegionMarker extends Item {
 
@@ -42,9 +44,11 @@ public class ItemRegionMarker extends Item {
 		if(Screen.hasShiftDown()) {
 			tooltip.add(new TranslationTextComponent("help.regionmarker.detail.1"));
 			tooltip.add(new TranslationTextComponent("help.regionmarker.detail.2"));
-			tooltip.add(new TranslationTextComponent("help.regionmarker.optional").mergeStyle(TextFormatting.GRAY));
+			tooltip.add(new TranslationTextComponent("help.regionmarker.optional.1").mergeStyle(TextFormatting.GRAY));
+			tooltip.add(new TranslationTextComponent("help.regionmarker.optional.2").mergeStyle(TextFormatting.GRAY));
 			tooltip.add(new TranslationTextComponent("help.regionmarker.detail.3"));
 			tooltip.add(new TranslationTextComponent("help.regionmarker.detail.4").mergeStyle(TextFormatting.RED));
+
 		} else {
 			tooltip.add(new TranslationTextComponent("help.regionmarker.simple.1"));
 			tooltip.add(new TranslationTextComponent("help.regionmarker.simple.2"));
@@ -75,10 +79,11 @@ public class ItemRegionMarker extends Item {
 		if (!worldIn.isRemote) {
 			ItemStack markStick = playerIn.getHeldItem(handIn);
 			if (!playerIn.hasPermissionLevel(4) || !playerIn.isCreative()) {
-				sendMessage(playerIn, new StringTextComponent(TextFormatting.RED + "You have not the permission to use this item!"));
+				sendMessage(playerIn, new TranslationTextComponent("item.usage.permission")
+						.mergeStyle(TextFormatting.RED));
 				return ActionResult.resultFail(markStick);
 			}
-			if (handIn == Hand.MAIN_HAND && markStick.getTag().getBoolean("valid")) {
+			if (isMainHand(handIn) && isValidRegion(markStick)) {
 				this.onFinishUseAction = () -> ExpandUtils.expandVert(playerIn, markStick, 0, 255);
 				playerIn.setActiveHand(handIn);
 				return super.onItemRightClick(worldIn, playerIn, handIn);
@@ -125,7 +130,6 @@ public class ItemRegionMarker extends Item {
 		return ActionResultType.SUCCESS;
 	}
 
-
 	@Override
 	public boolean onLeftClickEntity(ItemStack stack, PlayerEntity player, Entity entity) {
 		return true;
@@ -140,5 +144,9 @@ public class ItemRegionMarker extends Item {
 			nbt.putBoolean("valid", false);
 			stack.setTag(nbt);
 		}
+	}
+
+	private boolean isValidRegion(ItemStack markStick){
+		return markStick.getTag().getBoolean("valid");
 	}
 }

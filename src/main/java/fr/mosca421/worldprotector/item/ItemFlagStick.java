@@ -2,6 +2,7 @@ package fr.mosca421.worldprotector.item;
 
 import fr.mosca421.worldprotector.WorldProtector;
 import fr.mosca421.worldprotector.core.RegionFlag;
+import fr.mosca421.worldprotector.util.PlayerUtils;
 import fr.mosca421.worldprotector.util.RegionFlagUtils;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.ITooltipFlag;
@@ -34,6 +35,11 @@ public class ItemFlagStick extends Item {
 		this.flagIndex = 0;
 		this.flagsLoaded = false;
 	}
+
+	public static final String MODE_KEY = "mode";
+	public static final String MODE_ADD = "add";
+	public static final String MODE_REMOVE = "remove";
+	public static final String FLAG_KEY = "flag";
 
 	private List<String> flags;
 	private int flagIndex;
@@ -74,62 +80,34 @@ public class ItemFlagStick extends Item {
 		return UseAction.BOW;
 	}
 
-    public static boolean isSneaking(){
-		return Screen.hasShiftDown();
-	}
-
-	public static boolean inMainHand(Hand handIn){
-		return handIn == Hand.MAIN_HAND;
-	}
-
-	private void switchMode(ItemStack itemStack){
-		String mode = itemStack.getTag().getString("mode");
-		String flag = itemStack.getTag().getString("selected_flag");
-		switch(mode){
-			case "add_flag":
-				itemStack.getTag().putString("mode", "remove_flag");
-				itemStack.setDisplayName(new StringTextComponent(TextFormatting.GREEN + "Flag Stick [" + flag + ", remove]"));
-				break;
-			case "remove_flag":
-				itemStack.getTag().putString("mode", "add_flag");
-				itemStack.setDisplayName(new StringTextComponent(TextFormatting.GREEN + "Flag Stick [" + flag + ", add]"));
-				break;
-			default:
-				/* should not happen */
-				break;
-		}
-	}
-
-	private void cycleFlags(ItemStack flagStick){
-		String selectedFlag = flags.get(flagIndex);
-		setDisplayName(flagStick, selectedFlag);
-		flagStick.getTag().putString("selected_flag", selectedFlag);
-		flagIndex = (flagIndex + 1) % (flags.size());
-	}
-
-
 	@Override
-    public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn) {
+	public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn) {
 		if (!worldIn.isRemote) {
 			ItemStack flagStick = playerIn.getHeldItem(handIn);
+			// check player permission
 			if (!playerIn.hasPermissionLevel(4) || !playerIn.isCreative()) {
-				sendMessage(playerIn, new StringTextComponent(TextFormatting.RED + "You have not the permission to use this item!"));
+				sendMessage(playerIn, new TranslationTextComponent("item.usage.permission")
+						.mergeStyle(TextFormatting.RED));
 				return ActionResult.resultFail(flagStick);
 			}
-			if (isSneaking() && inMainHand(handIn)) {
+			boolean isMainHand = PlayerUtils.isMainHand(handIn);
+			// SHIFT -> switch mode
+			if (PlayerUtils.isSneaking() && isMainHand) {
 				switchMode(flagStick);
 				return ActionResult.resultSuccess(flagStick);
 			}
-			if (Screen.hasControlDown() && inMainHand(handIn)) {
+			// CTRL -> cycle flags
+			if (PlayerUtils.isHoldingCtrl() && isMainHand) {
 				cycleFlags(flagStick);
 				return ActionResult.resultSuccess(flagStick);
 			}
-			String flagMode = flagStick.getTag().getString("mode");
+			// check for region stick and add/remove flags
+			String flagMode = getMode(flagStick);
 			String selectedRegion;
-			if (inMainHand(handIn)) {
+			if (isMainHand) {
 				ItemStack offHand = playerIn.getHeldItemOffhand();
 				if (offHand.getItem() instanceof ItemRegionStick) {
-					selectedRegion = offHand.getTag().getString("selected_region");
+					selectedRegion = offHand.getTag().getString(ItemRegionStick.REGION_KEY);
 				} else {
 					return ActionResult.resultFail(flagStick);
 				}
@@ -137,20 +115,16 @@ public class ItemFlagStick extends Item {
 				// Offhand
 				return ActionResult.resultFail(flagStick);
 			}
-			String selectedFag = playerIn.getHeldItem(handIn).getTag().getString("selected_flag");
+			String selectedFag = getSelectedFlag(playerIn.getHeldItem(handIn));
 			if (selectedFag.isEmpty() || selectedRegion.isEmpty()) {
 				return ActionResult.resultFail(flagStick);
 			}
 			switch (flagMode) {
-				case "add_flag":
-					this.onFinishUseAction = () -> {
-						RegionFlagUtils.addFlag(selectedRegion, playerIn, selectedFag);
-					};
+				case MODE_ADD:
+					this.onFinishUseAction = () -> RegionFlagUtils.addFlag(selectedRegion, playerIn, selectedFag);
 					break;
-				case "remove_flag":
-					this.onFinishUseAction = () -> {
-						RegionFlagUtils.removeFlag(selectedRegion, playerIn, selectedFag);
-					};
+				case "remove":
+					this.onFinishUseAction = () -> RegionFlagUtils.removeFlag(selectedRegion, playerIn, selectedFag);
 					break;
 				default:
 					break;
@@ -160,44 +134,72 @@ public class ItemFlagStick extends Item {
 		} else {
 			return ActionResult.resultFail(playerIn.getHeldItem(handIn));
 		}
-    }
-
-	private void setDisplayName(ItemStack flagStick, String flag){
-		String mode = flagStick.getTag().getString("mode").equals("add_flag") ? "add" : "remove";
-		flagStick.setDisplayName(new StringTextComponent(TextFormatting.GREEN + "Flag Stick [" + flag + ", " + mode + "]"));
 	}
 
 	@Override
 	public boolean onLeftClickEntity(ItemStack stack, PlayerEntity player, Entity entity) {
+		// No functionality yet
 		return true; // false will damage entity
 	}
 
 	@Override
-	public void onUsingTick(ItemStack stack, LivingEntity player, int count) {
-		if (!player.getEntityWorld().isRemote()) {
+	public void inventoryTick(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
+		super.inventoryTick(stack, worldIn, entityIn, itemSlot, isSelected);
+		if (!worldIn.isRemote) {
+			if (!flagsLoaded) {
+				flags = new ArrayList<>(RegionFlag.getFlags());
+				Collections.sort(flags);
+				flagsLoaded = true;
+			}
+			// ensure flag stick has a nbt tag and is initialized as needed
+			if (!stack.hasTag()){
+				CompoundNBT nbt = new CompoundNBT();
+				nbt.putString(MODE_KEY, MODE_ADD);
+				nbt.putString(FLAG_KEY, flags.get(0));
+				stack.setTag(nbt);
+			}
+		}
 
+	}
 
+	private void switchMode(ItemStack flagStick){
+		String mode = getMode(flagStick);
+		String flag = getSelectedFlag(flagStick);
+		switch(mode){
+			case MODE_ADD:
+				setMode(flagStick, MODE_REMOVE);
+				setDisplayName(flagStick, flag, MODE_REMOVE);
+				break;
+			case MODE_REMOVE:
+				setMode(flagStick, MODE_ADD);
+				setDisplayName(flagStick, flag, MODE_ADD);
+				break;
+			default:
+				/* should not happen */
+				break;
 		}
 	}
 
-    public static String getModeString(ItemStack stack) {
-        return "item.flagstick.mode." + stack.getTag().getString("mode");
-    }
+	private void cycleFlags(ItemStack flagStick){
+		String selectedFlag = flags.get(flagIndex);
+		setDisplayName(flagStick, selectedFlag, getMode(flagStick));
+		flagStick.getTag().putString(FLAG_KEY, selectedFlag);
+		flagIndex = (flagIndex + 1) % (flags.size());
+	}
 
-    @Override
-	public void inventoryTick(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
-		super.inventoryTick(stack, worldIn, entityIn, itemSlot, isSelected);
-		if (!flagsLoaded) {
-			flags = new ArrayList<>(RegionFlag.getFlags());
-			Collections.sort(flags);
-			flagsLoaded = true;
-		}
-		if (!worldIn.isRemote && !stack.hasTag()) {
-			CompoundNBT nbt = new CompoundNBT();
-            nbt.putString("mode", "add_flag");
-            nbt.putString("selected_flag", flags.get(0));
-			stack.setTag(nbt);
-		}
+	private String getMode(ItemStack flagStick) {
+		return flagStick.getTag().getString(MODE_KEY);
+	}
 
+	private void setMode(ItemStack flagStick, String mode){
+		flagStick.getTag().putString(MODE_KEY, mode);
+	}
+
+	private String getSelectedFlag(ItemStack flagStick){
+		return flagStick.getTag().getString(FLAG_KEY);
+	}
+
+	private void setDisplayName(ItemStack flagStick, String flag, String mode){
+		flagStick.setDisplayName(new StringTextComponent(TextFormatting.GREEN + "Flag Stick [" + flag + ", " + mode + "]"));
 	}
 }

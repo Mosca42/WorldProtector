@@ -2,7 +2,6 @@ package fr.mosca421.worldprotector.registry;
 
 import fr.mosca421.worldprotector.WorldProtector;
 import fr.mosca421.worldprotector.item.ItemEmblem;
-import fr.mosca421.worldprotector.item.ItemFlagStick;
 import fr.mosca421.worldprotector.item.ItemRegionStick;
 
 public class ItemRegister {

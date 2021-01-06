@@ -65,12 +65,12 @@ public class WorldProtector {
 							player.connection.sendPacket(new STitlePacket(STitlePacket.Type.SUBTITLE,
 									// Changed: .updateForEntity -> func_240645_a_
 									TextComponentUtils.func_240645_a_(player.getCommandSource(),
-											new StringTextComponent(region.getEnterMessageSmall().replace("&", "§")),
+											new StringTextComponent(region.getEnterMessageSmall().replace("&", "ï¿½")),
 											player, 0)));
 							player.connection.sendPacket(new STitlePacket(STitlePacket.Type.TITLE,
 									// Changed: .updateForEntity -> func_240645_a_
 									TextComponentUtils.func_240645_a_(player.getCommandSource(),
-											new StringTextComponent(region.getEnterMessage().replace("&", "§")), player,
+											new StringTextComponent(region.getEnterMessage().replace("&", "ï¿½")), player,
 											0),
 									10, 10, 10));
 							if (region.getFlags().contains("exit-message")) {
@@ -100,11 +100,11 @@ public class WorldProtector {
 						player.connection.sendPacket(new STitlePacket(STitlePacket.Type.SUBTITLE,
 								// Changed: .updateForEntity -> func_240645_a_
 								TextComponentUtils.func_240645_a_(player.getCommandSource(),
-										new StringTextComponent(exitMessageSmall.replace("&", "§")), player, 0)));
+										new StringTextComponent(exitMessageSmall.replace("&", "ï¿½")), player, 0)));
 						player.connection.sendPacket(new STitlePacket(STitlePacket.Type.TITLE,
 								// Changed: .updateForEntity -> func_240645_a_
 								TextComponentUtils.func_240645_a_(player.getCommandSource(),
-										new StringTextComponent(exitMessage.replace("&", "§")), player, 0),
+										new StringTextComponent(exitMessage.replace("&", "ï¿½")), player, 0),
 								10, 10, 10));
 					} catch (CommandSyntaxException e) {
 						e.printStackTrace();

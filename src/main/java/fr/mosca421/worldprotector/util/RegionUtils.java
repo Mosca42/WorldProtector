@@ -6,7 +6,7 @@ import java.util.List;
 import com.google.common.base.Joiner;
 
 import fr.mosca421.worldprotector.core.Region;
-import fr.mosca421.worldprotector.core.RegionSaver;
+import fr.mosca421.worldprotector.data.RegionSaver;
 import fr.mosca421.worldprotector.item.ItemRegionStick;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;

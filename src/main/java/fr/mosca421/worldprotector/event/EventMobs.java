@@ -3,7 +3,7 @@ package fr.mosca421.worldprotector.event;
 import fr.mosca421.worldprotector.WorldProtector;
 import fr.mosca421.worldprotector.core.Region;
 import fr.mosca421.worldprotector.core.RegionFlag;
-import fr.mosca421.worldprotector.core.RegionSaver;
+import fr.mosca421.worldprotector.data.RegionSaver;
 import fr.mosca421.worldprotector.util.RegionUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.FlyingEntity;

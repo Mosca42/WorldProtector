@@ -2,10 +2,13 @@ package fr.mosca421.worldprotector.util;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import com.google.common.base.Joiner;
 
 import fr.mosca421.worldprotector.core.Region;
+import fr.mosca421.worldprotector.core.RegionFlag;
 import fr.mosca421.worldprotector.data.RegionSaver;
 import fr.mosca421.worldprotector.item.ItemRegionStick;
 import net.minecraft.entity.player.PlayerEntity;
@@ -177,7 +180,7 @@ public class RegionUtils {
 
 	public static List<Region> getHandlingRegionsFor(BlockPos position, String dimension) {
 		int maxPriority = 1;
-		ArrayList<Region> handlers = new ArrayList<>();
+		List<Region> handlers = new ArrayList<>();
 		for (Region region : RegionSaver.getRegions()) {
 			boolean regionDimensionMatches = region.getDimension().equals(dimension);
 			boolean positionIsInRegion = region.getArea().contains(new Vector3d(position.getX(), position.getY(), position.getZ()));
@@ -192,6 +195,37 @@ public class RegionUtils {
 			}
 		}
 		return handlers;
+	}
+
+	public static List<Region> filterHandlingRegions(BlockPos position, World world, RegionFlag flagFilter){
+		return getHandlingRegionsFor(position, getDimension(world))
+				.stream()
+				.filter(region -> region.containsFlag(flagFilter.toString()))
+				.collect(Collectors.toList());
+	}
+
+	public static List<Region> filterHandlingRegions(BlockPos position, World world, RegionFlag flagFilter, PlayerEntity player){
+		return getHandlingRegionsFor(position, getDimension(world))
+				.stream()
+				.filter(region -> region.containsFlag(flagFilter.toString()))
+				.filter(region -> !region.permits(player))
+				.collect(Collectors.toList());
+	}
+
+	public static void cancelEventsInRegions(BlockPos eventPos, World worldIn, RegionFlag flagFilter, PlayerEntity player, Runnable cancelAction){
+		getHandlingRegionsFor(eventPos, getDimension(worldIn))
+				.stream()
+				.filter(region -> region.containsFlag(flagFilter.toString()))
+				.filter(region -> !region.permits(player))
+				.forEach(region -> cancelAction.run());
+	}
+
+	public static void cancelEventsInRegions(BlockPos eventPos, World worldIn, RegionFlag flagFilter, Predicate<Region> isPermittedInRegion, Runnable cancelAction){
+		getHandlingRegionsFor(eventPos, getDimension(worldIn))
+				.stream()
+				.filter(region -> region.containsFlag(flagFilter.toString()))
+				.filter(isPermittedInRegion)
+				.forEach(region -> cancelAction.run());
 	}
 
 	public static void setPriorityRegion(String regionName, int priority, ServerPlayerEntity player) {

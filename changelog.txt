@@ -1,3 +1,10 @@
+1.16.4-2.0.1.0
+* Improved enderpearl flag: 'enderpearl-from' flag now prevents throwing enderpearls from a region and
+the 'enderpearl-to' flag prevents from teleporting to a location
+* Add farmland trampling protection: there are now three different flags to prevent farmland trampling
+* Add protection for secondary tool uses like stripping wood, tilling farmland and creating path blocks
+* Improved explosion protection: 'ignite-explosives' flag now prevents tnt from exploding at all instead of just preventing entity or block damage
+* Add flags to protect entities from explosion damage
 1.16.4-2.0.0.7
 * Fix item pickup flag not working
 1.16.4-2.0.0.6

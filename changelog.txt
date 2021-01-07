@@ -1,18 +1,20 @@
-1.16.4-2.1.0.6
+1.16.4-2.0.0.7
+* Fix item pickup flag not working
+1.16.4-2.0.0.6
 * Fix pvp protection flag not working properly
-1.16.4-2.1.0.5
+1.16.4-2.0.0.5
 * Disable 'item-pickup' flag -> Event is not cancelable and crashes game. We are working on a fix
 * Refund enderpearl if flag 'enderpearls' is active and pearl is thrown
 * Fix break and place protection for fluids. Empty and full buckets are now correctly considered for placing and breaking (scooping).
 * Added corresponding translation keys for fluid placing and scooping protection
-1.16.4-2.1.0.4
+1.16.4-2.0.0.4
 * Fix damage-animals check to correctly include all animals
-1.16.4-2.1.0.3
+1.16.4-2.0.0.3
 * Fix region stick valid tag not set correctly after setting two positions and clicking again to set another position
-1.16.4-2.1.0.2
+1.16.4-2.0.0.2
 * Add check for unknown flag in command line
 * Add translation key for an unknown flag
-1.16.4-2.1.0.1
+1.16.4-2.0.0.1
 * Fix check for hurting animals and mobs
 * Add flag 'damage-villagers' to protect villagers to be hurt by players
 1.16.4-2.0.0.0

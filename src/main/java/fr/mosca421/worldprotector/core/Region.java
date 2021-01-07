@@ -47,10 +47,11 @@ public class Region implements INBTSerializable<CompoundNBT> {
 		return area;
 	}
 
+	// TODO: Try to get lowest possible safe Y position
 	public BlockPos getCenterPos(){
 		double middleX = (this.area.maxX + this.area.minX) / 2;
 		double middleZ = (this.area.maxZ + this.area.minZ) / 2;
-		return new BlockPos(middleX, middleZ, this.area.maxY);
+		return new BlockPos(middleX, this.area.maxY, middleZ);
 	}
 
 	public void setArea(AxisAlignedBB area) {

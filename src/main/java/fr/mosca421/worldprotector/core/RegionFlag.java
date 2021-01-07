@@ -33,7 +33,11 @@ public enum RegionFlag {
     //
     USE("use"),
     CHEST_ACCESS("chest-access"),
-    ENDERPEARL_TELEPORTATION("enderpearls"),
+    USE_ENDERPEARL_FROM("enderpearl-from"),
+    USE_ENDERPEARL_TO("enderpearl-to"),
+    // Possible other flags related to this:
+    // - enderman-teleport: prevents enderman from teleporting
+    // - shulker-teleport: prevents shulkers from teleporting
     //
     ITEM_DROP("item-drop"),
     ITEM_PICKUP("item-pickup"),

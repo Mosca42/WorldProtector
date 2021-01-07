@@ -1,3 +1,7 @@
+1.16.4-2.0.2.0
+* Add 'all' flag to simply add or remove all flags to/from a region
+* Add teleportation link for the '/wp region info <region>' command
+* Add teleportation link for the '/wp region list' command
 1.16.4-2.0.1.0
 * Improved enderpearl flag: 'enderpearl-from' flag now prevents throwing enderpearls from a region and
 the 'enderpearl-to' flag prevents from teleporting to a location

@@ -134,7 +134,6 @@ Under the following conditions:
 *  Define any shape as a region
 *  Region highlighting
 *  Compass support for regions
-*  Command line QoL - add all, remove all flags, tp link
 *  Command to set default expand vert values for region stick
 *  Configuration 
 *  CLI flags per dimension - Save flags per dimension in overworld nbt

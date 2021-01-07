@@ -60,6 +60,7 @@ Currently, there are thirty-two flags :
 - fall-damage: prevents players from taking damage by fall-damage
 - send-chat: prevents players from sending chat messages (doesn't block commands)
 
+You are also able to add or remove all flags by using the special flag 'all'.
 
 ## Create a region
 
@@ -127,3 +128,14 @@ Under the following conditions:
 * Attribution — You must give appropriate credit, provide a link to the license, and indicate if changes were made. You may do so in any reasonable manner, but not in any way that suggests the licensor endorses you or your use.
 * NonCommercial — You may not use the material for commercial purposes.
 * No additional restrictions — You may not apply legal terms or technological measures that legally restrict others from doing anything the license permits.
+
+# Planned features
+
+*  Define any shape as a region
+*  Region highlighting
+*  Compass support for regions
+*  Command line QoL - add all, remove all flags, tp link
+*  Command to set default expand vert values for region stick
+*  Configuration 
+*  CLI flags per dimension - Save flags per dimension in overworld nbt
+*  Region claiming - Maybe with additional subregions for players 

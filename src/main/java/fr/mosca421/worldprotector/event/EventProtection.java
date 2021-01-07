@@ -35,14 +35,13 @@ public class EventProtection {
 	public static void onPlayerBreakBlock(BreakEvent event) {
 		if (!event.getWorld().isRemote()) {
 			PlayerEntity player = event.getPlayer();
-			List<Region> regions = RegionUtils.getHandlingRegionsFor(event.getPos(), RegionUtils.getDimension(player.world));
-			for (Region region : regions) {
-				if (region.containsFlag(RegionFlag.BREAK.toString()) && !region.permits(player)) {
-					player.sendMessage(new TranslationTextComponent("world.protection.break"), player.getUniqueID());
-					event.setCanceled(true);
-					return;
-				}
-			}
+			RegionUtils.cancelEventsInRegions(
+					event.getPos(), (World) event.getWorld(), RegionFlag.BREAK,
+					region -> !region.permits(player),
+					() -> {
+						event.setCanceled(true);
+						sendMessage(player, new TranslationTextComponent("world.protection.break"));
+					});
 		}
 	}
 
@@ -50,19 +49,22 @@ public class EventProtection {
 	public static void onPlayerPlaceBlock(EntityPlaceEvent event) {
 		if (!event.getWorld().isRemote()) {
 			List<Region> regions = RegionUtils.getHandlingRegionsFor(event.getPos(), RegionUtils.getDimension((World) event.getWorld()));
-			for (Region region : regions) {
-				if (region.containsFlag(RegionFlag.PLACE.toString())) {
-					if (event.getEntity() instanceof PlayerEntity) {
-						if (!region.permits(((PlayerEntity) event.getEntity()))) {
-							event.getEntity().sendMessage(new TranslationTextComponent("world.protection.place"), event.getEntity().getUniqueID());
+			if (event.getEntity() instanceof PlayerEntity) {
+				PlayerEntity player = (PlayerEntity) event.getEntity();
+				regions.stream()
+						.filter(region -> region.containsFlag(RegionFlag.PLACE.toString()))
+						.filter(region -> !region.permits(player))
+						.forEach(region -> {
 							event.setCanceled(true);
-							return;
-						}
-					} else {
-						event.setCanceled(true);
-						return;
-					}
-				}
+							sendMessage(player, new TranslationTextComponent("world.protection.place"));
+						});
+			} else {
+				// TODO: check
+				// Player does not place the block -> Enderman place?
+				regions.stream()
+						.filter(region -> region.containsFlag(RegionFlag.ENTITY_PLACE.toString()))
+						.forEach(region -> event.setCanceled(true));
+				WorldProtector.LOGGER.debug("Block placed by enderman denied!");
 			}
 		}
 	}
@@ -89,40 +91,24 @@ public class EventProtection {
 
 
 	/**
-	 * Checks is any region contains the specified flag
-	 * @param regions regions to check for
-	 * @param flag flag to be checked for
-	 * @return true if any region contains the specified flag, false otherwise
+	 * Removes affected entities and/or blocks from the event list to protect them
+	 * @param event -
 	 */
-	private static boolean anyRegionContainsFlag(List<Region> regions, String flag){
-		return regions.stream()
-				.anyMatch(region -> region.containsFlag(flag));
-	}
-
-	/**
-	 * Filters affected blocks from explosion event which are in a region with the specified flag.
-	 * @param event detonation event
-	 * @param flag flag to be filtered for
-	 * @return list of block positions which are in a region with the specified flag
-	 */
-	private static List<BlockPos> filterExplosionAffectedBlocks(ExplosionEvent.Detonate event, String flag){
-		return event.getAffectedBlocks().stream()
-				.filter(blockPos -> anyRegionContainsFlag(
-						RegionUtils.getHandlingRegionsFor(blockPos, RegionUtils.getDimension(event.getWorld())),
-						flag))
-				.collect(Collectors.toList());
-	}
-
 	@SubscribeEvent
 	public static void onExplosion(ExplosionEvent.Detonate event) {
-		event.getAffectedBlocks().removeAll(filterExplosionAffectedBlocks(event, RegionFlag.EXPLOSION.toString()));
+		if (!event.getWorld().isRemote) {
+			event.getAffectedBlocks().removeAll(filterExplosionAffectedBlocks(event, RegionFlag.EXPLOSION_BLOCK.toString()));
+			event.getAffectedEntities().removeAll(filterAffectedEntities(event.getAffectedEntities(), RegionFlag.EXPLOSION_ENTITY.toString()));
 
-		boolean explosionTriggeredByCreeper = (event.getExplosion().getExplosivePlacedBy() instanceof CreeperEntity);
-		if (!explosionTriggeredByCreeper) {
-			event.getAffectedBlocks().removeAll(filterExplosionAffectedBlocks(event, RegionFlag.EXPLOSION_OTHER.toString()));
-		}
-		if (explosionTriggeredByCreeper) {
-			event.getAffectedBlocks().removeAll(filterExplosionAffectedBlocks(event, RegionFlag.EXPLOSION_CREEPER.toString()));
+			boolean explosionTriggeredByCreeper = (event.getExplosion().getExplosivePlacedBy() instanceof CreeperEntity);
+			if (!explosionTriggeredByCreeper) {
+				event.getAffectedBlocks().removeAll(filterExplosionAffectedBlocks(event, RegionFlag.EXPLOSION_OTHER_BLOCKS.toString()));
+				event.getAffectedEntities().removeAll(filterAffectedEntities(event.getAffectedEntities(), RegionFlag.EXPLOSION_OTHER_ENTITY.toString()));
+			}
+			if (explosionTriggeredByCreeper) {
+				event.getAffectedBlocks().removeAll(filterExplosionAffectedBlocks(event, RegionFlag.EXPLOSION_CREEPER_BLOCK.toString()));
+				event.getAffectedEntities().removeAll(filterAffectedEntities(event.getAffectedEntities(), RegionFlag.EXPLOSION_OTHER_ENTITY.toString()));
+			}
 		}
 	}
 
@@ -179,5 +165,37 @@ public class EventProtection {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Checks is any region contains the specified flag
+	 * @param regions regions to check for
+	 * @param flag flag to be checked for
+	 * @return true if any region contains the specified flag, false otherwise
+	 */
+	private static boolean anyRegionContainsFlag(List<Region> regions, String flag){
+		return regions.stream()
+				.anyMatch(region -> region.containsFlag(flag));
+	}
+
+	/**
+	 * Filters affected blocks from explosion event which are in a region with the specified flag.
+	 * @param event detonation event
+	 * @param flag flag to be filtered for
+	 * @return list of block positions which are in a region with the specified flag
+	 */
+	private static List<BlockPos> filterExplosionAffectedBlocks(ExplosionEvent.Detonate event, String flag){
+		return event.getAffectedBlocks().stream()
+				.filter(blockPos -> anyRegionContainsFlag(
+						RegionUtils.getHandlingRegionsFor(blockPos, RegionUtils.getDimension(event.getWorld())),
+						flag))
+				.collect(Collectors.toList());
+	}
+
+	private static List<Entity> filterAffectedEntities(List<Entity> entities, String flag){
+		return entities.stream()
+				.filter(entity -> anyRegionContainsFlag(
+						RegionUtils.getHandlingRegionsFor(entity.getPosition(), RegionUtils.getDimension(entity.world)), flag))
+				.collect(Collectors.toList());
 	}
 }

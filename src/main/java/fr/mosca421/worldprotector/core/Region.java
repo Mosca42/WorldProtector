@@ -202,4 +202,8 @@ public class Region implements INBTSerializable<CompoundNBT> {
     public boolean containsFlag(String flag) {
 		return flags.contains(flag);
     }
+
+	public boolean containsFlag(RegionFlag flag) {
+		return flags.contains(flag.toString());
+	}
 }

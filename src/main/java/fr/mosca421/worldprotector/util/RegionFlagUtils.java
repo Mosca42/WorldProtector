@@ -21,9 +21,14 @@ public class RegionFlagUtils {
 	public static void getRegionFlags(String regionName, PlayerEntity player) {
 		if (RegionSaver.containsRegion(regionName)) {
 			Region region = RegionSaver.getRegion(regionName);
-			String regionFlags = Joiner.on(", ").join(region.getFlags());
-			sendMessage(player, new TranslationTextComponent(TextFormatting.DARK_RED + regionName + " Flags: " + regionFlags));
+			getRegionFlags(region, player);
 		}
+	}
+
+	public static void getRegionFlags(Region region, PlayerEntity player) {
+		String regionFlags = Joiner.on(", ").join(region.getFlags());
+		sendMessage(player, new TranslationTextComponent(TextFormatting.DARK_RED + region.getName() + " Flags: " + regionFlags));
+
 	}
 
 	public static void addFlag(String regionName, PlayerEntity player, String flag) {
@@ -46,17 +51,19 @@ public class RegionFlagUtils {
 
 	}
 
+	public static void removeFlag(Region region, PlayerEntity player, String flag){
+			if (region.removeFlag(flag)) {
+				sendMessage(player, new TranslationTextComponent("message.flags.remove", flag, region.getName()));
+				RegionSaver.save();
+			} else {
+				sendMessage(player, new StringTextComponent("Flag not defined in region."));
+			}
+	}
+
 	public static void removeFlag(String regionName, PlayerEntity player, String flag) {
 		if (RegionSaver.containsRegion(regionName)) {
 			Region region = RegionSaver.getRegion(regionName);
-			if (RegionFlag.contains(flag)) {
-				if (region.removeFlag(flag)) {
-					sendMessage(player, new TranslationTextComponent("message.flags.remove", flag, regionName));
-					RegionSaver.save();
-				} else {
-					sendMessage(player, new StringTextComponent("Flag not defined in region."));
-				}
-			}
+			removeFlag(region, player, flag);
 		} else {
 			sendMessage(player, new TranslationTextComponent("message.region.unknown", regionName));
 		}

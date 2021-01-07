@@ -11,8 +11,11 @@ import fr.mosca421.worldprotector.util.RegionFlagUtils;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.command.ISuggestionProvider;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraftforge.event.world.NoteBlockEvent;
+import org.apache.logging.log4j.util.Strings;
 
 import static fr.mosca421.worldprotector.util.MessageUtils.*;
 
@@ -74,32 +77,28 @@ public class CommandFlag {
 
 	private static int add(CommandSource source, String regionName, String flag, String enterOrExitFlagMsg) {
 		try {
-			ServerPlayerEntity player = source.asPlayer();
+			PlayerEntity player = source.asPlayer();
 			if (RegionSaver.containsRegion(regionName)) {
 				Region region = RegionSaver.getRegion(regionName);
 				if (RegionFlag.contains(flag)) {
 					RegionFlag regionFlag = RegionFlag.fromString(flag)
 							.orElseThrow(() -> new IllegalArgumentException("Flag could not be converted to enum counterpart"));
 					switch (regionFlag) {
+						case ALL:
+							RegionFlag.getFlags().forEach(region::addFlag);
+							break;
 						case ENTER_MESSAGE_TITLE:
 							region.setEnterMessage(enterOrExitFlagMsg);
-							break;
 						case ENTER_MESSAGE_SUBTITLE:
 							region.setEnterMessageSmall(enterOrExitFlagMsg);
-							break;
 						case EXIT_MESSAGE_TITLE:
 							region.setExitMessage(enterOrExitFlagMsg);
-							break;
 						case EXIT_MESSAGE_SUBTITLE:
 							region.setExitMessageSmall(enterOrExitFlagMsg);
-							break;
+							sendMessage(player, "Flag is currently disabled. We are working on a fix, sorry!");
 						case BLOCK_ENTER:
 						case BLOCK_EXIT:
 							sendMessage(player, "This flag is not yet implemented, sorry!");
-							return 0;
-						case ITEM_PICKUP:
-							sendMessage(player, "Flag is currently disabled. We are working on a fix, sorry!");
-							return 0;
 						default:
 							RegionFlagUtils.addFlag(region, player, flag);
 							break;
@@ -116,18 +115,50 @@ public class CommandFlag {
 		return 0;
 	}
 
-	private static int remove(CommandSource source, String region, String flag) {
+	private static int remove(CommandSource source, String regionName, String flag) {
 		try {
-			RegionFlagUtils.removeFlag(region, source.asPlayer(), flag);
-		} catch (CommandSyntaxException e) {
+			PlayerEntity player = source.asPlayer();
+			if (RegionSaver.containsRegion(regionName)) {
+				Region region = RegionSaver.getRegion(regionName);
+				if (RegionFlag.contains(flag)) {
+					RegionFlag regionFlag = RegionFlag.fromString(flag)
+							.orElseThrow(() -> new IllegalArgumentException("Flag could not be converted to enum counterpart"));
+					switch (regionFlag) {
+						case ALL:
+							RegionFlag.getFlags().forEach(region::addFlag);
+							break;
+						case ENTER_MESSAGE_TITLE:
+						case ENTER_MESSAGE_SUBTITLE:
+						case EXIT_MESSAGE_TITLE:
+						case EXIT_MESSAGE_SUBTITLE:
+							sendMessage(player, "Flag is currently disabled. We are working on a fix, sorry!");
+						case BLOCK_ENTER:
+						case BLOCK_EXIT:
+							sendMessage(player, "This flag is not yet implemented, sorry!");
+						default:
+							RegionFlagUtils.addFlag(region, player, flag);
+							break;
+					}
+				} else {
+					sendMessage(player, new TranslationTextComponent("message.flags.unknown", flag));
+				}
+			} else {
+				sendMessage(player, new TranslationTextComponent("message.region.unknown", regionName));
+			}
+		} catch (CommandSyntaxException | IllegalArgumentException e) {
 			e.printStackTrace();
 		}
 		return 0;
 	}
 
-	private static int info(CommandSource source, String region) {
+	private static int info(CommandSource source, String regionName) {
 		try {
-			RegionFlagUtils.getRegionFlags(region, source.asPlayer());
+			if (RegionSaver.containsRegion(regionName)) {
+				Region region = RegionSaver.getRegion(regionName);
+				RegionFlagUtils.getRegionFlags(region, source.asPlayer());
+			} else {
+				sendMessage(source.asPlayer(), new TranslationTextComponent("message.region.unknown", regionName));
+			}
 		} catch (CommandSyntaxException e) {
 			e.printStackTrace();
 		}

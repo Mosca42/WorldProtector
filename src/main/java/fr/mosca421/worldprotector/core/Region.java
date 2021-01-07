@@ -11,6 +11,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.StringNBT;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.common.util.INBTSerializable;
 
@@ -44,6 +45,13 @@ public class Region implements INBTSerializable<CompoundNBT> {
 
 	public AxisAlignedBB getArea() {
 		return area;
+	}
+
+	// TODO: Try to get lowest possible safe Y position
+	public BlockPos getCenterPos(){
+		double middleX = (this.area.maxX + this.area.minX) / 2;
+		double middleZ = (this.area.maxZ + this.area.minZ) / 2;
+		return new BlockPos(middleX, this.area.maxY, middleZ);
 	}
 
 	public void setArea(AxisAlignedBB area) {
@@ -202,4 +210,8 @@ public class Region implements INBTSerializable<CompoundNBT> {
     public boolean containsFlag(String flag) {
 		return flags.contains(flag);
     }
+
+	public boolean containsFlag(RegionFlag flag) {
+		return flags.contains(flag.toString());
+	}
 }

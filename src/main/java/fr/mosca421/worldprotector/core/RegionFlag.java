@@ -6,31 +6,58 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public enum RegionFlag {
+    ALL("all"),
     BREAK("break"),
     PLACE("place"),
-    EXPLOSION("explosions"),
+    ENTITY_PLACE("entity-place"),
+    //
+    EXPLOSION_ENTITY("explosions-entities"),
+    EXPLOSION_BLOCK("explosions-blocks"),
+    EXPLOSION_CREEPER_BLOCK("creeper-explosion-entities"),
+    EXPLOSION_CREEPER_ENTITY("creeper-explosion-blocks"),
+    EXPLOSION_OTHER_BLOCKS("other-explosion-entities"),
+    EXPLOSION_OTHER_ENTITY("other-explosion-blocks"),
+    IGNITE_EXPLOSIVES("ignite-explosives"),
+    //
+    TOOL_SECONDARY_USE("tools-secondary"),
+    AXE_STRIP("strip-wood"),
+    HOE_TILL("till-farmland"),
+    SHOVEL_PATH("shovel-path"),
+    //
+    TRAMPLE_FARMLAND("trample-farmland"),
+    TRAMPLE_FARMLAND_PLAYER("trample-farmland-player"),
+    TRAMPLE_FARMLAND_OTHER("trample-farmland-other"),
+    //
     SPAWNING_MONSTERS("mob-spawning-monsters"),
     SPAWNING_ANIMAL("mob-spawning-animal"),
     SPAWNING_ALL("mob-spawning-all"),
+    //
     USE("use"),
     CHEST_ACCESS("chest-access"),
-    INVINCIBLE("invincible"),
-    ENDERPEARL_TELEPORTATION("enderpearls"),
+    USE_ENDERPEARL_FROM("enderpearl-from"),
+    USE_ENDERPEARL_TO("enderpearl-to"),
+    // Possible other flags related to this:
+    // - enderman-teleport: prevents enderman from teleporting
+    // - shulker-teleport: prevents shulkers from teleporting
+    //
     ITEM_DROP("item-drop"),
+    ITEM_PICKUP("item-pickup"),
     EXP_DROP("exp-drop"),
-    EXPLOSION_CREEPER("creeper-explosions"),
-    EXPLOSION_OTHER("other-explosions"),
+    //
     DAMAGE_PLAYERS("damage-players"),
     DAMAGE_ANIMALS("damage-animals"),
     DAMAGE_MONSTERS("damage-monsters"),
     DAMAGE_VILLAGERS("damage-villagers"),
-    SEND_MESSAGE("send-chat"),
+    //
+    INVINCIBLE("invincible"),
     FALL_DAMAGE("fall-damage"),
-    ITEM_PICKUP("pickup-item"),
+    //
+    SEND_MESSAGE("send-chat"),
     EXIT_MESSAGE_TITLE("exit-message"),
     ENTER_MESSAGE_TITLE("enter-message"),
     EXIT_MESSAGE_SUBTITLE("exit-message-small"),
     ENTER_MESSAGE_SUBTITLE("enter-message-small"),
+    //
     BLOCK_ENTER("block-enter"),
     BLOCK_EXIT("block-exit");
 

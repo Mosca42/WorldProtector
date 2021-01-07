@@ -13,6 +13,7 @@ import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
+import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.ItemPickupEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -42,13 +43,29 @@ public class EventPlayers {
 	}
 
 	@SubscribeEvent
-	// FIXME: Event not cancelable
+	// Use EntityItemPickupEvent instead
 	public static void onPickupItem(ItemPickupEvent event) {
 		List<Region> regions = RegionUtils.getHandlingRegionsFor(event.getPlayer().getPosition(), RegionUtils.getDimension(event.getPlayer().world));
 		for (Region region : regions) {
 			if (region.containsFlag(RegionFlag.ITEM_PICKUP.toString()) && !RegionUtils.isInRegion(region.getName(), event.getPlayer())) {
 				event.getPlayer().sendMessage(new TranslationTextComponent("world.pickup.player"), event.getPlayer().getUniqueID());
 				// event.setCanceled(true);
+			}
+		}
+	}
+
+
+	@SubscribeEvent
+	public static void onPickupItem(EntityItemPickupEvent event) {
+		if (!event.getPlayer().world.isRemote) {
+			List<Region> regions = RegionUtils.getHandlingRegionsFor(event.getPlayer().getPosition(), RegionUtils.getDimension(event.getPlayer().world));
+			for (Region region : regions) {
+				if (region.containsFlag(RegionFlag.ITEM_PICKUP.toString()) && !RegionUtils.isInRegion(region.getName(), event.getPlayer())) {
+					// event.getPlayer().sendMessage(new TranslationTextComponent("world.pickup.player"), event.getPlayer().getUniqueID());
+					// sendStatusMessage used here to not spam the user with messages while standing in the entityitem
+					event.getPlayer().sendStatusMessage(new TranslationTextComponent("world.pickup.player"), true);
+					event.setCanceled(true);
+				}
 			}
 		}
 	}

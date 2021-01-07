@@ -11,6 +11,7 @@ import fr.mosca421.worldprotector.util.RegionFlagUtils;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.command.ISuggestionProvider;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.text.TranslationTextComponent;
 
@@ -83,22 +84,17 @@ public class CommandFlag {
 					switch (regionFlag) {
 						case ENTER_MESSAGE_TITLE:
 							region.setEnterMessage(enterOrExitFlagMsg);
-							break;
 						case ENTER_MESSAGE_SUBTITLE:
 							region.setEnterMessageSmall(enterOrExitFlagMsg);
-							break;
 						case EXIT_MESSAGE_TITLE:
 							region.setExitMessage(enterOrExitFlagMsg);
-							break;
 						case EXIT_MESSAGE_SUBTITLE:
 							region.setExitMessageSmall(enterOrExitFlagMsg);
-							break;
+							sendMessage(player, "Flag is currently disabled. We are working on a fix, sorry!");
+							return 0;
 						case BLOCK_ENTER:
 						case BLOCK_EXIT:
 							sendMessage(player, "This flag is not yet implemented, sorry!");
-							return 0;
-						case ITEM_PICKUP:
-							sendMessage(player, "Flag is currently disabled. We are working on a fix, sorry!");
 							return 0;
 						default:
 							RegionFlagUtils.addFlag(region, player, flag);

@@ -18,9 +18,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.util.text.*;
 import net.minecraft.world.World;
 
 import static fr.mosca421.worldprotector.util.MessageUtils.*;
@@ -138,6 +136,8 @@ public class RegionUtils {
 			String regionFlags = region.getFlags().isEmpty() ? noFlagsText : String.join(", ", region.getFlags());
 			String regionPlayers = region.getPlayers().isEmpty() ? noPlayersText : String.join(",\n", region.getPlayers());
 			sendMessage(player, new StringTextComponent(TextFormatting.BLUE + "==Region '" + regionName + "' information=="));
+			BlockPos tpPos = region.getCenterPos();
+			sendTeleportLink(player, tpPos, new TranslationTextComponent("message.region.info.tpcenter"));
 			sendMessage(player, new TranslationTextComponent("message.region.info.area", region.getArea().toString().substring(4)));
 			sendMessage(player, new TranslationTextComponent("message.region.info.priority", region.getPriority()));
 			sendMessage(player, new TranslationTextComponent("message.region.info.flags", regionFlags));
@@ -151,7 +151,10 @@ public class RegionUtils {
 	}
 
 	public static void giveRegionList(ServerPlayerEntity player) {
-		player.sendMessage(new StringTextComponent(TextFormatting.DARK_RED + "Region : " + Joiner.on(", ").join(RegionSaver.getRegionNames())), player.getUniqueID());
+		RegionSaver.getRegions().forEach(region -> {
+			BlockPos tpPos = region.getCenterPos();
+			sendTeleportLink(player, tpPos, new TranslationTextComponent("message.region.list.entry", region.getName()));
+		});
 	}
 
 	public static void redefineRegion(String regionName, ServerPlayerEntity player, ItemStack item) {

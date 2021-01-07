@@ -33,6 +33,8 @@
   "help.regionstick.detail.2": "1. Left-click on the 1st block to start marking a region.\n2. Left-click on the 2nd block to finish marking a region.",
   "help.regionstick.detail.3": "4. Finally define the region with the \"/region define <name>\" command.",
   "help.regionstick.detail.4": "You need to keep holding the Region Stick in your hand while defining a region!",
+  "message.region.list.entry": "Region '%s': ",
+  "message.region.info.tpcenter": "Region center: ",
   "message.region.info.noplayers": "No players added yet",
   "message.region.info.noflags": "No flags added yet",
   "message.region.info.flags": "Region flags: %s",

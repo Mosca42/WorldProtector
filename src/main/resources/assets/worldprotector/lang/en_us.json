@@ -1,5 +1,7 @@
 {
   "item.worldprotector.region_stick": "Region Stick",
+  "item.worldprotector.flag_stick": "Flag Stick",
+  "item.worldprotector.region_marker": "Region Marker",
   "item.worldprotector.emblem": "WorldProtector Emblem",
   "itemGroup.worldprotector": "World Protector",
   "world.protection.place": "You are not allowed to place blocks here!",

@@ -3,14 +3,33 @@
 WorldProtector is a mod allows you to protect your constructions on your servers, 
 it's based on the same principle as the plugin WorldGuard but with several differences at command level.
 
-
 # Features
 
-The Region Marker allows you to mark an area (cuboid) for which you can then specify a name.
-For this region it is possible to apply flags that prevent certain actions/events to protect it.
-It is also possible to add players to the regions, which are then not affected by the flags.
-This can be done with commands but also with the Region Stick and Flag Stick items.
+## Sticks!
 
+There are three different sticks, which can help you define regions, add and remove protection flags to them, as well as players.
+Except for the marking, which has to be done with the Region Marker, it is possible to use this mod only with the command line.
+
+The most common task can also be done without commands (almost, you still need to use a command to define a region)!
+
+### Region Marker
+
+The Region Marker allows you to mark an area (cuboid) for which you can then specify a name.
+For a region it is possible to apply flags that prevent certain actions/events from happening to protect it.
+This can be done with the Flag Stick in conjunction with the Region Stick.
+
+### Region Stick
+
+The Region Stick is used to select the region you want to edit.
+When selected a region it is possible to add players to the region by first choosing the desired mode (add or remove player), and then hitting the player (don't worry it does not hurt).
+Added players are then not affected by the flags. 
+
+### Flag Stick
+
+The Flag Stick is used to select the flag you want to add/remove to/from a region. 
+Choose the corresponding mode (add or remove flag) and hold the Region Stick with the selected region in your offhand. Then hold-right click.
+
+Analogous you can also put a bunch of name tags, named with the corresponding flag names in an anvil, into a container and shift-right click on the container to add or remove all flags in the container at once!
 
 ## Commands
 

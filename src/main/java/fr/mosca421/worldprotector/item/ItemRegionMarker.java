@@ -83,7 +83,9 @@ public class ItemRegionMarker extends Item {
 				return ActionResult.resultFail(markStick);
 			}
 			if (isMainHand(handIn) && isValidRegion(markStick)) {
-				this.onFinishUseAction = () -> ExpandUtils.expandVert(playerIn, markStick, 0, 255);
+				int yLow = (int) markStick.getTag().getDouble("yLow_default");
+				int yHigh = (int) markStick.getTag().getDouble("yHigh_default");
+				this.onFinishUseAction = () -> ExpandUtils.expandVert(playerIn, markStick, yLow, yHigh);
 				playerIn.setActiveHand(handIn);
 				return super.onItemRightClick(worldIn, playerIn, handIn);
 			}

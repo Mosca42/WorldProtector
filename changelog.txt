@@ -1,3 +1,16 @@
+1.16.4-2.0.3.0
+* Region Stick renamed to Region Marker!
+* The Region Marker (prev. Region Stick) is still used to mark areas for later region definition! But to make this task easier,
+you can now hold right-click (like a bow) to expand to region after you defined the two positions. This uses the default y levels.
+The Region Marker shows these y levels in its name. These values can be set with a new command.
+* Add command '/wp expand y-default <Y1> <Y2>' to set default y levels for region marker's secondary use while holding the Region Marker in your main hand.
+The order of Y1 and Y2 is not important: /wp expand y-default 42 69 is the same as /wp expand y-default 69 42.
+* Add Region Stick: The region stick is used for cycling through already defined regions. The selected region is always displayed in the item's name.
+The Region Stick also features two different modes: Add and Remove which can be used to add/remove a player to/from a region by hitting the player with the stick.
+The mode of the stick is also displayed in the item's name.
+* Add Flag Stick: The Flag Stick is used to cycle through the list of possible flags for regions.
+With a flag selected you can select a mode (add or remove) to add/remove a flag to/from a region.
+This is done by holding the Region Stick with the selected region in your offhand and then hold the right mouse button (like a bow) with the Flag Stick in your main hand.
 1.16.4-2.0.2.0
 * Add 'all' flag to simply add or remove all flags to/from a region
 * Add teleportation link for the '/wp region info <region>' command

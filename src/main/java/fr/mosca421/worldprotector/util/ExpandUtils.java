@@ -18,25 +18,35 @@ public class ExpandUtils {
 		sendMessage(player, "");
 		sendMessage(player, new TranslationTextComponent(TextFormatting.BLUE + "==WorldProtector Help=="));
 		sendMessage(player,"help.expand.1");
+		sendMessage(player,"help.expand.2");
 		sendMessage(player, new TranslationTextComponent(TextFormatting.BLUE + "==WorldProtector Help=="));
 	}
 
 	public static void expandVert(PlayerEntity player, ItemStack item, int y1, int y2) {
-		if (y1 > y2) {
-			sendMessage(player, "help.expand.error");
-			return;
-		}
-		if (item.getItem() instanceof ItemRegionMarker) {
-			if (item.getTag() != null) {
-				CompoundNBT itemTag = item.getTag();
-				if (item.hasTag() && itemTag.getBoolean("valid")) {
-					itemTag.putDouble("y1", y1);
-					itemTag.putDouble("y2", y2);
-					sendMessage(player, new TranslationTextComponent("message.itemhand.expand", y1, y2));
-				} else {
-					sendMessage(player, "message.itemhand.choose");
-				}
+		if (isValidRegionMarker(item)) {
+			CompoundNBT itemTag = item.getTag();
+			if (itemTag.getBoolean("valid")) {
+				itemTag.putDouble("y1", y1);
+				itemTag.putDouble("y2", y2);
+				sendMessage(player, new TranslationTextComponent("message.itemhand.expand", y1, y2));
+			} else {
+				sendMessage(player, "message.itemhand.choose");
 			}
+		} else {
+			sendMessage(player, "message.itemhand.take");
+		}
+	}
+
+	private static boolean isValidRegionMarker(ItemStack itemStack) {
+		return itemStack.getItem() instanceof ItemRegionMarker && itemStack.hasTag();
+	}
+
+	public static void setDefaultYLevels(PlayerEntity player, int yLow, int yHigh) {
+		ItemStack itemInMainHand = player.getHeldItemMainhand();
+		if (isValidRegionMarker(itemInMainHand)) {
+			ItemRegionMarker regionMarker = (ItemRegionMarker) itemInMainHand.getItem();
+			regionMarker.setDefaultYValues(itemInMainHand, yLow, yHigh);
+			sendMessage(player, new TranslationTextComponent("message.regionmarker.setY", yLow, yHigh));
 		} else {
 			sendMessage(player, "message.itemhand.take");
 		}

@@ -45,7 +45,6 @@ public class ItemRegionMarker extends Item {
 			tooltip.add(new TranslationTextComponent("help.regionmarker.detail.1"));
 			tooltip.add(new TranslationTextComponent("help.regionmarker.detail.2"));
 			tooltip.add(new TranslationTextComponent("help.regionmarker.optional.1").mergeStyle(TextFormatting.GRAY));
-			tooltip.add(new TranslationTextComponent("help.regionmarker.optional.2").mergeStyle(TextFormatting.GRAY));
 			tooltip.add(new TranslationTextComponent("help.regionmarker.detail.3"));
 			tooltip.add(new TranslationTextComponent("help.regionmarker.detail.4").mergeStyle(TextFormatting.RED));
 
@@ -148,5 +147,11 @@ public class ItemRegionMarker extends Item {
 
 	private boolean isValidRegion(ItemStack markStick){
 		return markStick.getTag().getBoolean("valid");
+	}
+
+	public void setDefaultYValues(ItemStack regionMarker, int yLow, int yHigh) {
+		CompoundNBT itemTag = regionMarker.getTag();
+		itemTag.putDouble("yLow_default", yLow);
+		itemTag.putDouble("yHigh_default", yHigh);
 	}
 }

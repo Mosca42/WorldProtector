@@ -1,3 +1,5 @@
+1.16.4-2.0.5.0
+* Add a feature to define a region without commands (still need op or creative): Place a Region Marker into a anvil an rename it to define a marked region.
 1.16.4-2.0.4.0
 * Add a feature for the flag stick to add/remove multiple flags at once. Put name tags, named with the corresponding flags, into a container and then shift-right click the container with the Flag Stick!
 (Command line support for adding/removing multiple flags will come soon!)

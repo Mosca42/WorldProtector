@@ -10,7 +10,7 @@ it's based on the same principle as the plugin WorldGuard but with several diffe
 There are three different sticks, which can help you define regions, add and remove protection flags to them, as well as players.
 Except for the marking, which has to be done with the Region Marker, it is possible to use this mod only with the command line.
 
-The most common task can also be done without commands (almost, you still need to use a command to define a region)!
+The most common task can also be done without commands!
 
 ### Region Marker
 
@@ -52,7 +52,7 @@ To create your region, follow these instructions :
 
 2. [Optional] Expand the Y level (height) of your marked region with the ```/wp expand vert [<Y1>] [<Y2>]``` command (default is 0 to 255) or by using the secondary function of the Region Marker (see Region Marker tooltip).
 
-3. Define your region: ```/wp region define <your region's name>```
+3. Define your region: ```/wp region define <your region's name>``` or by renaming the Region Marker in an anvil.
 
 4. Add flags to your region by using the appropriate command ```/wp flag add <your region's name> <flag name>``` or by using the Flag Stick in conjunction with the Region Stick (see Flag Stick and Region Stick tooltips).
 

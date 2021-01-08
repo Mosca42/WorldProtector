@@ -35,8 +35,8 @@ public class CommandExpand {
 										.executes(ctx -> vert(ctx.getSource(), ctx.getArgument("Y1", Integer.class), ctx.getArgument("Y2", Integer.class))))))
 				.then(Commands.literal(Command.DEFAULT_Y.toString())
 						.then(Commands.argument("Y1", IntegerArgumentType.integer(0, 255))
-								.then(Commands.argument("Y1", IntegerArgumentType.integer(0, 255))
-										.executes(ctx -> setDefaultYExpansion(ctx.getSource(), ctx.getArgument("Y2", Integer.class), ctx.getArgument("Y2", Integer.class))))))
+								.then(Commands.argument("Y2", IntegerArgumentType.integer(0, 255))
+										.executes(ctx -> setDefaultYExpansion(ctx.getSource(), ctx.getArgument("Y1", Integer.class), ctx.getArgument("Y2", Integer.class))))))
 				.then(Commands.literal(Command.VERT.toString())
 						.executes(ctx -> vert(ctx.getSource(), 0, 255)));
 	}

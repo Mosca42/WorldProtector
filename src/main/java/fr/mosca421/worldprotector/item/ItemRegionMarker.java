@@ -112,7 +112,11 @@ public class ItemRegionMarker extends Item {
 						playerItemTag.putInt("z1", pos.getZ());
 						playerItemTag.putInt("id", 1);
 						playerItemTag.putBoolean("valid", false);
-						MessageUtils.sendMessage(player, new StringTextComponent(TextFormatting.DARK_RED + "Position 1 : x=" + player.getHeldItem(hand).getTag().getInt("x1") + ", y=" + player.getHeldItem(hand).getTag().getInt("y1") + ", z=" + player.getHeldItem(hand).getTag().getInt("z1")));
+						MessageUtils.sendMessage(player, new StringTextComponent("Position 1 : x=" +
+								player.getHeldItem(hand).getTag().getInt("x1") + ", y=" +
+								player.getHeldItem(hand).getTag().getInt("y1") + ", z=" +
+								player.getHeldItem(hand).getTag().getInt("z1"))
+								.mergeStyle(TextFormatting.DARK_RED));
 						break;
 					case 1:
 						playerItemTag.putInt("x2", pos.getX());
@@ -120,7 +124,11 @@ public class ItemRegionMarker extends Item {
 						playerItemTag.putInt("z2", pos.getZ());
 						playerItemTag.putInt("id", 0);
 						playerItemTag.putBoolean("valid", true);
-						MessageUtils.sendMessage(player, new StringTextComponent(TextFormatting.DARK_RED + "Position 2 : x=" + player.getHeldItem(hand).getTag().getInt("x2") + ", y=" + player.getHeldItem(hand).getTag().getInt("y2") + ", z=" + player.getHeldItem(hand).getTag().getInt("z2")));
+						MessageUtils.sendMessage(player, new StringTextComponent("Position 2 : x=" +
+								player.getHeldItem(hand).getTag().getInt("x2") + ", y=" +
+								player.getHeldItem(hand).getTag().getInt("y2") + ", z=" +
+								player.getHeldItem(hand).getTag().getInt("z2"))
+								.mergeStyle(TextFormatting.DARK_RED));
 						break;
 					default:
 						// Never reached
@@ -143,6 +151,8 @@ public class ItemRegionMarker extends Item {
 			CompoundNBT nbt = new CompoundNBT();
 			nbt.putInt("id", 0);
 			nbt.putBoolean("valid", false);
+			nbt.putDouble("yLow_default", 0);
+			nbt.putDouble("yHigh_default", 255);
 			stack.setTag(nbt);
 		}
 	}

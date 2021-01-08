@@ -115,9 +115,9 @@ public class EventPlayers {
 			if (leftIn.getItem() instanceof ItemRegionMarker && rightIn.getItem() instanceof AirItem) {
 				String regionName = event.getItemResult().getDisplayName().getString();
 				if (!player.hasPermissionLevel(4) || !player.isCreative()) {
-					sendMessage(player, " z");
+					sendMessage(player,   "message.region.define.denied");
 				} else {
-					RegionUtils.createRegion(regionName, player, leftIn);
+					RegionUtils.createRegion(regionName, player, event.getItemResult());
 				}
 			}
 		}

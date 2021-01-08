@@ -6,6 +6,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import com.google.common.base.Joiner;
+import fr.mosca421.worldprotector.WorldProtector;
 import fr.mosca421.worldprotector.core.Region;
 import fr.mosca421.worldprotector.item.ItemRegionMarker;
 import fr.mosca421.worldprotector.core.RegionFlag;
@@ -93,13 +94,12 @@ public class RegionUtils {
 	public static void createRegion(String regionName, PlayerEntity player, ItemStack item) {
 		if (item.getItem() instanceof ItemRegionMarker) {
 			if (item.getTag() != null) {
-				CompoundNBT regionValidTag = item.getTag();
-				if (item.hasTag() && regionValidTag.getBoolean("valid")) {
-					AxisAlignedBB regions = getRegionFromNBT(regionValidTag);
+				if (item.getTag().getBoolean("valid")) {
+					AxisAlignedBB regions = getRegionFromNBT(item.getTag());
 					Region region = new Region(regionName, regions, getDimension(player.world));
 					RegionSaver.addRegion(region);
+					item.getTag().putBoolean("valid", false); // reset flag for consistent command behaviour
 					RegionSaver.save();
-					regionValidTag.putBoolean("valid", false); // reset flag for consistent command behaviour
 					sendMessage(player, new TranslationTextComponent("message.region.define", regionName));
 				} else {
 					sendMessage(player, "message.itemhand.choose");
@@ -157,14 +157,13 @@ public class RegionUtils {
 	public static void redefineRegion(String regionName, PlayerEntity player, ItemStack item) {
 		if (item.getItem() instanceof ItemRegionMarker) {
 			if (item.getTag() != null) {
-				CompoundNBT regionValidTag = item.getTag();
-				if (item.hasTag() && regionValidTag.getBoolean("valid")) {
+				if (item.getTag().getBoolean("valid")) {
 					if (RegionSaver.containsRegion(regionName)) {
-						AxisAlignedBB regions = getRegionFromNBT(regionValidTag);
+						AxisAlignedBB regions = getRegionFromNBT(item.getTag());
 						Region region = new Region(regionName, regions, getDimension(player.world));
 						RegionSaver.replaceRegion(region);
+						item.getTag().putBoolean("valid", false); // reset flag for consistent command behaviour
 						RegionSaver.save();
-						regionValidTag.putBoolean("valid", false); // reset flag for consistent command behaviour
 						sendMessage(player, new TranslationTextComponent("message.region.redefine", regionName));}
 					else {
 						sendMessage(player, new TranslationTextComponent("message.region.unknown", regionName));

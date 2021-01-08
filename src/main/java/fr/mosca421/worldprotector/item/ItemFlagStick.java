@@ -11,7 +11,10 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.*;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.tileentity.LockableLootTileEntity;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResult;
+import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
@@ -22,6 +25,7 @@ import net.minecraft.world.World;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static fr.mosca421.worldprotector.util.MessageUtils.sendMessage;
 
@@ -54,6 +58,7 @@ public class ItemFlagStick extends Item {
 			tooltip.add(new TranslationTextComponent(TextFormatting.AQUA +  "Switch" + TextFormatting.RESET + " modes by " +
 					TextFormatting.AQUA + TextFormatting.ITALIC + "CTRL" + TextFormatting.RESET + " right clicking."));
 			tooltip.add(new TranslationTextComponent("Hold down the right mouse button to add/remove the selected flag to/from the region."));
+			tooltip.add(new TranslationTextComponent("Alternatively: Shift-right click on a container with name tags, named after flags, to add/remove all the corresponding flags to/from the region!"));
 			tooltip.add(new TranslationTextComponent(TextFormatting.RED + "Keep the Region Stick with the selected region in your off hand!"));
 		} else {
 			tooltip.add(new TranslationTextComponent("Use the Flag Stick to simply add/remove flags to/from a region."));
@@ -123,7 +128,7 @@ public class ItemFlagStick extends Item {
 				case MODE_ADD:
 					this.onFinishUseAction = () -> RegionFlagUtils.addFlag(selectedRegion, playerIn, selectedFag);
 					break;
-				case "remove":
+				case MODE_REMOVE:
 					this.onFinishUseAction = () -> RegionFlagUtils.removeFlag(selectedRegion, playerIn, selectedFag);
 					break;
 				default:
@@ -137,8 +142,61 @@ public class ItemFlagStick extends Item {
 	}
 
 	@Override
+	public ActionResultType onItemUse(ItemUseContext context) {
+		if (!context.getWorld().isRemote) {
+			TileEntity target = context.getWorld().getTileEntity(context.getPos());
+			PlayerEntity player = context.getPlayer();
+			ItemStack mainHand = player.getHeldItemMainhand();
+			ItemStack offHand = player.getHeldItemOffhand();
+			if (offHand.getItem() instanceof ItemRegionStick && mainHand.getItem() instanceof ItemFlagStick) {
+				ItemRegionStick regionStick = (ItemRegionStick) offHand.getItem();
+				ItemFlagStick flagStick = (ItemFlagStick) mainHand.getItem();
+				String flagMode = flagStick.getMode(mainHand);
+				String selectedRegion = regionStick.getRegion(offHand);
+				if (target instanceof LockableLootTileEntity) {
+					LockableLootTileEntity container = (LockableLootTileEntity) target;
+					if (container.isEmpty()) {
+						sendMessage(player,  "message.flags.container.noflags");
+						return ActionResultType.FAIL;
+					}
+					List<String> nameTags = new ArrayList<>();
+					for (int i = 0; i < container.getSizeInventory(); i++) {
+						ItemStack stack = container.getStackInSlot(i);
+						if (stack.getItem() instanceof NameTagItem) {
+							nameTags.add(stack.getDisplayName().getString());
+						}
+					}
+					if (nameTags.isEmpty()) {
+						sendMessage(player,  "message.flags.container.noflags");
+						return ActionResultType.FAIL;
+					}
+					List<String> validFlags = nameTags.stream().filter(RegionFlag::contains).collect(Collectors.toList());
+					if (validFlags.isEmpty()) {
+						sendMessage(player,  "message.flags.container.novalidflags");
+						return ActionResultType.FAIL;
+					}
+					switch (flagMode) {
+						case MODE_ADD:
+							RegionFlagUtils.addFlags(selectedRegion, player, validFlags);
+							break;
+						case MODE_REMOVE:
+							RegionFlagUtils.removeFlags(selectedRegion, player, validFlags);
+							break;
+						default:
+							/* should never happen */
+							return ActionResultType.FAIL;
+					}
+					return ActionResultType.SUCCESS;
+				}
+			} else {
+				return ActionResultType.FAIL;
+			}
+		}
+		return ActionResultType.FAIL;
+	}
+
+	@Override
 	public boolean onLeftClickEntity(ItemStack stack, PlayerEntity player, Entity entity) {
-		// No functionality yet
 		return true; // false will damage entity
 	}
 

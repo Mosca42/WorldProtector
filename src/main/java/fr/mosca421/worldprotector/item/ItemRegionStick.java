@@ -148,7 +148,7 @@ public class ItemRegionStick extends Item {
 		regionStick.setDisplayName(new StringTextComponent(TextFormatting.AQUA + "Region Stick [" + region + ", " + mode + "]"));
 	}
 
-	private String getMode(ItemStack regionStick){
+	public String getMode(ItemStack regionStick){
 		return regionStick.getTag().getString(MODE_KEY);
 	}
 
@@ -156,7 +156,7 @@ public class ItemRegionStick extends Item {
 		regionStick.getTag().putString(MODE_KEY, mode);
 	}
 
-	private String getRegion(ItemStack regionStick) {
+	public String getRegion(ItemStack regionStick) {
 		return regionStick.getTag().getString(REGION_KEY);
 	}
 

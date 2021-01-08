@@ -5,12 +5,14 @@ import fr.mosca421.worldprotector.core.Region;
 import fr.mosca421.worldprotector.core.RegionFlag;
 import fr.mosca421.worldprotector.data.RegionSaver;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.server.management.OpEntry;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import net.minecraft.util.text.TextFormatting;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static fr.mosca421.worldprotector.util.MessageUtils.*;
 
@@ -40,6 +42,42 @@ public class RegionFlagUtils {
 		}
 	}
 
+	public static void addFlags(String regionName, PlayerEntity player, List<String> flags) {
+		if (RegionSaver.containsRegion(regionName)) {
+			Region region = RegionSaver.getRegion(regionName);
+			List<String> addedFlags = flags.stream()
+					.filter(region::addFlag)
+					.collect(Collectors.toList());
+			RegionSaver.save();
+			String flagString = String.join(", ", addedFlags);
+			if (!addedFlags.isEmpty()) {
+				sendMessage(player, new TranslationTextComponent("message.flags.add.multiple", flagString, regionName));
+			} else {
+				sendMessage(player, new TranslationTextComponent( "message.flags.add.none", flagString));
+			}
+		} else {
+			sendMessage(player, new TranslationTextComponent("message.region.unknown", regionName));
+		}
+	}
+
+	public static void removeFlags(String regionName, PlayerEntity player, List<String> flags) {
+		if (RegionSaver.containsRegion(regionName)) {
+			Region region = RegionSaver.getRegion(regionName);
+			List<String> removedFlags = flags.stream()
+					.filter(region::removeFlag)
+					.collect(Collectors.toList());
+			RegionSaver.save();
+			String flagString = String.join(", ", removedFlags);
+			if (!removedFlags.isEmpty()) {
+				sendMessage(player, new TranslationTextComponent("message.flags.remove.multiple", flagString, regionName));
+			} else {
+				sendMessage(player, new TranslationTextComponent( "message.flags.remove.none", flagString));
+			}
+		} else {
+			sendMessage(player, new TranslationTextComponent("message.region.unknown", regionName));
+		}
+	}
+
 	public static void addFlag(Region region, PlayerEntity player, String flag) {
 		if (region.addFlag(flag)) {
 			sendMessage(player, new TranslationTextComponent("message.flags.add", flag, region.getName()));
@@ -47,8 +85,6 @@ public class RegionFlagUtils {
 		} else {
 			sendMessage(player, new StringTextComponent("Flag already defined in region."));
 		}
-
-
 	}
 
 	public static void removeFlag(Region region, PlayerEntity player, String flag){

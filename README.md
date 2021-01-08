@@ -1,13 +1,15 @@
-
 # Introduction
 
 WorldProtector is a mod allows you to protect your constructions on your servers, 
 it's based on the same principle as the plugin WorldGuard but with several differences at command level.
 
+
 # Features
 
-The Region Stick allows you to mark an area (cuboid) for which you can then specify a name.
+The Region Marker allows you to mark an area (cuboid) for which you can then specify a name.
 For this region it is possible to apply flags that prevent certain actions/events to protect it.
+It is also possible to add players to the regions, which are then not affected by the flags.
+This can be done with commands but also with the Region Stick and Flag Stick items.
 
 
 ## Commands
@@ -23,8 +25,24 @@ Currently, there are three types of commands :
 Type /wp help for more information.
 
 
+## Create a region
+
+To create your region, follow these instructions :
+
+1. Use the Region Marker to mark the two blocks which define the area of the region.
+
+2. [Optional] Expand the Y level (height) of your marked region with the ```/wp expand vert [<Y1>] [<Y2>]``` command (default is 0 to 255) or by using the secondary function of the Region Marker (see Region Marker tooltip).
+
+3. Define your region: ```/wp region define <your region's name>```
+
+4. Add flags to your region by using the appropriate command ```/wp flag add <your region's name> <flag name>``` or by using the Flag Stick in conjunction with the Region Stick (see Flag Stick and Region Stick tooltips).
+
+5. [Optional] Add players to your region which are allowed to bypass the flags by using the command ````/wp region addplayer <playername>```` or by using the Regin Stick (see Region Stick tooltip for more details).
+
+
 ## Flags
-Currently, there are thirty-two flags :
+
+Currently, there are thirty-two flags available:
 
 - break: prevents players from breaking blocks
 - place: prevents players (and Endermen) from placing blocks
@@ -62,18 +80,6 @@ Currently, there are thirty-two flags :
 
 You are also able to add or remove all flags by using the special flag 'all'.
 
-## Create a region
-
-To create your region, follow these instructions :
-
-1. Use the region stick to mark the two blocks which define the area of the region
-
-2. [Optional] Expand the Y level (height) of your marked region with the ```/wp expand vert [<Y1>] [<Y2>]``` command (default is 0 to 255).
-
-3. Define your region: ```/wp region define <your region's name>```
-
-4. Add flags to your region: ```/wp flag add <your region's name> <flag name>```
-
 
 ## Region priority
 
@@ -91,10 +97,12 @@ Therefore, the arena region needs to have a higher priority than the spawn regio
 
 2 is superior to 1, so that the arena gains the upper hand over the spawn region and PvP is possible.
 
+
 # Additional information
 
 - The mod has to be installed on the client and on the server too
 - You can use this mod in a custom modpack
+
 
 # Contribution
 
@@ -110,6 +118,7 @@ Thanks to BrokenSwing for his help about regions and safeguard in the world.
 Thanks to TheBossMax2 for the mod logo.
 
 DISCORD: [WorldProtector Discord](https://discord.gg/MsA8XPc)
+
 
 # License
 
@@ -129,12 +138,12 @@ Under the following conditions:
 * NonCommercial — You may not use the material for commercial purposes.
 * No additional restrictions — You may not apply legal terms or technological measures that legally restrict others from doing anything the license permits.
 
+
 # Planned features
 
 *  Define any shape as a region
 *  Region highlighting
 *  Compass support for regions
-*  Command to set default expand vert values for region stick
-*  Configuration 
+*  Configuration support
 *  CLI flags per dimension - Save flags per dimension in overworld nbt
 *  Region claiming - Maybe with additional subregions for players 

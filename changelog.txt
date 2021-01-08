@@ -1,3 +1,6 @@
+1.16.4-2.0.4.0
+* Add a feature for the flag stick to add/remove multiple flags at once. Put name tags, named with the corresponding flags, into a container and then shift-right click the container with the Flag Stick!
+(Command line support for adding/removing multiple flags will come soon!)
 1.16.4-2.0.3.0
 * Region Stick renamed to Region Marker!
 * The Region Marker (prev. Region Stick) is still used to mark areas for later region definition! But to make this task easier,

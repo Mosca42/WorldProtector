@@ -87,10 +87,6 @@ public class RegionSaver extends WorldSavedData {
 		return compound;
 	}
 
-	/**
-	 * FIXME: only data for overworld is loaded here?
-	 * @param event
-	 */
 	public static void onServerStarting(FMLServerStartingEvent event) {
 		try {
 			ServerWorld world = Objects.requireNonNull(event.getServer().getWorld(World.OVERWORLD));

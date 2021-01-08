@@ -3,15 +3,20 @@ package fr.mosca421.worldprotector.event;
 import fr.mosca421.worldprotector.WorldProtector;
 import fr.mosca421.worldprotector.core.Region;
 import fr.mosca421.worldprotector.core.RegionFlag;
+import fr.mosca421.worldprotector.item.ItemRegionMarker;
 import fr.mosca421.worldprotector.util.RegionFlagUtils;
 import fr.mosca421.worldprotector.util.RegionUtils;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.item.AirItem;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import net.minecraftforge.event.entity.player.AnvilRepairEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.ItemPickupEvent;
@@ -19,6 +24,8 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 import java.util.List;
+
+import static fr.mosca421.worldprotector.util.MessageUtils.sendMessage;
 
 @Mod.EventBusSubscriber(modid = WorldProtector.MODID)
 public class EventPlayers {
@@ -94,6 +101,23 @@ public class EventPlayers {
 				if (region.containsFlag(RegionFlag.FALL_DAMAGE.toString())) {
 					event.setCanceled(true);
 					return;
+				}
+			}
+		}
+	}
+
+	@SubscribeEvent
+	public static void onAnvilRepair(AnvilRepairEvent event) {
+		if (!event.getPlayer().world.isRemote) {
+			ItemStack rightIn = event.getIngredientInput();
+			ItemStack leftIn = event.getItemInput();
+			PlayerEntity player = event.getPlayer();
+			if (leftIn.getItem() instanceof ItemRegionMarker && rightIn.getItem() instanceof AirItem) {
+				String regionName = event.getItemResult().getDisplayName().getString();
+				if (!player.hasPermissionLevel(4) || !player.isCreative()) {
+					sendMessage(player, " z");
+				} else {
+					RegionUtils.createRegion(regionName, player, leftIn);
 				}
 			}
 		}

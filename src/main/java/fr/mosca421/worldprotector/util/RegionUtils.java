@@ -87,8 +87,7 @@ public class RegionUtils {
 	private static AxisAlignedBB getRegionFromNBT(CompoundNBT nbtTag){
 		return new AxisAlignedBB(
 				nbtTag.getInt("x1"), nbtTag.getInt("y1"), nbtTag.getInt("z1"),
-				nbtTag.getInt("x2"), nbtTag.getInt("y2"), nbtTag.getInt("z2"))
-				.grow(1);
+				nbtTag.getInt("x2"), nbtTag.getInt("y2"), nbtTag.getInt("z2"));
 	}
 
 	public static void createRegion(String regionName, PlayerEntity player, ItemStack item) {

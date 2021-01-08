@@ -1,3 +1,6 @@
+1.16.4-2.0.5.1
+* Fix region valid flag not resetting after defining region with anvil.
+* Fix region is expanded 1 block to much into all axis.
 1.16.4-2.0.5.0
 * Add a feature to define a region without commands (still need op or creative): Place a Region Marker into a anvil an rename it to define a marked region.
 1.16.4-2.0.4.0

@@ -1,3 +1,5 @@
+1.16.4-2.0.5.2
+* Fix add/remove all flags command not working correctly
 1.16.4-2.0.5.1
 * Fix region valid flag not resetting after defining region with anvil.
 * Fix region is expanded 1 block to much into all axis.

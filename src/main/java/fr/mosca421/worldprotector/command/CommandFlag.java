@@ -12,10 +12,9 @@ import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.command.ISuggestionProvider;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraftforge.event.world.NoteBlockEvent;
-import org.apache.logging.log4j.util.Strings;
+
+import java.util.ArrayList;
 
 import static fr.mosca421.worldprotector.util.MessageUtils.*;
 
@@ -85,7 +84,7 @@ public class CommandFlag {
 							.orElseThrow(() -> new IllegalArgumentException("Flag could not be converted to enum counterpart"));
 					switch (regionFlag) {
 						case ALL:
-							RegionFlag.getFlags().forEach(region::addFlag);
+							RegionFlagUtils.addFlags(regionName, player, new ArrayList<>(RegionFlag.getFlags()));
 							break;
 						case ENTER_MESSAGE_TITLE:
 							region.setEnterMessage(enterOrExitFlagMsg);
@@ -125,7 +124,7 @@ public class CommandFlag {
 							.orElseThrow(() -> new IllegalArgumentException("Flag could not be converted to enum counterpart"));
 					switch (regionFlag) {
 						case ALL:
-							RegionFlag.getFlags().forEach(region::addFlag);
+							RegionFlagUtils.removeFlags(regionName, player, new ArrayList<>(RegionFlag.getFlags()));
 							break;
 						case ENTER_MESSAGE_TITLE:
 						case ENTER_MESSAGE_SUBTITLE:
@@ -136,7 +135,7 @@ public class CommandFlag {
 						case BLOCK_EXIT:
 							sendMessage(player, "This flag is not yet implemented, sorry!");
 						default:
-							RegionFlagUtils.addFlag(region, player, flag);
+							RegionFlagUtils.removeFlag(region, player, flag);
 							break;
 					}
 				} else {

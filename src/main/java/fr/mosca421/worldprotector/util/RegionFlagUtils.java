@@ -11,6 +11,7 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import net.minecraft.util.text.TextFormatting;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -42,6 +43,10 @@ public class RegionFlagUtils {
 		}
 	}
 
+	public static void addAllFlags(String regionName, PlayerEntity player) {
+		addFlags(regionName, player, new ArrayList<>(RegionFlag.getFlags()));
+	}
+
 	public static void addFlags(String regionName, PlayerEntity player, List<String> flags) {
 		if (RegionSaver.containsRegion(regionName)) {
 			Region region = RegionSaver.getRegion(regionName);
@@ -58,6 +63,10 @@ public class RegionFlagUtils {
 		} else {
 			sendMessage(player, new TranslationTextComponent("message.region.unknown", regionName));
 		}
+	}
+
+	public static void removeAllFlags(String regionName, PlayerEntity player) {
+		removeFlags(regionName, player, new ArrayList<>(RegionFlag.getFlags()));
 	}
 
 	public static void removeFlags(String regionName, PlayerEntity player, List<String> flags) {

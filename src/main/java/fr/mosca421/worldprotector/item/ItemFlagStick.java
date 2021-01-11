@@ -124,15 +124,19 @@ public class ItemFlagStick extends Item {
 			if (selectedFag.isEmpty() || selectedRegion.isEmpty()) {
 				return ActionResult.resultFail(flagStick);
 			}
-			switch (flagMode) {
-				case MODE_ADD:
-					this.onFinishUseAction = () -> RegionFlagUtils.addFlag(selectedRegion, playerIn, selectedFag);
-					break;
-				case MODE_REMOVE:
-					this.onFinishUseAction = () -> RegionFlagUtils.removeFlag(selectedRegion, playerIn, selectedFag);
-					break;
-				default:
-					break;
+			if (selectedFag.equals(RegionFlag.ALL.toString())){
+				RegionFlagUtils.addAllFlags(selectedRegion, playerIn);
+			} else {
+				switch (flagMode) {
+					case MODE_ADD:
+						this.onFinishUseAction = () -> RegionFlagUtils.addFlag(selectedRegion, playerIn, selectedFag);
+						break;
+					case MODE_REMOVE:
+						this.onFinishUseAction = () -> RegionFlagUtils.removeFlag(selectedRegion, playerIn, selectedFag);
+						break;
+					default:
+						break;
+				}
 			}
 			playerIn.setActiveHand(handIn);
 			return super.onItemRightClick(worldIn, playerIn, handIn);

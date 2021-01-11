@@ -84,7 +84,7 @@ public class CommandFlag {
 							.orElseThrow(() -> new IllegalArgumentException("Flag could not be converted to enum counterpart"));
 					switch (regionFlag) {
 						case ALL:
-							RegionFlagUtils.addFlags(regionName, player, new ArrayList<>(RegionFlag.getFlags()));
+							RegionFlagUtils.addAllFlags(regionName, player);
 							break;
 						case ENTER_MESSAGE_TITLE:
 							region.setEnterMessage(enterOrExitFlagMsg);
@@ -124,7 +124,7 @@ public class CommandFlag {
 							.orElseThrow(() -> new IllegalArgumentException("Flag could not be converted to enum counterpart"));
 					switch (regionFlag) {
 						case ALL:
-							RegionFlagUtils.removeFlags(regionName, player, new ArrayList<>(RegionFlag.getFlags()));
+							RegionFlagUtils.removeAllFlags(regionName, player);
 							break;
 						case ENTER_MESSAGE_TITLE:
 						case ENTER_MESSAGE_SUBTITLE:

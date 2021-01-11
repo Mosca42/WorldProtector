@@ -59,13 +59,19 @@ public class ItemRegionMarker extends Item {
 	public ItemStack onItemUseFinish(ItemStack stack, World worldIn, LivingEntity entityLiving) {
 		if (!worldIn.isRemote) {
 			this.onFinishUseAction.run();
+			((PlayerEntity) entityLiving).getCooldownTracker().setCooldown(this, 20);
 		}
 		return stack;
 	}
 
 	@Override
+	public void onPlayerStoppedUsing(ItemStack stack, World worldIn, LivingEntity entityLiving, int timeLeft) {
+
+	}
+
+	@Override
 	public int getUseDuration(ItemStack stack) {
-		return 25;
+		return 32;
 	}
 
 	@Override

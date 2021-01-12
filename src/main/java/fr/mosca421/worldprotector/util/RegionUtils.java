@@ -5,19 +5,18 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import com.google.common.base.Joiner;
-import fr.mosca421.worldprotector.WorldProtector;
 import fr.mosca421.worldprotector.core.Region;
 import fr.mosca421.worldprotector.item.ItemRegionMarker;
 import fr.mosca421.worldprotector.core.RegionFlag;
 import fr.mosca421.worldprotector.data.RegionSaver;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.*;
+import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 
 import static fr.mosca421.worldprotector.util.MessageUtils.*;
@@ -88,7 +87,8 @@ public class RegionUtils {
 	private static AxisAlignedBB getRegionFromNBT(CompoundNBT nbtTag){
 		return new AxisAlignedBB(
 				nbtTag.getInt("x1"), nbtTag.getInt("y1"), nbtTag.getInt("z1"),
-				nbtTag.getInt("x2"), nbtTag.getInt("y2"), nbtTag.getInt("z2"));
+				nbtTag.getInt("x2"), nbtTag.getInt("y2"), nbtTag.getInt("z2"))
+				.grow(1);
 	}
 
 	public static void createRegion(String regionName, PlayerEntity player, ItemStack item) {
@@ -177,12 +177,20 @@ public class RegionUtils {
 		}
 	}
 
+	public static List<Region> getHandlingRegionsFor(Entity entity, IWorld world){
+		return getHandlingRegionsFor(entity.getPosition(), RegionUtils.getDimension((World) world));
+	}
+
+	public static List<Region> getHandlingRegionsFor(BlockPos position, IWorld world){
+		return getHandlingRegionsFor(position, RegionUtils.getDimension((World) world));
+	}
+
 	public static List<Region> getHandlingRegionsFor(BlockPos position, String dimension) {
 		int maxPriority = 1;
 		List<Region> handlers = new ArrayList<>();
 		for (Region region : RegionSaver.getRegions()) {
 			boolean regionDimensionMatches = region.getDimension().equals(dimension);
-			boolean positionIsInRegion = region.getArea().contains(new Vector3d(position.getX(), position.getY(), position.getZ()));
+			boolean positionIsInRegion = region.containsPosition(position);
 			if (regionDimensionMatches && positionIsInRegion) {
 				if (region.getPriority() == maxPriority) {
 					handlers.add(region);
@@ -225,6 +233,22 @@ public class RegionUtils {
 				.filter(region -> region.containsFlag(flagFilter.toString()))
 				.filter(isPermittedInRegion)
 				.forEach(region -> cancelAction.run());
+	}
+
+
+	public static boolean isActionProhibited(BlockPos position, IWorld world, RegionFlag flag) {
+		return RegionUtils.getHandlingRegionsFor(position, world).stream()
+				.anyMatch(region -> region.containsFlag(flag));
+	}
+
+	public static boolean isActionProhibited(BlockPos position, Entity entity, RegionFlag flag) {
+		return RegionUtils.getHandlingRegionsFor(position, entity.world).stream()
+				.anyMatch(region -> region.containsFlag(flag));
+	}
+
+	public static boolean isPlayerActionProhibited(BlockPos position, PlayerEntity player, RegionFlag flag) {
+		return RegionUtils.getHandlingRegionsFor(position, player.world).stream()
+				.anyMatch(region -> region.containsFlag(flag) && region.forbids(player));
 	}
 
 	public static void setPriorityRegion(String regionName, int priority, PlayerEntity player) {

@@ -126,11 +126,13 @@ public class ItemRegionStick extends Item {
 			Collections.sort(cachedRegions);
 			regionCount = cachedRegions.size();
 			regionCacheInitialized = true;
+			regionIndex = 0;
 		}
 		// check if region data was changed and update cache
 		if (regionCount != RegionSaver.getRegions().size()) {
 			cachedRegions = RegionSaver.getRegions().stream().map(Region::getName).collect(Collectors.toList());
 			regionCount = cachedRegions.size();
+			regionIndex = Math.min(regionIndex, regionCount - 1);
 		}
 		// init nbt tag
 		if (!worldIn.isRemote && !stack.hasTag()) {

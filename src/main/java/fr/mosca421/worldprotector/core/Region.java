@@ -12,6 +12,7 @@ import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.StringNBT;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.common.util.INBTSerializable;
 
@@ -140,6 +141,10 @@ public class Region implements INBTSerializable<CompoundNBT> {
 		return players.contains(player.getUniqueID().toString());
 	}
 
+	public boolean forbids(PlayerEntity player) {
+		return !this.permits(player);
+	}
+
 	public boolean addPlayer(String playerUUID) {
 		return players.add(playerUUID);
 	}
@@ -213,5 +218,9 @@ public class Region implements INBTSerializable<CompoundNBT> {
 
 	public boolean containsFlag(RegionFlag flag) {
 		return flags.contains(flag.toString());
+	}
+
+	public boolean containsPosition(BlockPos position){
+		return this.area.contains(new Vector3d(position.getX(), position.getY(), position.getZ()));
 	}
 }

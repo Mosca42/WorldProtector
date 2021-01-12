@@ -1,3 +1,10 @@
+1.16.4-2.0.5.3
+* Fix npe when removing all regions and try to cycle through the regions
+* Fix marked area now consistent with marked blocks
+* Add item cooldown to FlagStick and RegionMarker usage
+* Fix display bug with FlagStick
+* Switch CTRL and SHIFT functions of RegionStick and FlagStick
+* Revert region expansion fix from 1.16.4-2.0.5.1 - (still not working as intended but better)
 1.16.4-2.0.5.2
 * Fix add/remove all flags command not working correctly
 1.16.4-2.0.5.1

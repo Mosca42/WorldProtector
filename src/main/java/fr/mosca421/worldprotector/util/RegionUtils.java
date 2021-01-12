@@ -187,21 +187,21 @@ public class RegionUtils {
 
 	public static List<Region> getHandlingRegionsFor(BlockPos position, String dimension) {
 		int maxPriority = 1;
-		List<Region> handlers = new ArrayList<>();
-		for (Region region : RegionSaver.getRegions()) {
-			boolean regionDimensionMatches = region.getDimension().equals(dimension);
-			boolean positionIsInRegion = region.containsPosition(position);
-			if (regionDimensionMatches && positionIsInRegion) {
-				if (region.getPriority() == maxPriority) {
-					handlers.add(region);
-				} else if (region.getPriority() > maxPriority) {
-					handlers.clear();
-					maxPriority = region.getPriority();
-					handlers.add(region);
-				}
+		List<Region> handlingRegions = new ArrayList<>();
+		List<Region> filteredRegions = RegionSaver.getRegions().stream()
+				.filter(region -> region.getDimension().equals(dimension))
+				.filter(region -> region.containsPosition(position))
+				.collect(Collectors.toList());
+		for (Region region : filteredRegions) {
+			if (region.getPriority() == maxPriority) {
+				handlingRegions.add(region);
+			} else if (region.getPriority() > maxPriority) {
+				handlingRegions.clear();
+				maxPriority = region.getPriority();
+				handlingRegions.add(region);
 			}
 		}
-		return handlers;
+		return handlingRegions;
 	}
 
 	public static List<Region> filterHandlingRegions(BlockPos position, World world, RegionFlag flagFilter){

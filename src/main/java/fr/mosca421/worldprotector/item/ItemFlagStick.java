@@ -54,9 +54,9 @@ public class ItemFlagStick extends Item {
 	public void addInformation(ItemStack stack, World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
 		if(Screen.hasShiftDown()) {
 			tooltip.add(new TranslationTextComponent(TextFormatting.LIGHT_PURPLE +  "Select" + TextFormatting.RESET + " the flag by " +
-					TextFormatting.LIGHT_PURPLE + TextFormatting.ITALIC + "SHIFT" + TextFormatting.RESET + " right clicking."));
+					TextFormatting.LIGHT_PURPLE + TextFormatting.ITALIC + "CTRL" + TextFormatting.RESET + " right clicking."));
 			tooltip.add(new TranslationTextComponent(TextFormatting.AQUA +  "Switch" + TextFormatting.RESET + " modes by " +
-					TextFormatting.AQUA + TextFormatting.ITALIC + "CTRL" + TextFormatting.RESET + " right clicking."));
+					TextFormatting.AQUA + TextFormatting.ITALIC + "SHIFT" + TextFormatting.RESET + " right clicking."));
 			tooltip.add(new TranslationTextComponent("Hold down the right mouse button to add/remove the selected flag to/from the region."));
 			tooltip.add(new TranslationTextComponent("Alternatively: Shift-right click on a container with name tags, named after flags, to add/remove all the corresponding flags to/from the region!"));
 			tooltip.add(new TranslationTextComponent(TextFormatting.RED + "Keep the Region Stick with the selected region in your off hand!"));
@@ -102,12 +102,12 @@ public class ItemFlagStick extends Item {
 			}
 			boolean isMainHand = PlayerUtils.isMainHand(handIn);
 			// SHIFT -> switch mode
-			if (PlayerUtils.isSneaking() && isMainHand) {
+			if (PlayerUtils.isHoldingCtrl() && isMainHand) {
 				switchMode(flagStick);
 				return ActionResult.resultSuccess(flagStick);
 			}
 			// CTRL -> cycle flags
-			if (PlayerUtils.isHoldingCtrl() && isMainHand) {
+			if (PlayerUtils.isSneaking() && isMainHand) {
 				cycleFlags(flagStick);
 				return ActionResult.resultSuccess(flagStick);
 			}
@@ -227,7 +227,8 @@ public class ItemFlagStick extends Item {
 			if (!stack.hasTag()){
 				CompoundNBT nbt = new CompoundNBT();
 				nbt.putString(MODE_KEY, MODE_ADD);
-				nbt.putString(FLAG_KEY, flags.get(0));
+				nbt.putString(FLAG_KEY, "all");
+				setDisplayName(stack, "all", MODE_ADD);
 				stack.setTag(nbt);
 			}
 		}

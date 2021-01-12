@@ -54,9 +54,9 @@ public class ItemRegionStick extends Item {
 	public void addInformation(ItemStack stack, World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
 		if(Screen.hasShiftDown()) {
 			tooltip.add(new TranslationTextComponent( TextFormatting.LIGHT_PURPLE +  "Select" + TextFormatting.RESET + " an existing region by " +
-				TextFormatting.LIGHT_PURPLE + TextFormatting.ITALIC + "SHIFT" + TextFormatting.RESET + " right clicking."));
+				TextFormatting.LIGHT_PURPLE + TextFormatting.ITALIC + "CTRL" + TextFormatting.RESET + " right clicking."));
 			tooltip.add(new TranslationTextComponent(TextFormatting.AQUA +  "Switch" + TextFormatting.RESET + " modes by " +
-					TextFormatting.AQUA + TextFormatting.ITALIC + "CTRL" + TextFormatting.RESET + " right clicking."));
+					TextFormatting.AQUA + TextFormatting.ITALIC + "SHIFT" + TextFormatting.RESET + " right clicking."));
 			tooltip.add(new TranslationTextComponent("Hit the player you want to add/remove (don't worry it wont hurt)."));
 			tooltip.add(new TranslationTextComponent("For the secondary functionality keep the Region Stick in your offhand and read the Flag Stick tooltip."));
 		} else {
@@ -102,11 +102,11 @@ public class ItemRegionStick extends Item {
 						.mergeStyle(TextFormatting.RED));
 				return ActionResult.resultFail(regionStick);
 			}
-			if (isSneaking() && isMainHand(handIn)) {
+			if (isHoldingCtrl() && isMainHand(handIn)) {
 				switchMode(regionStick);
 				return new ActionResult<>(ActionResultType.SUCCESS, playerIn.getHeldItem(handIn));
 			}
-			if (isHoldingCtrl() && isMainHand(handIn)) {
+			if (isSneaking() && isMainHand(handIn)) {
 				if (cycleRegion(regionStick)) {
 					return new ActionResult<>(ActionResultType.SUCCESS, regionStick);
 				}

@@ -160,6 +160,7 @@ Under the following conditions:
 
 # Planned features
 
+*  Provide simple gui for choosing flag/region, since there could be many to cycle through
 *  Define any shape as a region
 *  Region highlighting
 *  Compass support for regions

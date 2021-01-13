@@ -12,6 +12,7 @@ import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.command.ISuggestionProvider;
 import net.minecraft.command.arguments.EntityArgument;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 
 public class CommandRegion {
@@ -53,10 +54,18 @@ public class CommandRegion {
                         .then(Commands.argument(Command.REGION.toString(), StringArgumentType.string())
 								.suggests((ctx, builder) -> ISuggestionProvider.suggest(RegionSaver.getRegionNames(), builder))
                                 .executes(ctx -> teleport(ctx.getSource(), StringArgumentType.getString(ctx, Command.REGION.toString())))))
-                .then(Commands.literal(Command.PRIORITY_GET.toString())
-                        .then(Commands.argument(Command.REGION.toString(), StringArgumentType.string())
+				.then(Commands.literal(Command.ACTIVATE.toString())
+						.then(Commands.argument(Command.REGION.toString(), StringArgumentType.string())
 								.suggests((ctx, builder) -> ISuggestionProvider.suggest(RegionSaver.getRegionNames(), builder))
-                                .executes(ctx -> getpriority(ctx.getSource(), StringArgumentType.getString(ctx, Command.REGION.toString())))))
+								.executes(ctx -> activeRegion(ctx.getSource(), StringArgumentType.getString(ctx, Command.REGION.toString())))))
+				.then(Commands.literal(Command.DEACTIVATE.toString())
+						.then(Commands.argument(Command.REGION.toString(), StringArgumentType.string())
+								.suggests((ctx, builder) -> ISuggestionProvider.suggest(RegionSaver.getRegionNames(), builder))
+								.executes(ctx -> deactivateRegion(ctx.getSource(), StringArgumentType.getString(ctx, Command.REGION.toString())))))
+				.then(Commands.literal(Command.PRIORITY_GET.toString())
+						.then(Commands.argument(Command.REGION.toString(), StringArgumentType.string())
+								.suggests((ctx, builder) -> ISuggestionProvider.suggest(RegionSaver.getRegionNames(), builder))
+								.executes(ctx -> getPriority(ctx.getSource(), StringArgumentType.getString(ctx, Command.REGION.toString())))))
                 .then(Commands.literal(Command.PLAYER_ADD.toString())
                         .then(Commands.argument(Command.REGION.toString(), StringArgumentType.string())
 								.suggests((ctx, builder) -> ISuggestionProvider.suggest(RegionSaver.getRegionNames(), builder))
@@ -71,7 +80,7 @@ public class CommandRegion {
                         .then(Commands.argument(Command.REGION.toString(), StringArgumentType.string())
 								.suggests((ctx, builder) -> ISuggestionProvider.suggest(RegionSaver.getRegionNames(), builder))
                                 .then(Commands.argument(Command.PRIORITY.toString(), IntegerArgumentType.integer())
-                                        .executes(ctx -> setpriority(ctx.getSource(), StringArgumentType.getString(ctx, Command.REGION.toString()), IntegerArgumentType.getInteger(ctx, Command.PRIORITY.toString()))))));
+                                        .executes(ctx -> setPriority(ctx.getSource(), StringArgumentType.getString(ctx, Command.REGION.toString()), IntegerArgumentType.getInteger(ctx, Command.PRIORITY.toString()))))));
     }
 
 	private static int info(CommandSource source, String regionName) {
@@ -83,10 +92,28 @@ public class CommandRegion {
 		return 0;
 	}
 
-	private static int addPlayer(CommandSource source, String region, Collection<ServerPlayerEntity> players) {
+	private static int activeRegion(CommandSource source, String regionName){
 		try {
-			for (ServerPlayerEntity serverplayerentity : players) {
-				RegionUtils.addPlayer(region, source.asPlayer(), serverplayerentity);
+			RegionUtils.activate(regionName, source.asPlayer());
+		} catch (CommandSyntaxException e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+
+	private static int deactivateRegion(CommandSource source, String regionName){
+		try {
+			RegionUtils.deactivate(regionName, source.asPlayer());
+		} catch (CommandSyntaxException e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+
+	private static int addPlayer(CommandSource source, String regionName, Collection<ServerPlayerEntity> players) {
+		try {
+			for (PlayerEntity playerToAdd : players) {
+				RegionUtils.addPlayer(regionName, source.asPlayer(), playerToAdd);
 			}
 		} catch (CommandSyntaxException e) {
 			e.printStackTrace();
@@ -94,10 +121,10 @@ public class CommandRegion {
 		return 0;
 	}
 
-	private static int removePlayer(CommandSource source, String region, Collection<ServerPlayerEntity> players) {
+	private static int removePlayer(CommandSource source, String regionName, Collection<ServerPlayerEntity> players) {
 		try {
-			for (ServerPlayerEntity playerToRemove : players) {
-				RegionUtils.removePlayer(region, source.asPlayer(), playerToRemove);
+			for (PlayerEntity playerToRemove : players) {
+				RegionUtils.removePlayer(regionName, source.asPlayer(), playerToRemove);
 			}
 		} catch (CommandSyntaxException e) {
 			e.printStackTrace();
@@ -123,28 +150,28 @@ public class CommandRegion {
 		return 0;
 	}
 
-	private static int define(CommandSource source, String region) {
+	private static int define(CommandSource source, String regionName) {
 
 		try {
-			RegionUtils.createRegion(region, source.asPlayer(), source.asPlayer().getHeldItemMainhand());
+			RegionUtils.createRegion(regionName, source.asPlayer(), source.asPlayer().getHeldItemMainhand());
 		} catch (CommandSyntaxException e) {
 			e.printStackTrace();
 		}
 		return 0;
 	}
 
-	private static int redefine(CommandSource source, String region) {
+	private static int redefine(CommandSource source, String regionName) {
 		try {
-			RegionUtils.redefineRegion(region, source.asPlayer(), source.asPlayer().getHeldItemMainhand());
+			RegionUtils.redefineRegion(regionName, source.asPlayer(), source.asPlayer().getHeldItemMainhand());
 		} catch (CommandSyntaxException e) {
 			e.printStackTrace();
 		}
 		return 0;
 	}
 
-	private static int remove(CommandSource source, String region) {
+	private static int remove(CommandSource source, String regionName) {
 		try {
-			RegionUtils.removeRegion(region, source.asPlayer());
+			RegionUtils.removeRegion(regionName, source.asPlayer());
 		} catch (CommandSyntaxException e) {
 			e.printStackTrace();
 		}
@@ -161,25 +188,25 @@ public class CommandRegion {
 		return 0;
 	}
 
-	private static int teleport(CommandSource source, String region) {
+	private static int teleport(CommandSource source, String regionName) {
 		try {
-			RegionUtils.teleportRegion(region, source.asPlayer());
+			RegionUtils.teleportRegion(regionName, source.asPlayer());
 		} catch (CommandSyntaxException e) {
 			e.printStackTrace();
 		}
 		return 0;
 	}
 
-	private static int getpriority(CommandSource source, String region) {
+	private static int getPriority(CommandSource source, String regionName) {
 		try {
-			RegionUtils.getPriority(region, source.asPlayer());
+			RegionUtils.getPriority(regionName, source.asPlayer());
 		} catch (CommandSyntaxException e) {
 			e.printStackTrace();
 		}
 		return 0;
 	}
 
-	private static int setpriority(CommandSource source, String region, int priority) {
+	private static int setPriority(CommandSource source, String region, int priority) {
 		try {
 			RegionUtils.setPriorityRegion(region, priority, source.asPlayer());
 		} catch (CommandSyntaxException e) {

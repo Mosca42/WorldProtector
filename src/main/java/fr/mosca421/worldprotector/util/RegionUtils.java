@@ -295,9 +295,26 @@ public class RegionUtils {
 			Region region = RegionSaver.getRegion(regionName);
 			region.setIsActive(true);
 			RegionSaver.save();
-			sendMessage(player, new TranslationTextComponent( "message.region.activated", regionName));
+			sendMessage(player, new TranslationTextComponent( "message.region.activate", regionName));
 		} else {
 			sendMessage(player, new TranslationTextComponent("message.region.unknown", regionName));
+		}
+	}
+
+	public static void activateAll(List<Region> regions, PlayerEntity player) {
+		List<Region> deactiveRegions = regions.stream()
+				.filter(region -> !region.isActive())
+				.collect(Collectors.toList());
+		deactiveRegions.forEach(region -> region.setIsActive(true));
+		RegionSaver.save();
+		List<String> activatedRegions = deactiveRegions.stream()
+				.map(Region::getName)
+				.collect(Collectors.toList());
+		String regionString = String.join(", ", activatedRegions);
+		if (!activatedRegions.isEmpty()) {
+			sendMessage(player, new TranslationTextComponent("message.region.activate.multiple", regionString));
+		} else {
+			sendMessage(player, "message.region.activate.none");
 		}
 	}
 
@@ -306,9 +323,26 @@ public class RegionUtils {
 			Region region = RegionSaver.getRegion(regionName);
 			region.setIsActive(false);
 			RegionSaver.save();
-			sendMessage(player, new TranslationTextComponent( "message.region.deactivated", regionName));
+			sendMessage(player, new TranslationTextComponent( "message.region.deactivate", regionName));
 		} else {
 			sendMessage(player, new TranslationTextComponent("message.region.unknown", regionName));
+		}
+	}
+
+	public static void deactivateAll(List<Region> regions, PlayerEntity player) {
+		List<Region> activeRegions = regions.stream()
+				.filter(Region::isActive)
+				.collect(Collectors.toList());
+		activeRegions.forEach(region -> region.setIsActive(false));
+		RegionSaver.save();
+		List<String> deactivatedRegions = activeRegions.stream()
+				.map(Region::getName)
+				.collect(Collectors.toList());
+		String regionString = String.join(", ", deactivatedRegions);
+		if (!deactivatedRegions.isEmpty()) {
+			sendMessage(player, new TranslationTextComponent("message.region.deactivate.multiple", regionString));
+		} else {
+			sendMessage(player, "message.region.deactivate.none");
 		}
 	}
 }

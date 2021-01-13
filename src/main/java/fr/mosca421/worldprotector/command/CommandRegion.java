@@ -1,11 +1,14 @@
 package fr.mosca421.worldprotector.command;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import fr.mosca421.worldprotector.core.Region;
 import fr.mosca421.worldprotector.data.RegionSaver;
 import fr.mosca421.worldprotector.util.RegionUtils;
 import net.minecraft.command.CommandSource;
@@ -57,11 +60,21 @@ public class CommandRegion {
 				.then(Commands.literal(Command.ACTIVATE.toString())
 						.then(Commands.argument(Command.REGION.toString(), StringArgumentType.string())
 								.suggests((ctx, builder) -> ISuggestionProvider.suggest(RegionSaver.getRegionNames(), builder))
+								.executes(ctx -> activeRegion(ctx.getSource(), StringArgumentType.getString(ctx, Command.REGION.toString()))))
+						.then(Commands.literal("all").executes(ctx -> activateAll(ctx.getSource()))))
+				.then(Commands.literal(Command.ACTIVATE.toString())
+						.then(Commands.argument(Command.REGION.toString(), StringArgumentType.string())
+								.suggests((ctx, builder) -> ISuggestionProvider.suggest(RegionSaver.getRegionNames(), builder))
 								.executes(ctx -> activeRegion(ctx.getSource(), StringArgumentType.getString(ctx, Command.REGION.toString())))))
 				.then(Commands.literal(Command.DEACTIVATE.toString())
 						.then(Commands.argument(Command.REGION.toString(), StringArgumentType.string())
 								.suggests((ctx, builder) -> ISuggestionProvider.suggest(RegionSaver.getRegionNames(), builder))
 								.executes(ctx -> deactivateRegion(ctx.getSource(), StringArgumentType.getString(ctx, Command.REGION.toString())))))
+				.then(Commands.literal(Command.DEACTIVATE.toString())
+						.then(Commands.argument(Command.REGION.toString(), StringArgumentType.string())
+								.suggests((ctx, builder) -> ISuggestionProvider.suggest(RegionSaver.getRegionNames(), builder))
+								.executes(ctx -> deactivateRegion(ctx.getSource(), StringArgumentType.getString(ctx, Command.REGION.toString()))))
+						.then(Commands.literal("all").executes(ctx -> deactivateAll(ctx.getSource()))))
 				.then(Commands.literal(Command.PRIORITY_GET.toString())
 						.then(Commands.argument(Command.REGION.toString(), StringArgumentType.string())
 								.suggests((ctx, builder) -> ISuggestionProvider.suggest(RegionSaver.getRegionNames(), builder))
@@ -101,9 +114,27 @@ public class CommandRegion {
 		return 0;
 	}
 
+	private static int activateAll(CommandSource source) {
+		try {
+			RegionUtils.activateAll(new ArrayList<>(RegionSaver.getRegions()), source.asPlayer());
+		} catch (CommandSyntaxException e) {
+			e.printStackTrace();
+		}
+		return 0;
+    }
+
 	private static int deactivateRegion(CommandSource source, String regionName){
 		try {
 			RegionUtils.deactivate(regionName, source.asPlayer());
+		} catch (CommandSyntaxException e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+
+	private static int deactivateAll(CommandSource source) {
+		try {
+			RegionUtils.deactivateAll(new ArrayList<>(RegionSaver.getRegions()), source.asPlayer());
 		} catch (CommandSyntaxException e) {
 			e.printStackTrace();
 		}

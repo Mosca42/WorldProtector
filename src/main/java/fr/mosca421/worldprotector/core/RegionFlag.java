@@ -8,9 +8,10 @@ import java.util.stream.Collectors;
 
 public enum RegionFlag {
     ALL("all"),
+    //
     BREAK("break"),
     PLACE("place"),
-    ENTITY_PLACE("entity-place"),
+    ENTITY_PLACE("entity-place"), // TODO: needs testing
     //
     EXPLOSION_ENTITY("explosions-entities"),
     EXPLOSION_BLOCK("explosions-blocks"),

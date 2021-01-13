@@ -44,7 +44,7 @@ public class RegionFlagUtils {
 	}
 
 	public static void addAllFlags(String regionName, PlayerEntity player) {
-		addFlags(regionName, player, new ArrayList<>(RegionFlag.getFlags()));
+		addFlags(regionName, player, RegionFlag.getFlags());
 	}
 
 	public static void addFlags(String regionName, PlayerEntity player, List<String> flags) {
@@ -66,7 +66,7 @@ public class RegionFlagUtils {
 	}
 
 	public static void removeAllFlags(String regionName, PlayerEntity player) {
-		removeFlags(regionName, player, new ArrayList<>(RegionFlag.getFlags()));
+		removeFlags(regionName, player, RegionFlag.getFlags());
 	}
 
 	public static void removeFlags(String regionName, PlayerEntity player, List<String> flags) {

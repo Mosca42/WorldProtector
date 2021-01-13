@@ -1,6 +1,7 @@
 package fr.mosca421.worldprotector.core;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -109,10 +110,10 @@ public enum RegionFlag {
      * Returns a set of all flags with their string representation defined within this enum.
      * @return a set of all flagIdentifiers defined within RegionFlag
      */
-    public static Set<String> getFlags() {
+    public static List<String> getFlags() {
         return Arrays.stream(RegionFlag.values())
                 .map(RegionFlag::toString)
-                .collect(Collectors.toSet());
+                .collect(Collectors.toList());
     }
 
     public static Optional<RegionFlag> fromString(String flagIdentifier){

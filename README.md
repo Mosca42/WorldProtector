@@ -61,31 +61,10 @@ To create your region, follow these instructions :
 
 ## Flags
 
-Currently, there are thirty-two flags available:
+Currently, there are forty-eight flags available:
 
 - break: prevents players from breaking blocks
-- place: prevents players (and Endermen) from placing blocks
-- use: prevents players to interact with most blocks like buttons, fences, doors, etc.
-- chest-access: prevents players from accessing most containers
-- enderpearl-from: prevents enderpearl teleportation from region
-- enderpearl-to: prevents enderpearl teleportation to region
-- tools-secondary: prevents all type of secondary tool actions (strip wood, till farmland, create paths)
-- strip-wood: prevents wood from being stripped
-- till-farmland: prevents farmland from being tilled
-- shovel-path: prevents creation of path blocks
-- trample-farmland: prevents all farmland trampling
-- trample-farmland-player: prevents players from trampling farmland
-- trample-farmland-other: prevents non-player entities from trampling farmland
-- mob-spawning-all: prevents all entity spawning.
-- mob-spawning-monsters: prevents monsters from spawning
-- mob-spawning-animal:  prevents monsters from spawning
-- damage-players: prevents players from damaging other players (PvP)
-- damage-animals: prevents players from damaging animals
-- damage-villagers: prevents players from damaging villagers
-- damage-monsters: prevents players from damaging monsters
-- item-drop: prevents players from dropping items
-- item-pickup: prevents players from picking up items
-- exp-drop: prevents dropping of experience orbs
+- place: prevents players from placing blocks
 - ignite-explosives: prevents explosives from blowing up
 - explosions-blocks: prevents all explosions from destroying blocks (doesn't work under Sponge)
 - explosions-entities: prevents all explosions from damaging entities (doesn't work under Sponge)
@@ -93,12 +72,47 @@ Currently, there are thirty-two flags available:
 - creeper-explosions-entities: prevents explosions caused by Creepers to damage entities (doesn't work under Sponge)
 - other-explosions-blocks: prevents all other explosions from destroying blocks (doesn't work under Sponge)
 - other-explosions-entities: prevents all other explosions from damaging entities (doesn't work under Sponge)
+- tools-secondary: prevents all type of secondary tool actions (strip wood, till farmland, create paths)
+- strip-wood: prevents wood from being stripped
+- till-farmland: prevents farmland from being tilled
+- shovel-path: prevents creation of path blocks
+- trample-farmland: prevents all farmland trampling
+- trample-farmland-player: prevents players from trampling farmland
+- trample-farmland-other: prevents non-player entities from trampling farmland
+- lightning: prevents entities being hit by lightning (or at least get hurt/transformed)
+- animal-taming: prevents players from taming animals
+- animal-breeding: prevents players from breeding animals
+- animal-mounting: prevents players from mounting animals
+- spawning-all: prevents spawning of all entities
+- spawning-monsters: prevents spawning of monsters
+- spawning-animal: prevents spawning of animals
+- spawning-irongolem: prevents spawning of iron golems
+- spawning-exp: prevents spawning of exp orbs completely
+- use: prevents players to interact with most blocks like buttons, fences, doors, etc.
+- use-bonemeal: prevents players from using bone meal
+- access-container: prevents players from accessing most containers
+- access-enderchest: prevents players from accessing their ender chest  
+- enderpearl-from: prevents ender pearl teleportation out of a region
+- enderpearl-to: prevents ender pearl teleportation to a region
+- enderman-teleport-from: prevents enderman from teleporting out of a region
+- enderman-teleport-to: prevents enderman from teleporting to a region
+- shulker-teleport-from: prevents shulkers from teleporting out of a region
+- shulker-teleport-to: prevents shulkers from teleporting to a region
+- item-drop: prevents players from dropping items
+- item-pickup: prevents players from picking up items
+- exp-drop-all: prevents all entities from dropping experience orbs
+- exp-drop-monster: prevents monsters from dropping experience orbs
+- exp-drop-other: prevents non-hostile entities from dropping experience orbs
+- level-freeze: prevents the player levels from increasing/decreasing (exp orbs will still be picked up)
+- damage-players: prevents players from damaging other players (PvP)
+- damage-animals: prevents players from damaging animals
+- damage-villagers: prevents players from damaging villagers
+- damage-monsters: prevents players from damaging monsters
 - invincible: prevents players from taking damage
 - fall-damage: prevents players from taking damage by fall-damage
 - send-chat: prevents players from sending chat messages (doesn't block commands)
 
 You are also able to add or remove all flags by using the special flag 'all'.
-
 
 ## Region priority
 
@@ -158,12 +172,11 @@ Under the following conditions:
 * No additional restrictions — You may not apply legal terms or technological measures that legally restrict others from doing anything the license permits.
 
 
-# Planned features
+# Possible future features
 
 *  Provide simple gui for choosing flag/region, since there could be many to cycle through
 *  Define any shape as a region
 *  Region highlighting
-*  Compass support for regions
 *  Configuration support
-*  CLI flags per dimension - Save flags per dimension in overworld nbt
-*  Region claiming - Maybe with additional subregions for players 
+*  CLI: flags per dimension
+*  Region claiming for players (maybe with additional subregions for players)

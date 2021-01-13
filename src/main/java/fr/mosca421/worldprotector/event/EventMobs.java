@@ -71,7 +71,7 @@ public class EventMobs {
 		if (!player.world.isRemote) {
 			boolean isBreedingProhibited = isPlayerActionProhibited(event.getParentB().getPosition(), player, RegionFlag.ANIMAL_BREEDING);
 			if (isBreedingProhibited) {
-				MessageUtils.sendMessage(player, "message.event.mobs.animal_breeding");
+				MessageUtils.sendMessage(player, "message.event.mobs.breed_animals");
 				event.setCanceled(true);
 			}
 		}
@@ -85,7 +85,7 @@ public class EventMobs {
 			boolean isTamingProhibited = isPlayerActionProhibited(animal.getPosition(), player, RegionFlag.ANIMAL_TAMING);
 			if (isTamingProhibited) {
 				event.setCanceled(true);
-				MessageUtils.sendMessage(player, "message.event.mobs.animal_taming");
+				MessageUtils.sendMessage(player, "message.event.mobs.tame_animal");
 			}
 		}
 	}
@@ -117,7 +117,7 @@ public class EventMobs {
 					boolean flagDamageAnimals = region.containsFlag(RegionFlag.DAMAGE_ANIMALS.toString());
 					boolean isInPlayerList = RegionUtils.isInRegion(region.getName(), player);
 					if (flagDamageAnimals && regionContainsEntity(region, eventEntity) && !isInPlayerList) {
-						player.sendMessage(new TranslationTextComponent("world.hurt.animal"), player.getUniqueID());
+						player.sendMessage(new TranslationTextComponent("message.event.mobs.hurt_animal"), player.getUniqueID());
 						event.setCanceled(true);
 					}
 				}
@@ -128,7 +128,7 @@ public class EventMobs {
 					boolean flagDamageMonsters = region.containsFlag(RegionFlag.DAMAGE_MONSTERS.toString());
 					boolean isInPlayerList = RegionUtils.isInRegion(region.getName(), player);
 					if (flagDamageMonsters && regionContainsEntity(region, eventEntity) && !isInPlayerList) {
-						player.sendMessage(new TranslationTextComponent("world.hurt.mob"), player.getUniqueID());
+						player.sendMessage(new TranslationTextComponent("message.event.mobs.hurt_monster"), player.getUniqueID());
 						event.setCanceled(true);
 					}
 				}
@@ -140,7 +140,7 @@ public class EventMobs {
 					boolean flagDamageMonsters = region.containsFlag(RegionFlag.DAMAGE_VILLAGERS.toString());
 					boolean isInPlayerList = RegionUtils.isInRegion(region.getName(), player);
 					if (flagDamageMonsters && regionContainsEntity(region, villager) && !isInPlayerList) {
-						player.sendMessage(new TranslationTextComponent("world.hurt.villager"), player.getUniqueID());
+						player.sendMessage(new TranslationTextComponent("message.event.mobs.hurt_villager"), player.getUniqueID());
 						event.setCanceled(true);
 					}
 				}

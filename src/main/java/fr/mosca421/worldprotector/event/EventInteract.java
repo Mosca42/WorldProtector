@@ -47,14 +47,14 @@ public class EventInteract {
 				// FIXME: Prevents block placement and general block interaction - should only disable button, lever, door, etc usage
 				if (containsUse && (!isLockableTileEntity || isTrappedChest) && !playerHasPermission) {
 					event.setCanceled(true);
-					MessageUtils.sendMessage(player, "world.interact.use");
+					MessageUtils.sendMessage(player, "message.event.interact.use");
 					return;
 				}
 				if (containsChestAccess && !playerHasPermission && isContainer) {
 					event.setCanceled(true);
 					// Shift click block placement on containers not possible
 					if (event.getHand() == Hand.MAIN_HAND) {
-						MessageUtils.sendMessage(player, "world.interact.container");
+						MessageUtils.sendMessage(player, "message.event.interact.access_container");
 					}
 					return;
 				}
@@ -75,7 +75,7 @@ public class EventInteract {
 				if (containsChestAccess && !playerHasPermission && isMinecartContainer) {
 					event.setCanceled(true);
 					if (event.getHand() == Hand.MAIN_HAND) {
-						MessageUtils.sendMessage(player, "world.interact.container");
+						MessageUtils.sendMessage(player, "message.event.interact.access_container");
 					}
 					return;
 				}

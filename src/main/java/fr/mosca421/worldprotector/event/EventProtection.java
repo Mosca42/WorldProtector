@@ -41,7 +41,7 @@ public class EventProtection {
 					region -> !region.permits(player),
 					() -> {
 						event.setCanceled(true);
-						sendMessage(player, new TranslationTextComponent("world.protection.break"));
+						sendMessage(player, new TranslationTextComponent("message.event.protection.break_block"));
 					});
 		}
 	}
@@ -56,7 +56,7 @@ public class EventProtection {
 						.anyMatch(region -> region.containsFlag(RegionFlag.PLACE) && region.forbids(player));
 				if (isPlayerPlacementProhibited) {
 					event.setCanceled(true);
-					sendMessage(player, new TranslationTextComponent("world.protection.place"));
+					sendMessage(player, new TranslationTextComponent("message.event.protection.place_block"));
 				}
 			}
 			// TODO: Test
@@ -82,11 +82,11 @@ public class EventProtection {
 					boolean cancelEvent = region.containsFlag(RegionFlag.IGNITE_EXPLOSIVES) && !region.permits(player);
 					event.setCanceled(cancelEvent);
 					if (cancelEvent) {
-						sendMessage(player, "world.protection.ignitetnt");
+						sendMessage(player, "message.event.protection.ignite_tnt");
 					}
 				}
 			} else {
-				// Projectile or other TNT, or [.?.]
+				// TODO: Explosion triggered by projectile or other TNT, or [.?.]
 			}
 		}
 	}
@@ -123,22 +123,22 @@ public class EventProtection {
 				boolean playerNotPermitted = !region.permits(player);
 				if (region.containsFlag(RegionFlag.TOOL_SECONDARY_USE) && playerNotPermitted) {
 					event.setCanceled(true);
-					sendMessage(player,   "world.protection.toolsecondary");
+					sendMessage(player,   "message.event.protection.tool_secondary_use");
 					return;
 				}
 				if (event.getToolType() == ToolType.AXE && region.containsFlag(RegionFlag.AXE_STRIP) && playerNotPermitted) {
 					event.setCanceled(true);
-					sendMessage(player,   "world.protection.stripwood");
+					sendMessage(player,   "message.event.protection.strip_wood");
 					return;
 				}
 				if (event.getToolType() == ToolType.HOE && region.containsFlag(RegionFlag.HOE_TILL) && playerNotPermitted) {
 					event.setCanceled(true);
-					sendMessage(player,   "world.protection.tillfarmland");
+					sendMessage(player,   "message.event.protection.till_farmland");
 					return;
 				}
 				if (event.getToolType() == ToolType.SHOVEL && region.containsFlag(RegionFlag.SHOVEL_PATH) && playerNotPermitted) {
 					event.setCanceled(true);
-					sendMessage(player,   "world.protection.shovelpath");
+					sendMessage(player,   "message.event.protection.shovel_path");
 					return;
 				}
 			}
@@ -155,13 +155,13 @@ public class EventProtection {
 				int bucketItemMaxStackCount = event.getEmptyBucket().getMaxStackSize();
 				// MaxStackSize: 1 -> full bucket so only placeable; >1 -> empty bucket, only fillable
 				if (bucketItemMaxStackCount == 1 && region.containsFlag(RegionFlag.PLACE.toString()) && !region.permits(player)) {
-					sendMessage(player, new TranslationTextComponent("world.protection.placefluid"));
+					sendMessage(player, new TranslationTextComponent("message.event.protection.place_fluid"));
 					event.setCanceled(true);
 					return;
 				}
 				// FIXME: Message is send if target raycast hits a non fluid. Check if event.getTarget hits a fluid
 				if (bucketItemMaxStackCount > 1 && region.containsFlag(RegionFlag.BREAK.toString()) && !region.permits(player)) {
-					sendMessage(player, new TranslationTextComponent("world.protection.scoopfluid"));
+					sendMessage(player, new TranslationTextComponent("message.event.protection.scoop_fluid"));
 					event.setCanceled(true);
 					return;
 				}

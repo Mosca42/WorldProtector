@@ -51,7 +51,7 @@ public class EventWorld {
                     PlayerEntity player = (PlayerEntity) event.getEntity();
                     if (r.containsFlag(RegionFlag.TRAMPLE_FARMLAND_PLAYER.toString())) {
                         event.setCanceled(true);
-                        MessageUtils.sendMessage(player, "world.protection.trampfarmland");
+                        MessageUtils.sendMessage(player, "message.event.world.trample_farmland");
                     }
                 } else {
                     // cancel trampling by other entities
@@ -82,7 +82,7 @@ public class EventWorld {
             boolean isBonemealUseProhibited = isPlayerActionProhibited(event.getPos(), player, RegionFlag.USE_BONEMEAL);
             if (isBonemealUseProhibited) {
                 event.setCanceled(true);
-                MessageUtils.sendMessage(player, "message.event.world.use_bonemeal");
+                MessageUtils.sendMessage(player,"message.event.world.use_bone_meal");
             }
         }
     }
@@ -110,7 +110,7 @@ public class EventWorld {
                 // prevent monster xp drop
                 if (region.containsFlag(RegionFlag.EXP_DROP_MONSTER) && isMonster(entity) && region.forbids(player)) {
                     event.setCanceled(true);
-                    MessageUtils.sendStatusMessage(player, "message.event.world.exp_drop.monster");
+                    MessageUtils.sendStatusMessage(player, "message.event.world.exp_drop.monsters");
                     return;
                 }
                 // prevent other entity xp drop (villagers, animals, ..)

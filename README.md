@@ -180,3 +180,6 @@ Under the following conditions:
 *  Configuration support
 *  CLI: flags per dimension
 *  Region claiming for players (maybe with additional subregions for players)
+*  CLI: add command to list regions you are standing in
+*  CLI: make region info commands available for all players
+*  CLI: add and remove multiple flags at once

@@ -21,6 +21,7 @@ import net.minecraft.entity.passive.WaterMobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.entity.living.AnimalTameEvent;
 import net.minecraftforge.event.entity.living.BabyEntitySpawnEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -72,6 +73,19 @@ public class EventMobs {
 			if (isBreedingProhibited) {
 				MessageUtils.sendMessage(player, "message.event.mobs.animal_breeding");
 				event.setCanceled(true);
+			}
+		}
+	}
+
+	@SubscribeEvent
+	public static void onAnimalTameAttempt(AnimalTameEvent event){
+		AnimalEntity animal = event.getAnimal();
+		PlayerEntity player = event.getTamer();
+		if (!player.world.isRemote){
+			boolean isTamingProhibited = isPlayerActionProhibited(animal.getPosition(), player, RegionFlag.ANIMAL_TAMING);
+			if (isTamingProhibited) {
+				event.setCanceled(true);
+				MessageUtils.sendMessage(player, "message.event.mobs.animal_taming");
 			}
 		}
 	}

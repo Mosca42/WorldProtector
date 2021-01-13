@@ -19,6 +19,14 @@ public class MessageUtils {
         player.sendMessage(new TranslationTextComponent(translationKey), player.getUniqueID());
     }
 
+    public static void sendStatusMessage(PlayerEntity player, String translationKey){
+        player.sendStatusMessage(new TranslationTextComponent(translationKey), true);
+    }
+
+    public static void sendStatusMessage(PlayerEntity player, ITextComponent textComponent){
+        player.sendStatusMessage(textComponent, true);
+    }
+
     private static String format(double value) {
         return String.format("%.2f", value);
     }

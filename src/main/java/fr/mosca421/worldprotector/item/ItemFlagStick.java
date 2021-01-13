@@ -36,19 +36,18 @@ public class ItemFlagStick extends Item {
 				.maxStackSize(1)
 				.group(WorldProtector.WORLD_PROTECTOR_TAB));
 		this.flags = new ArrayList<>();
-		this.flagIndex = 0;
 		this.flagsLoaded = false;
 	}
 
+	public static final String FLAG_IDX_KEY = "flag_idx";
 	public static final String MODE_KEY = "mode";
 	public static final String MODE_ADD = "add";
 	public static final String MODE_REMOVE = "remove";
 	public static final String FLAG_KEY = "flag";
 
 	private List<String> flags;
-	private int flagIndex;
 	private boolean flagsLoaded;
-	private Runnable onFinishUseAction = () -> {};
+	private Runnable onFinishUseAction = () -> {}; // TODO: check -> could cause problems if 2 sticks are used
 
 	@Override
 	public void addInformation(ItemStack stack, World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
@@ -219,7 +218,7 @@ public class ItemFlagStick extends Item {
 		super.inventoryTick(stack, worldIn, entityIn, itemSlot, isSelected);
 		if (!worldIn.isRemote) {
 			if (!flagsLoaded) {
-				flags = new ArrayList<>(RegionFlag.getFlags());
+				flags = RegionFlag.getFlags();
 				Collections.sort(flags);
 				flagsLoaded = true;
 			}
@@ -228,6 +227,7 @@ public class ItemFlagStick extends Item {
 				CompoundNBT nbt = new CompoundNBT();
 				nbt.putString(MODE_KEY, MODE_ADD);
 				nbt.putString(FLAG_KEY, "all");
+				nbt.putInt(FLAG_IDX_KEY, 0);
 				setDisplayName(stack, "all", MODE_ADD);
 				stack.setTag(nbt);
 			}
@@ -254,10 +254,15 @@ public class ItemFlagStick extends Item {
 	}
 
 	private void cycleFlags(ItemStack flagStick){
+		int flagIndex = flagStick.getTag().getInt(FLAG_IDX_KEY);
+		// get flag and set display name
 		String selectedFlag = flags.get(flagIndex);
 		setDisplayName(flagStick, selectedFlag, getMode(flagStick));
+		// write flag nbt
 		flagStick.getTag().putString(FLAG_KEY, selectedFlag);
+		// increase flag index and write nbt
 		flagIndex = (flagIndex + 1) % (flags.size());
+		flagStick.getTag().putInt(FLAG_IDX_KEY, flagIndex);
 	}
 
 	private String getMode(ItemStack flagStick) {

@@ -1,3 +1,6 @@
+1.16.4-2.0.6.1
+* Fix different Region Sticks having the same region index (index is now saved in nbt)
+* Fix different Flag Sticks having the same flag index (index is now saved in nbt)
 1.16.4-2.0.6.0
 * Add flag to prevent loot to be dropped (useful for exp farms)
 * Add flag to prevent exp to be dropped: Added flag for all entities, only monsters, and non-hostile entities (definitively not useful for exp farms :P)

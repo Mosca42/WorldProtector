@@ -4,6 +4,7 @@ import fr.mosca421.worldprotector.WorldProtector;
 import fr.mosca421.worldprotector.core.Region;
 import fr.mosca421.worldprotector.core.RegionFlag;
 import fr.mosca421.worldprotector.data.RegionSaver;
+import fr.mosca421.worldprotector.util.MessageUtils;
 import fr.mosca421.worldprotector.util.RegionUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.FlyingEntity;
@@ -15,15 +16,19 @@ import net.minecraft.entity.monster.MonsterEntity;
 import net.minecraft.entity.monster.ShulkerEntity;
 import net.minecraft.entity.monster.SlimeEntity;
 import net.minecraft.entity.passive.AnimalEntity;
+import net.minecraft.entity.passive.IronGolemEntity;
 import net.minecraft.entity.passive.WaterMobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.entity.living.BabyEntitySpawnEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 import java.util.List;
+
+import static fr.mosca421.worldprotector.util.RegionUtils.isPlayerActionProhibited;
 
 @Mod.EventBusSubscriber(modid = WorldProtector.MODID)
 public class EventMobs {
@@ -33,30 +38,49 @@ public class EventMobs {
 	@SubscribeEvent
 	public static void onEntityJoinWorld(EntityJoinWorldEvent event) {
 		Entity eventEntity = event.getEntity();
-		for (Region region : RegionSaver.getRegions()) {
-			if (regionContainsEntity(region, eventEntity)) {
-				if (region.containsFlag(RegionFlag.SPAWNING_ALL.toString()) && eventEntity instanceof MobEntity) {
+		List<Region> affectedRegions = RegionUtils.getHandlingRegionsFor(event.getEntity().getPosition(), RegionUtils.getDimension(event.getWorld()));
+		for (Region region : affectedRegions) {
+				if (region.containsFlag(RegionFlag.SPAWNING_ALL) && eventEntity instanceof MobEntity) {
 					event.setCanceled(true);
+					return;
 				}
-				if (region.containsFlag(RegionFlag.SPAWNING_ANIMAL.toString()) && isAnimal(eventEntity)) {
+				if (region.containsFlag(RegionFlag.SPAWNING_ANIMAL) && isAnimal(eventEntity)) {
 					event.setCanceled(true);
+					return;
 				}
+				if (region.containsFlag(RegionFlag.SPAWNING_GOLEM) && eventEntity instanceof IronGolemEntity) {
+					event.setCanceled(true);
+					return;
+				}
+				if (region.containsFlag(RegionFlag.SPAWNING_MONSTERS) && isMonster(eventEntity)) {
+					event.setCanceled(true);
+					return;
+				}
+				if (region.containsFlag(RegionFlag.SPAWING_EXP) && eventEntity instanceof ExperienceOrbEntity) {
+					event.setCanceled(true);
+					return;
+				}
+		}
+	}
 
-				if (region.containsFlag(RegionFlag.SPAWNING_MONSTERS.toString()) && isMonster(eventEntity)) {
-					event.setCanceled(true);
-				}
-				if (region.containsFlag(RegionFlag.EXP_DROP.toString()) && eventEntity instanceof ExperienceOrbEntity) {
-					event.setCanceled(true);
-				}
+	// TODO: Test on Villagers and add extra flag
+	@SubscribeEvent
+	public static void onBreedingAttempt(BabyEntitySpawnEvent event) {
+		PlayerEntity player = event.getCausedByPlayer();
+		if (!player.world.isRemote) {
+			boolean isBreedingProhibited = isPlayerActionProhibited(event.getParentB().getPosition(), player, RegionFlag.ANIMAL_BREEDING);
+			if (isBreedingProhibited) {
+				MessageUtils.sendMessage(player, "message.event.mobs.animal_breeding");
+				event.setCanceled(true);
 			}
 		}
 	}
 
-	private static boolean isAnimal(Entity entity){
+	public static boolean isAnimal(Entity entity){
 		return entity instanceof AnimalEntity || entity instanceof WaterMobEntity;
 	}
 
-	private static boolean isMonster(Entity entity){
+	public static boolean isMonster(Entity entity){
 		return entity instanceof MonsterEntity
 				|| entity instanceof SlimeEntity
 				|| entity instanceof FlyingEntity

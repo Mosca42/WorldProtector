@@ -1,12 +1,16 @@
 package fr.mosca421.worldprotector;
 
 import fr.mosca421.worldprotector.command.CommandsRegister;
+import fr.mosca421.worldprotector.core.Region;
 import fr.mosca421.worldprotector.data.RegionSaver;
+import fr.mosca421.worldprotector.event.RegionEvent;
 import fr.mosca421.worldprotector.registry.ItemRegister;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
+import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -29,7 +33,7 @@ public class WorldProtector {
         ItemRegister.ITEMS.register(modEventBus);
 	}
 
-	public static final ItemGroup WORLD_PROTECTOR_TAB = new ItemGroup("worldprotector") {
+	public static final ItemGroup WORLD_PROTECTOR_TAB = new ItemGroup(MODID) {
 		@Override
 		public ItemStack createIcon() {
 			return new ItemStack(ItemRegister.EMBLEM.get());

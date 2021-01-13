@@ -99,6 +99,8 @@
   "help.region.7": "/wp region tp <name>: Teleport to region",
   "help.region.8": "/wp region addplayer <region> <name>: Adds the player to the region",
   "help.region.9": "/wp region removeplayer <region> <name>: Removes the player to the region",
+  "help.region.10": "/wp region activate <region>: Activates the region ('all' is applicable)",
+  "help.region.11": "/wp region deactivate <region>: Deactivates the region  ('all' is applicable)",
   "help.flags.1": "/wp flag add <name> <flag> : Adds the flag to the region",
   "help.flags.2": "/wp flag remove <name> <flag> : Removes the flag from the region",
   "help.flags.3": "/wp flag list: List all flags of the region",

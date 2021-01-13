@@ -122,6 +122,8 @@ public class RegionUtils {
 		sendMessage(player,"help.region.7");
 		sendMessage(player,"help.region.8");
 		sendMessage(player,"help.region.9");
+		sendMessage(player,"help.region.10");
+		sendMessage(player,"help.region.11");
 		sendMessage(player, new TranslationTextComponent(TextFormatting.BLUE + "==WorldProtector Help=="));
 	}
 

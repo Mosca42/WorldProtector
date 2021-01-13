@@ -86,18 +86,23 @@ public class CommandFlag {
 						case ALL:
 							RegionFlagUtils.addAllFlags(regionName, player);
 							break;
-						case ENTER_MESSAGE_TITLE:
-							region.setEnterMessage(enterOrExitFlagMsg);
-						case ENTER_MESSAGE_SUBTITLE:
-							region.setEnterMessageSmall(enterOrExitFlagMsg);
-						case EXIT_MESSAGE_TITLE:
-							region.setExitMessage(enterOrExitFlagMsg);
-						case EXIT_MESSAGE_SUBTITLE:
-							region.setExitMessageSmall(enterOrExitFlagMsg);
+						case USE:
+						case DRAGON_BLOCK_PROT:
+						case WITHER_BLOCK_PROT:
+						case ZOMBIE_DOOR_PROT:
+						case ANIMAL_UNMOUNTING:
+						case EXP_CHANGE:
+						case EXP_PICKUP:
 							sendMessage(player, "Flag is currently disabled. We are working on a fix, sorry!");
+							break;
+						case ENTER_MESSAGE_TITLE:
+						case ENTER_MESSAGE_SUBTITLE:
+						case EXIT_MESSAGE_TITLE:
+						case EXIT_MESSAGE_SUBTITLE:
 						case BLOCK_ENTER:
 						case BLOCK_EXIT:
 							sendMessage(player, "This flag is not yet implemented, sorry!");
+							break;
 						default:
 							RegionFlagUtils.addFlag(region, player, flag);
 							break;
@@ -126,14 +131,23 @@ public class CommandFlag {
 						case ALL:
 							RegionFlagUtils.removeAllFlags(regionName, player);
 							break;
+						case USE:
+						case DRAGON_BLOCK_PROT:
+						case WITHER_BLOCK_PROT:
+						case ZOMBIE_DOOR_PROT:
+						case ANIMAL_UNMOUNTING:
+						case EXP_CHANGE:
+						case EXP_PICKUP:
+							sendMessage(player, "Flag is currently disabled. We are working on a fix, sorry!");
+							break;
 						case ENTER_MESSAGE_TITLE:
 						case ENTER_MESSAGE_SUBTITLE:
 						case EXIT_MESSAGE_TITLE:
 						case EXIT_MESSAGE_SUBTITLE:
-							sendMessage(player, "Flag is currently disabled. We are working on a fix, sorry!");
 						case BLOCK_ENTER:
 						case BLOCK_EXIT:
 							sendMessage(player, "This flag is not yet implemented, sorry!");
+							break;
 						default:
 							RegionFlagUtils.removeFlag(region, player, flag);
 							break;

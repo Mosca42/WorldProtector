@@ -10,6 +10,7 @@ import fr.mosca421.worldprotector.util.RegionUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.TNTEntity;
 import net.minecraft.entity.monster.CreeperEntity;
+import net.minecraft.entity.monster.EndermanEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.tileentity.DispenserTileEntity;
 import net.minecraft.util.math.BlockPos;
@@ -51,20 +52,21 @@ public class EventProtection {
 			List<Region> regions = RegionUtils.getHandlingRegionsFor(event.getPos(), RegionUtils.getDimension((World) event.getWorld()));
 			if (event.getEntity() instanceof PlayerEntity) {
 				PlayerEntity player = (PlayerEntity) event.getEntity();
-				regions.stream()
-						.filter(region -> region.containsFlag(RegionFlag.PLACE.toString()))
-						.filter(region -> !region.permits(player))
-						.forEach(region -> {
-							event.setCanceled(true);
-							sendMessage(player, new TranslationTextComponent("world.protection.place"));
-						});
-			} else {
-				// TODO: check
-				// Player does not place the block -> Enderman place?
-				regions.stream()
-						.filter(region -> region.containsFlag(RegionFlag.ENTITY_PLACE.toString()))
-						.forEach(region -> event.setCanceled(true));
-				WorldProtector.LOGGER.debug("Block placed by enderman denied!");
+				boolean isPlayerPlacementProhibited = regions.stream()
+						.anyMatch(region -> region.containsFlag(RegionFlag.PLACE) && region.forbids(player));
+				if (isPlayerPlacementProhibited) {
+					event.setCanceled(true);
+					sendMessage(player, new TranslationTextComponent("world.protection.place"));
+				}
+			}
+			// TODO: Test
+			if (event.getEntity() instanceof EndermanEntity) {
+				boolean endermanPlacingProhibited = regions.stream()
+						.anyMatch(region -> region.containsFlag(RegionFlag.ENTITY_PLACE));
+				if (endermanPlacingProhibited) {
+					event.setCanceled(true);
+					WorldProtector.LOGGER.debug("Block placed by enderman denied!");
+				}
 			}
 		}
 	}

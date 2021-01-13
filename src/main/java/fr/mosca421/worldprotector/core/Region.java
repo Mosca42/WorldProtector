@@ -29,6 +29,7 @@ public class Region implements INBTSerializable<CompoundNBT> {
 	private String exitMessageSmall = Strings.EMPTY;
 	private final Set<String> flags;
 	private final Set<String> players;
+	private boolean isActive;
 
 	public Region(CompoundNBT nbt) {
 		this.players = new HashSet<>();
@@ -40,6 +41,7 @@ public class Region implements INBTSerializable<CompoundNBT> {
 		this.name = name;
 		this.area = area;
 		this.dimension = dimension;
+		this.isActive = true;
 		this.players = new HashSet<>();
 		this.flags = new HashSet<>();
 	}
@@ -52,11 +54,8 @@ public class Region implements INBTSerializable<CompoundNBT> {
 	public BlockPos getCenterPos(){
 		double middleX = (this.area.maxX + this.area.minX) / 2;
 		double middleZ = (this.area.maxZ + this.area.minZ) / 2;
+		// area.getCenter()
 		return new BlockPos(middleX, this.area.maxY, middleZ);
-	}
-
-	public void setArea(AxisAlignedBB area) {
-		this.area = area;
 	}
 
 	public Set<String> getFlags() {
@@ -91,38 +90,6 @@ public class Region implements INBTSerializable<CompoundNBT> {
 		return dimension;
 	}
 
-	public String getEnterMessage() {
-		return enterMessage;
-	}
-
-	public void setEnterMessage(String enterMessage) {
-		this.enterMessage = enterMessage;
-	}
-
-	public String getExitMessage() {
-		return exitMessage;
-	}
-
-	public void setExitMessage(String exitMessage) {
-		this.exitMessage = exitMessage;
-	}
-
-	public String getEnterMessageSmall() {
-		return enterMessageSmall;
-	}
-
-	public void setEnterMessageSmall(String enterMessageSmall) {
-		this.enterMessageSmall = enterMessageSmall;
-	}
-
-	public String getExitMessageSmall() {
-		return exitMessageSmall;
-	}
-
-	public void setExitMessageSmall(String exitMessageSmall) {
-		this.exitMessageSmall = exitMessageSmall;
-	}
-
 	public Set<String> getPlayers() {
 		return players;
 	}
@@ -143,6 +110,14 @@ public class Region implements INBTSerializable<CompoundNBT> {
 
 	public boolean forbids(PlayerEntity player) {
 		return !this.permits(player);
+	}
+
+	public boolean isActive() {
+		return isActive;
+	}
+
+	public void setIsActive(boolean isActive){
+		this.isActive = isActive;
 	}
 
 	public boolean addPlayer(String playerUUID) {
@@ -169,6 +144,7 @@ public class Region implements INBTSerializable<CompoundNBT> {
 		nbt.putString("exitMessage", exitMessage);
 		nbt.putString("enterMessageSmall", enterMessageSmall);
 		nbt.putString("exitMessageSmall", exitMessageSmall);
+		nbt.putBoolean("isActive", isActive);
 		ListNBT flagsNBT = new ListNBT();
 		flagsNBT.addAll(flags.stream()
 				.map(StringNBT::valueOf)
@@ -200,6 +176,7 @@ public class Region implements INBTSerializable<CompoundNBT> {
 		this.exitMessage = nbt.getString("exitMessage");
 		this.enterMessageSmall = nbt.getString("enterMessageSmall");
 		this.exitMessageSmall = nbt.getString("exitMessageSmall");
+		this.isActive = nbt.getBoolean("isActive");
 		this.flags.clear();
 		ListNBT flagsList = nbt.getList("flags", NBT.TAG_STRING);
 		for (int i = 0; i < flagsList.size(); i++) {

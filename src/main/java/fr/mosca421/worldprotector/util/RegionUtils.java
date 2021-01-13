@@ -189,6 +189,7 @@ public class RegionUtils {
 		int maxPriority = 1;
 		List<Region> handlingRegions = new ArrayList<>();
 		List<Region> filteredRegions = RegionSaver.getRegions().stream()
+				.filter(Region::isActive)
 				.filter(region -> region.getDimension().equals(dimension))
 				.filter(region -> region.containsPosition(position))
 				.collect(Collectors.toList());
@@ -276,15 +277,38 @@ public class RegionUtils {
 	}
 
 	public static boolean isInRegion(String regionName, PlayerEntity player) {
-		if (RegionSaver.containsRegion(regionName)) {
-			Region region = RegionSaver.getRegion(regionName);
-			return region.permits(player);
-		}
-		return false;
+		return RegionSaver.containsRegion(regionName)
+				&& RegionSaver.getRegion(regionName).permits(player);
+	}
+
+	public boolean isActive(String regionName) {
+		return RegionSaver.containsRegion(regionName)
+				&& RegionSaver.getRegion(regionName).isActive();
 	}
 
 	public static String getDimension(World world){
 		return world.getDimensionKey().getLocation().toString();
 	}
 
+	public static void activate(String regionName, PlayerEntity player) {
+		if (RegionSaver.containsRegion(regionName)) {
+			Region region = RegionSaver.getRegion(regionName);
+			region.setIsActive(true);
+			RegionSaver.save();
+			sendMessage(player, new TranslationTextComponent( "message.region.activated", regionName));
+		} else {
+			sendMessage(player, new TranslationTextComponent("message.region.unknown", regionName));
+		}
+	}
+
+	public static void deactivate(String regionName, PlayerEntity player) {
+		if (RegionSaver.containsRegion(regionName)) {
+			Region region = RegionSaver.getRegion(regionName);
+			region.setIsActive(false);
+			RegionSaver.save();
+			sendMessage(player, new TranslationTextComponent( "message.region.deactivated", regionName));
+		} else {
+			sendMessage(player, new TranslationTextComponent("message.region.unknown", regionName));
+		}
+	}
 }

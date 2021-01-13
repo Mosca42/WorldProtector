@@ -87,6 +87,7 @@ public class CommandFlag {
 							RegionFlagUtils.addAllFlags(regionName, player);
 							break;
 						case USE:
+						case ENTITY_PLACE:
 						case DRAGON_BLOCK_PROT:
 						case WITHER_BLOCK_PROT:
 						case ZOMBIE_DOOR_PROT:
@@ -132,6 +133,7 @@ public class CommandFlag {
 							RegionFlagUtils.removeAllFlags(regionName, player);
 							break;
 						case USE:
+						case ENTITY_PLACE:
 						case DRAGON_BLOCK_PROT:
 						case WITHER_BLOCK_PROT:
 						case ZOMBIE_DOOR_PROT:

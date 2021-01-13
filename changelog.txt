@@ -1,3 +1,7 @@
+1.16.4-2.0.7.0
+* Add command to de-/activate a region: /wp region activate <regionname> and /wp region deactivate <regionname>.
+Deactivated regions are not considered in checking flags.
+* Add command to de-/activate all regions: /wp region activate all and /wp region deactivate all
 1.16.4-2.0.6.1
 * Fix different Region Sticks having the same region index (index is now saved in nbt)
 * Fix different Flag Sticks having the same flag index (index is now saved in nbt)

@@ -1,3 +1,16 @@
+1.16.4-2.0.6.0
+* Add flag to prevent loot to be dropped (useful for exp farms)
+* Add flag to prevent exp to be dropped: Added flag for all entities, only monsters, and non-hostile entities (definitively not useful for exp farms :P)
+* Add flag to prevent lightning strikes from hitting entities
+* Add flags for Shulker and Enderman teleportation (from and to regions)
+* Add flag to prevent animal breeding
+* Add flag to prevent animal taming
+* Add flag to prevent animal/Entity mounting
+* Add flag to prevent Ender Chest access: Now separate from the other containers
+* Add flag for a level freeze (useful for enchanting/anvil?): Player can still pickup xp, but level does not increase or decrease
+* Add flag to prevent spawning of iron golems
+* Add Flag to prevent usage of bone meal
+* Rework lang translation key structure to be similar in structure and fitting to event classes
 1.16.4-2.0.5.3
 * Fix npe when removing all regions and try to cycle through the regions
 * Fix marked area now consistent with marked blocks

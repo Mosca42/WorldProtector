@@ -36,7 +36,7 @@ public class EventInteract {
 				boolean isEnderChest = target instanceof EnderChestTileEntity;
 				boolean isLectern = target instanceof LecternTileEntity;
 				boolean isTrappedChest = target instanceof TrappedChestTileEntity;
-				boolean isContainer = isLectern || isEnderChest || isLockableTileEntity;
+				boolean isContainer = isLectern || isLockableTileEntity;
 				boolean playerHasPermission = region.permits(player);
 
 				if (containsEnderChestAccess && isEnderChest && region.forbids(player)) {

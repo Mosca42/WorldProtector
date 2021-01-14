@@ -74,9 +74,7 @@ public class EventInteract {
 
 				if (containsChestAccess && !playerHasPermission && isMinecartContainer) {
 					event.setCanceled(true);
-					if (event.getHand() == Hand.MAIN_HAND) {
-						MessageUtils.sendMessage(player, "message.event.interact.access_container");
-					}
+					MessageUtils.sendMessage(player, "message.event.interact.access_container");
 					return;
 				}
 			}

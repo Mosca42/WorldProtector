@@ -56,7 +56,7 @@ To create your region, follow these instructions :
 
 4. Add flags to your region by using the appropriate command ```/wp flag add <your region's name> <flag name>``` or by using the Flag Stick in conjunction with the Region Stick (see Flag Stick and Region Stick tooltips).
 
-5. [Optional] Add players to your region which are allowed to bypass the flags by using the command ````/wp region addplayer <playername>```` or by using the Regin Stick (see Region Stick tooltip for more details).
+5. [Optional] Add players to your region which are allowed to bypass the flags by using the command ````/wp region addplayer <playername>```` or by using the Region Stick (see Region Stick tooltip for more details).
 
 
 ## Flags

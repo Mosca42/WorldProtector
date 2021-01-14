@@ -139,7 +139,7 @@ Therefore, the arena region needs to have a higher priority than the spawn regio
 
 # Contribution
 
-Found a bug? Or do you have an idea for a new flag or jsut a general suggestions for the mod?
+Found a bug? Or do you have an idea for a new flag or just a general suggestions for the mod?
 
 Don't hesitate to propose them to me. Or even better: Open a new [issue](https://github.com/Mosca42/WorldProtector/issues)!
 
@@ -172,7 +172,7 @@ Under the following conditions:
 * No additional restrictions — You may not apply legal terms or technological measures that legally restrict others from doing anything the license permits.
 
 
-# Possible future features
+# Possible future features/improvements
 
 *  Provide simple gui for choosing flag/region, since there could be many to cycle through
 *  Define any shape as a region
@@ -184,3 +184,4 @@ Under the following conditions:
 *  CLI: make region info commands available for all players
 *  CLI: add and remove multiple flags at once
 *  Regions are saved with their name, but this is not considered when defining a new region with the same name in a different dimension.
+*  Add configuration option to disable specific event checks completely for optimization

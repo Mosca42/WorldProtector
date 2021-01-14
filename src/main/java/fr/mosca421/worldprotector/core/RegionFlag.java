@@ -48,7 +48,7 @@ public enum RegionFlag {
     //
     USE("use"), // Buttons, Doors, Lever, etc  // TODO: Currently not working correctly
     USE_BONEMEAL("use-bonemeal"),
-    CHEST_ACCESS("access-container"),
+    CONTAINER_ACCESS("access-container"),
     ENDER_CHEST_ACCESS("access-enderchest"),
     USE_ENDERPEARL_FROM_REGION("enderpearl-from"),
     USE_ENDERPEARL_TO_REGION("enderpearl-to"),

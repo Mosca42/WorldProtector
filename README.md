@@ -183,3 +183,4 @@ Under the following conditions:
 *  CLI: add command to list regions you are standing in
 *  CLI: make region info commands available for all players
 *  CLI: add and remove multiple flags at once
+*  Regions are saved with their name, but this is not considered when defining a new region with the same name in a different dimension.

@@ -254,15 +254,11 @@ public class RegionUtils {
 				.anyMatch(region -> region.containsFlag(flag) && region.forbids(player));
 	}
 
-	public static void setPriorityRegion(String regionName, int priority, PlayerEntity player) {
+	public static void setRegionPriority(String regionName, int priority, PlayerEntity player) {
 		if (RegionSaver.containsRegion(regionName)) {
 			Region region = RegionSaver.getRegion(regionName);
-			if (priority >= 1) {
-				region.setPriority(priority);
-				sendMessage(player, new TranslationTextComponent("message.region.setpriority", priority, regionName));
-			} else {
-				sendMessage(player, "message.region.priority");
-			}
+			region.setPriority(priority);
+			sendMessage(player, new TranslationTextComponent("message.region.setpriority", priority, regionName));
 		} else {
 			sendMessage(player, "message.region.unknown");
 		}

@@ -2,13 +2,11 @@ package fr.mosca421.worldprotector.command;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.stream.Collectors;
 
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import fr.mosca421.worldprotector.core.Region;
 import fr.mosca421.worldprotector.data.RegionSaver;
 import fr.mosca421.worldprotector.util.RegionUtils;
 import net.minecraft.command.CommandSource;
@@ -92,7 +90,7 @@ public class CommandRegion {
                 .then(Commands.literal(Command.PRIORITY_SET.toString())
                         .then(Commands.argument(Command.REGION.toString(), StringArgumentType.string())
 								.suggests((ctx, builder) -> ISuggestionProvider.suggest(RegionSaver.getRegionNames(), builder))
-                                .then(Commands.argument(Command.PRIORITY.toString(), IntegerArgumentType.integer())
+                                .then(Commands.argument(Command.PRIORITY.toString(), IntegerArgumentType.integer(1, 9))
                                         .executes(ctx -> setPriority(ctx.getSource(), StringArgumentType.getString(ctx, Command.REGION.toString()), IntegerArgumentType.getInteger(ctx, Command.PRIORITY.toString()))))));
     }
 
@@ -239,7 +237,7 @@ public class CommandRegion {
 
 	private static int setPriority(CommandSource source, String region, int priority) {
 		try {
-			RegionUtils.setPriorityRegion(region, priority, source.asPlayer());
+			RegionUtils.setRegionPriority(region, priority, source.asPlayer());
 		} catch (CommandSyntaxException e) {
 			e.printStackTrace();
 		}

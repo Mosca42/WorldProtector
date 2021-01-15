@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import fr.mosca421.worldprotector.WorldProtector;
 import fr.mosca421.worldprotector.core.Region;
 import fr.mosca421.worldprotector.item.ItemRegionMarker;
 import fr.mosca421.worldprotector.core.RegionFlag;
@@ -92,6 +93,10 @@ public class RegionUtils {
 	}
 
 	public static void createRegion(String regionName, PlayerEntity player, ItemStack item) {
+		if (regionName.contains(" ")){ // region contains whitespace
+			sendMessage(player,   "message.region.define.error");
+			return;
+		}
 		if (item.getItem() instanceof ItemRegionMarker) {
 			if (item.getTag() != null) {
 				if (item.getTag().getBoolean(ItemRegionMarker.VALID)) {

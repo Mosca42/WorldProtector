@@ -72,6 +72,7 @@
   "message.flags.container.novalidflags": "Container does not contain any name tags with valid flags!",
   "message.flags.unknown": "Unknown flag '%s'!",
   "message.region.define": "Region '%s' defined successfully!",
+  "message.region.define.error": "Region contains invalid characters. Whitespace is not allowed!",
   "message.region.define.denied": "You are not allowed to create regions!",
   "message.region.redefine": "Region '%s' redefined!",
   "message.region.remove": "Region '%s' removed!",

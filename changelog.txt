@@ -1,3 +1,6 @@
+1.16.4-2.0.7.3
+* Prevent defining regions with whitespace in the name
+* Add feedback message if no regions were defined when using /wp region list
 1.16.4-2.0.7.2
 * Add missing functionality to actually add/remove a player on hit when using the Region Stick
 1.16.4-2.0.7.1

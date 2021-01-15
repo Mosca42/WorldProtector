@@ -4,13 +4,10 @@ import fr.mosca421.worldprotector.WorldProtector;
 import fr.mosca421.worldprotector.core.Region;
 import fr.mosca421.worldprotector.core.RegionFlag;
 import fr.mosca421.worldprotector.util.MessageUtils;
-import fr.mosca421.worldprotector.util.PlayerUtils;
 import fr.mosca421.worldprotector.util.RegionUtils;
-import net.minecraft.block.*;
 import net.minecraft.entity.item.minecart.ContainerMinecartEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.tileentity.*;
-import net.minecraft.util.Hand;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -36,7 +33,7 @@ public class EventInteract {
 
 				// check for trapped chest
 				if (region.containsFlag(RegionFlag.USE) && !isLockableTileEntity && isPlayerProhibited) {
-					if (!PlayerUtils.isSneaking()) {
+					if (!player.isSneaking()) {
 						event.setCanceled(true);
 						MessageUtils.sendMessage(player, "message.event.interact.use");
 						return;
@@ -44,7 +41,7 @@ public class EventInteract {
 				}
 				// check for ender chest access
 				if (region.containsFlag(RegionFlag.ENDER_CHEST_ACCESS) && isEnderChest && isPlayerProhibited) {
-					if (!PlayerUtils.isSneaking()) {
+					if (!player.isSneaking()) {
 						event.setCanceled(true);
 						MessageUtils.sendMessage(player, "message.event.interact.access_ender_chest");
 						return;
@@ -52,7 +49,7 @@ public class EventInteract {
 				}
 				// check for container access
 				if (region.containsFlag(RegionFlag.CONTAINER_ACCESS) && isContainer && isPlayerProhibited) {
-					if (!PlayerUtils.isSneaking()) {
+					if (!player.isSneaking()) {
 						event.setCanceled(true);
 						MessageUtils.sendMessage(player, "message.event.interact.access_container");
 						return;

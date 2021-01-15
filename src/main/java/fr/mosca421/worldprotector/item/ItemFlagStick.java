@@ -2,13 +2,13 @@ package fr.mosca421.worldprotector.item;
 
 import fr.mosca421.worldprotector.WorldProtector;
 import fr.mosca421.worldprotector.core.RegionFlag;
-import fr.mosca421.worldprotector.util.PlayerUtils;
 import fr.mosca421.worldprotector.util.RegionFlagUtils;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.*;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.LockableLootTileEntity;
@@ -35,9 +35,9 @@ public class ItemFlagStick extends Item {
 		super(new Properties()
 				.maxStackSize(1)
 				.group(WorldProtector.WORLD_PROTECTOR_TAB));
-		this.flags = new ArrayList<>();
-		this.flagsLoaded = false;
 	}
+
+	private static final List<String> flags;
 
 	// nbt keys
 	public static final String FLAG_IDX = "flag_idx";
@@ -47,15 +47,17 @@ public class ItemFlagStick extends Item {
 	public static final String MODE_ADD = "add";
 	public static final String MODE_REMOVE = "remove";
 
-	private List<String> flags;
-	private boolean flagsLoaded;
-	private Runnable onFinishUseAction = () -> {}; // TODO: check -> could cause problems if 2 sticks are used
+	static {
+		// init flag list
+		WorldProtector.LOGGER.info("Flag Stick flags initialized");
+		flags = RegionFlag.getFlags();
+		Collections.sort(flags);
+	}
 
 	@Override
 	public void addInformation(ItemStack stack, World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
 		if(Screen.hasShiftDown()) {
-			tooltip.add(new TranslationTextComponent(TextFormatting.LIGHT_PURPLE +  "Select" + TextFormatting.RESET + " the flag by " +
-					TextFormatting.LIGHT_PURPLE + TextFormatting.ITALIC + "CTRL" + TextFormatting.RESET + " right clicking."));
+			tooltip.add(new TranslationTextComponent("Select the flag by right clicking."));
 			tooltip.add(new TranslationTextComponent(TextFormatting.AQUA +  "Switch" + TextFormatting.RESET + " modes by " +
 					TextFormatting.AQUA + TextFormatting.ITALIC + "SHIFT" + TextFormatting.RESET + " right clicking."));
 			tooltip.add(new TranslationTextComponent("Hold down the right mouse button to add/remove the selected flag to/from the region."));
@@ -70,9 +72,29 @@ public class ItemFlagStick extends Item {
 
     @Override
     public ItemStack onItemUseFinish(ItemStack stack, World worldIn, LivingEntity entityLiving) {
-	    if (!worldIn.isRemote) {
-			this.onFinishUseAction.run();
-			((PlayerEntity) entityLiving).getCooldownTracker().setCooldown(this, 20);
+	    if (!worldIn.isRemote && entityLiving instanceof ServerPlayerEntity) {
+	    	ServerPlayerEntity player = (ServerPlayerEntity) entityLiving;
+	    	String selectedRegion = player.getHeldItemOffhand().getTag().getString(ItemRegionStick.REGION);
+	    	String selectedFlag = stack.getTag().getString(FLAG);
+			int finishAction = stack.getTag().getInt("finish_action");
+			switch (finishAction) {
+				case 1:
+					RegionFlagUtils.addAllFlags(selectedRegion, player);
+					break;
+				case 2:
+					RegionFlagUtils.addFlag(selectedRegion, player, selectedFlag);
+					break;
+				case 3:
+					RegionFlagUtils.removeAllFlags(selectedRegion, player);
+					break;
+				case 4:
+					RegionFlagUtils.removeFlag(selectedRegion, player, selectedFlag);
+					break;
+				default:
+					WorldProtector.LOGGER.error("Oh oh");
+					break;
+			}
+			player.getCooldownTracker().setCooldown(this, 20);
 		}
         return stack;
     }
@@ -101,59 +123,52 @@ public class ItemFlagStick extends Item {
 						.mergeStyle(TextFormatting.RED));
 				return ActionResult.resultFail(flagStick);
 			}
-			boolean isMainHand = PlayerUtils.isMainHand(handIn);
-			// SHIFT -> switch mode
-			if (PlayerUtils.isHoldingCtrl() && isMainHand) {
-				switchMode(flagStick);
-				return ActionResult.resultSuccess(flagStick);
-			}
-			// CTRL -> cycle flags
-			if (PlayerUtils.isSneaking() && isMainHand) {
-				cycleFlags(flagStick);
-				return ActionResult.resultSuccess(flagStick);
-			}
-			// check for region stick and add/remove flags
-			String flagMode = getMode(flagStick);
-			String selectedRegion;
-			if (isMainHand) {
-				ItemStack offHand = playerIn.getHeldItemOffhand();
-				if (offHand.getItem() instanceof ItemRegionStick) {
-					selectedRegion = offHand.getTag().getString(ItemRegionStick.REGION);
-				} else {
+			ItemStack offHand = playerIn.getHeldItemOffhand();
+			ItemStack mainHand = playerIn.getHeldItemMainhand();
+			if (offHand.getItem() instanceof ItemRegionStick && mainHand.getItem() instanceof ItemFlagStick) {
+				String selectedRegion = offHand.getTag().getString(ItemRegionStick.REGION);
+				String selectedFag = getSelectedFlag(playerIn.getHeldItem(handIn));
+				String flagMode = getMode(flagStick);
+				if (selectedFag.isEmpty() || selectedRegion.isEmpty()) {
 					return ActionResult.resultFail(flagStick);
 				}
+				boolean allFlagsSelected = selectedFag.equals(RegionFlag.ALL.toString());
+				switch (flagMode) {
+					case MODE_ADD:
+						if (allFlagsSelected) {
+							flagStick.getTag().putInt("finish_action", 1);
+						} else {
+							flagStick.getTag().putInt("finish_action", 2);
+						}
+						break;
+					case MODE_REMOVE:
+						if (allFlagsSelected) {
+							flagStick.getTag().putInt("finish_action", 3);
+						} else {
+							flagStick.getTag().putInt("finish_action", 4);
+						}
+						break;
+					default:
+						break;
+				}
+				playerIn.setActiveHand(handIn);
+				return super.onItemRightClick(worldIn, playerIn, handIn);
 			} else {
-				// Offhand
-				return ActionResult.resultFail(flagStick);
-			}
-			String selectedFag = getSelectedFlag(playerIn.getHeldItem(handIn));
-			if (selectedFag.isEmpty() || selectedRegion.isEmpty()) {
-				return ActionResult.resultFail(flagStick);
-			}
-			boolean allFlagsSelected = selectedFag.equals(RegionFlag.ALL.toString());
-			switch (flagMode) {
-				case MODE_ADD:
-					if (allFlagsSelected){
-						this.onFinishUseAction = () -> RegionFlagUtils.addAllFlags(selectedRegion, playerIn);
+				if (handIn == Hand.MAIN_HAND) {
+					if (playerIn.isSneaking()) {
+						switchMode(flagStick);
+						return ActionResult.resultSuccess(flagStick);
 					} else {
-						this.onFinishUseAction = () -> RegionFlagUtils.addFlag(selectedRegion, playerIn, selectedFag);
+						cycleFlags(flagStick);
+						return ActionResult.resultSuccess(flagStick);
 					}
-					break;
-				case MODE_REMOVE:
-					if (allFlagsSelected){
-						this.onFinishUseAction = () -> RegionFlagUtils.removeAllFlags(selectedRegion, playerIn);
-					} else {
-						this.onFinishUseAction = () -> RegionFlagUtils.removeFlag(selectedRegion, playerIn, selectedFag);
-					}
-					break;
-				default:
-					break;
+				}
 			}
-			playerIn.setActiveHand(handIn);
-			return super.onItemRightClick(worldIn, playerIn, handIn);
+			// check for region stick and add/remove flags
 		} else {
 			return ActionResult.resultFail(playerIn.getHeldItem(handIn));
 		}
+		return null;
 	}
 
 	@Override
@@ -182,11 +197,13 @@ public class ItemFlagStick extends Item {
 						}
 					}
 					if (nameTags.isEmpty()) {
+						WorldProtector.LOGGER.info("[Flag Stick]: message.flags.container.noflags");
 						sendMessage(player,  "message.flags.container.noflags");
 						return ActionResultType.FAIL;
 					}
 					List<String> validFlags = nameTags.stream().filter(RegionFlag::contains).collect(Collectors.toList());
 					if (validFlags.isEmpty()) {
+						WorldProtector.LOGGER.info("[Flag Stick]: message.flags.container.novalidflags");
 						sendMessage(player,  "message.flags.container.novalidflags");
 						return ActionResultType.FAIL;
 					}
@@ -219,17 +236,14 @@ public class ItemFlagStick extends Item {
 	public void inventoryTick(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
 		super.inventoryTick(stack, worldIn, entityIn, itemSlot, isSelected);
 		if (!worldIn.isRemote) {
-			if (!flagsLoaded) {
-				flags = RegionFlag.getFlags();
-				Collections.sort(flags);
-				flagsLoaded = true;
-			}
 			// ensure flag stick has a nbt tag and is initialized as needed
 			if (!stack.hasTag()){
+				WorldProtector.LOGGER.info("Flag Stick nbt initialized");
 				CompoundNBT nbt = new CompoundNBT();
 				nbt.putString(MODE, MODE_ADD);
 				nbt.putString(FLAG, RegionFlag.ALL.toString());
 				nbt.putInt(FLAG_IDX, 0);
+				nbt.putInt("finish_action", 0);
 				setDisplayName(stack, RegionFlag.ALL, MODE_ADD);
 				stack.setTag(nbt);
 			}

@@ -5,12 +5,12 @@ import java.util.List;
 import fr.mosca421.worldprotector.WorldProtector;
 import fr.mosca421.worldprotector.util.ExpandUtils;
 import fr.mosca421.worldprotector.util.MessageUtils;
-import fr.mosca421.worldprotector.util.PlayerUtils;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
@@ -27,7 +27,6 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 
 import static fr.mosca421.worldprotector.util.MessageUtils.sendMessage;
-import static fr.mosca421.worldprotector.util.PlayerUtils.*;
 
 public class ItemRegionMarker extends Item {
 
@@ -72,9 +71,16 @@ public class ItemRegionMarker extends Item {
 
 	@Override
 	public ItemStack onItemUseFinish(ItemStack stack, World worldIn, LivingEntity entityLiving) {
-		if (!worldIn.isRemote) {
-			this.onFinishUseAction.run();
-			((PlayerEntity) entityLiving).getCooldownTracker().setCooldown(this, 20);
+		WorldProtector.LOGGER.debug(entityLiving);
+		if (!worldIn.isRemote){
+			if(entityLiving instanceof ServerPlayerEntity) {
+				ServerPlayerEntity player = (ServerPlayerEntity) entityLiving;
+				int yLow = (int) stack.getTag().getDouble(Y_DEFAULT_LOW);
+				int yHigh = (int) stack.getTag().getDouble(Y_DEFAULT_HIGH);
+				player.sendStatusMessage(new TranslationTextComponent("expand"), true);
+				ExpandUtils.expandVert(player, stack, yLow, yHigh);
+				player.getCooldownTracker().setCooldown(this, 20);
+			}
 		}
 		return stack;
 	}
@@ -103,17 +109,13 @@ public class ItemRegionMarker extends Item {
 						.mergeStyle(TextFormatting.RED));
 				return ActionResult.resultFail(markStick);
 			}
-			if (isMainHand(handIn) && isValidRegion(markStick)) {
-				int yLow = (int) markStick.getTag().getDouble(Y_DEFAULT_LOW);
-				int yHigh = (int) markStick.getTag().getDouble(Y_DEFAULT_HIGH);
-				this.onFinishUseAction = () -> ExpandUtils.expandVert(playerIn, markStick, yLow, yHigh);
+			if (handIn == Hand.MAIN_HAND && isValidRegion(markStick)) {
 				playerIn.setActiveHand(handIn);
 				return super.onItemRightClick(worldIn, playerIn, handIn);
 			}
 			return ActionResult.resultFail(markStick);
-		} else {
-			return ActionResult.resultFail(playerIn.getHeldItem(handIn));
 		}
+		return ActionResult.resultFail(playerIn.getHeldItem(handIn));
 	}
 
 	@Override
@@ -169,6 +171,7 @@ public class ItemRegionMarker extends Item {
 	public void inventoryTick(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
 		super.inventoryTick(stack, worldIn, entityIn, itemSlot, isSelected);
 		if (!worldIn.isRemote && !stack.hasTag()) {
+			WorldProtector.LOGGER.info("Region Marker nbt initialized");
 			CompoundNBT nbt = new CompoundNBT();
 			nbt.putInt(CYCLE_POINT_ID, 0);
 			nbt.putBoolean(VALID, false);

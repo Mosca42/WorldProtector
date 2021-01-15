@@ -16,7 +16,6 @@ import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.common.util.INBTSerializable;
 
-// TODO: Work on immutability
 public class Region implements INBTSerializable<CompoundNBT> {
 
 	private AxisAlignedBB area;
@@ -30,6 +29,24 @@ public class Region implements INBTSerializable<CompoundNBT> {
 	private final Set<String> flags;
 	private final Set<String> players;
 	private boolean isActive;
+
+	// nbt keys
+	public static final String NAME = "name";
+	public static final String DIM = "dimension";
+	public static final String MIN_X = "minX";
+	public static final String MIN_Y = "minY";
+	public static final String MIN_Z = "minZ";
+	public static final String MAX_X = "maxX";
+	public static final String MAX_Y = "maxY";
+	public static final String MAX_Z = "maxZ";
+	public static final String PRIORITY = "priority";
+	public static final String ACTIVE = "active";
+	public static final String PLAYERS = "players";
+	public static final String FLAGS = "flags";
+	public static final String ENTER_MSG_1 = "enter_msg";
+	public static final String ENTER_MSG_2 = "enter_msg_small";
+	public static final String EXIT_MSG_1 = "exit_msg";
+	public static final String EXIT_MSG_2 = "exit_msg_small";
 
 	public Region(CompoundNBT nbt) {
 		this.players = new HashSet<>();
@@ -131,59 +148,59 @@ public class Region implements INBTSerializable<CompoundNBT> {
 	@Override
 	public CompoundNBT serializeNBT() {
 		CompoundNBT nbt = new CompoundNBT();
-		nbt.putString("name", name);
-		nbt.putInt("minX", (int) area.minX);
-		nbt.putInt("minY", (int) area.minY);
-		nbt.putInt("minZ", (int) area.minZ);
-		nbt.putInt("maxX", (int) area.maxX);
-		nbt.putInt("maxY", (int) area.maxY);
-		nbt.putInt("maxZ", (int) area.maxZ);
-		nbt.putInt("priority", priority);
-		nbt.putString("dimension", dimension);
-		nbt.putString("enterMessage", enterMessage);
-		nbt.putString("exitMessage", exitMessage);
-		nbt.putString("enterMessageSmall", enterMessageSmall);
-		nbt.putString("exitMessageSmall", exitMessageSmall);
-		nbt.putBoolean("isActive", isActive);
+		nbt.putString(NAME, name);
+		nbt.putInt(MIN_X, (int) area.minX);
+		nbt.putInt(MIN_Y, (int) area.minY);
+		nbt.putInt(MIN_Z, (int) area.minZ);
+		nbt.putInt(MAX_X, (int) area.maxX);
+		nbt.putInt(MAX_Y, (int) area.maxY);
+		nbt.putInt(MAX_Z, (int) area.maxZ);
+		nbt.putInt(PRIORITY, priority);
+		nbt.putString(DIM, dimension);
+		nbt.putBoolean(ACTIVE, isActive);
+		nbt.putString(ENTER_MSG_1, enterMessage);
+		nbt.putString(ENTER_MSG_2, enterMessageSmall);
+		nbt.putString(EXIT_MSG_1, exitMessage);
+		nbt.putString(EXIT_MSG_2, exitMessageSmall);
 		ListNBT flagsNBT = new ListNBT();
 		flagsNBT.addAll(flags.stream()
 				.map(StringNBT::valueOf)
 				.collect(Collectors.toSet()));
-		nbt.put("flags", flagsNBT);
+		nbt.put(FLAGS, flagsNBT);
 
 		ListNBT playersNBT = new ListNBT();
 		playersNBT.addAll(players.stream()
 				.map(StringNBT::valueOf)
 				.collect(Collectors.toSet()));
-		nbt.put("players", playersNBT);
+		nbt.put(PLAYERS, playersNBT);
 		return nbt;
 	}
 
 	private AxisAlignedBB areaFromNBT(CompoundNBT nbt){
 		return new AxisAlignedBB(
-				nbt.getInt("minX"), nbt.getInt("minY"), nbt.getInt("minZ"),
-				nbt.getInt("maxX"), nbt.getInt("maxY"), nbt.getInt("maxZ")
+				nbt.getInt(MIN_X), nbt.getInt(MIN_Y), nbt.getInt(MIN_Z),
+				nbt.getInt(MAX_X), nbt.getInt(MAX_Y), nbt.getInt(MAX_Z)
 		);
 	}
 
 	@Override
 	public void deserializeNBT(CompoundNBT nbt) {
-		this.name = nbt.getString("name");
+		this.name = nbt.getString(NAME);
 		this.area = areaFromNBT(nbt);
-		this.priority = nbt.getInt("priority");
-		this.dimension = nbt.getString("dimension");
-		this.enterMessage = nbt.getString("enterMessage");
-		this.exitMessage = nbt.getString("exitMessage");
-		this.enterMessageSmall = nbt.getString("enterMessageSmall");
-		this.exitMessageSmall = nbt.getString("exitMessageSmall");
-		this.isActive = nbt.getBoolean("isActive");
+		this.priority = nbt.getInt(PRIORITY);
+		this.dimension = nbt.getString(DIM);
+		this.isActive = nbt.getBoolean(ACTIVE);
+		this.enterMessage = nbt.getString(ENTER_MSG_2);
+		this.enterMessageSmall = nbt.getString(ENTER_MSG_2);
+		this.exitMessage = nbt.getString(EXIT_MSG_1);
+		this.exitMessageSmall = nbt.getString(EXIT_MSG_2);
 		this.flags.clear();
-		ListNBT flagsList = nbt.getList("flags", NBT.TAG_STRING);
+		ListNBT flagsList = nbt.getList(FLAGS, NBT.TAG_STRING);
 		for (int i = 0; i < flagsList.size(); i++) {
 			flags.add(flagsList.getString(i));
 		}
 		this.players.clear();
-		ListNBT playerLists = nbt.getList("players", NBT.TAG_STRING);
+		ListNBT playerLists = nbt.getList(PLAYERS, NBT.TAG_STRING);
 		for (int i = 0; i < playerLists.size(); i++) {
 			players.add(playerLists.getString(i));
 		}

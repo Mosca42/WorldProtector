@@ -1,3 +1,5 @@
+1.16.4-2.0.7.2
+* Add missing functionality to actually add/remove a player on hit when using the Region Stick
 1.16.4-2.0.7.1
 * Fix use, access-container and access-ender-chest flag: Use flag is now more consistent with the 1.15.2 behavior and
 it is now possible to place blocks against containers and in flag protected regions while sneaking

@@ -39,11 +39,13 @@ public class ItemFlagStick extends Item {
 		this.flagsLoaded = false;
 	}
 
-	public static final String FLAG_IDX_KEY = "flag_idx";
-	public static final String MODE_KEY = "mode";
+	// nbt keys
+	public static final String FLAG_IDX = "flag_idx";
+	public static final String FLAG = "flag";
+	public static final String MODE = "mode";
+
 	public static final String MODE_ADD = "add";
 	public static final String MODE_REMOVE = "remove";
-	public static final String FLAG_KEY = "flag";
 
 	private List<String> flags;
 	private boolean flagsLoaded;
@@ -116,7 +118,7 @@ public class ItemFlagStick extends Item {
 			if (isMainHand) {
 				ItemStack offHand = playerIn.getHeldItemOffhand();
 				if (offHand.getItem() instanceof ItemRegionStick) {
-					selectedRegion = offHand.getTag().getString(ItemRegionStick.REGION_KEY);
+					selectedRegion = offHand.getTag().getString(ItemRegionStick.REGION);
 				} else {
 					return ActionResult.resultFail(flagStick);
 				}
@@ -225,10 +227,10 @@ public class ItemFlagStick extends Item {
 			// ensure flag stick has a nbt tag and is initialized as needed
 			if (!stack.hasTag()){
 				CompoundNBT nbt = new CompoundNBT();
-				nbt.putString(MODE_KEY, MODE_ADD);
-				nbt.putString(FLAG_KEY, "all");
-				nbt.putInt(FLAG_IDX_KEY, 0);
-				setDisplayName(stack, "all", MODE_ADD);
+				nbt.putString(MODE, MODE_ADD);
+				nbt.putString(FLAG, RegionFlag.ALL.toString());
+				nbt.putInt(FLAG_IDX, 0);
+				setDisplayName(stack, RegionFlag.ALL, MODE_ADD);
 				stack.setTag(nbt);
 			}
 		}
@@ -254,30 +256,34 @@ public class ItemFlagStick extends Item {
 	}
 
 	private void cycleFlags(ItemStack flagStick){
-		int flagIndex = flagStick.getTag().getInt(FLAG_IDX_KEY);
+		int flagIndex = flagStick.getTag().getInt(FLAG_IDX);
 		// get flag and set display name
 		String selectedFlag = flags.get(flagIndex);
 		setDisplayName(flagStick, selectedFlag, getMode(flagStick));
 		// write flag nbt
-		flagStick.getTag().putString(FLAG_KEY, selectedFlag);
+		flagStick.getTag().putString(FLAG, selectedFlag);
 		// increase flag index and write nbt
 		flagIndex = (flagIndex + 1) % (flags.size());
-		flagStick.getTag().putInt(FLAG_IDX_KEY, flagIndex);
+		flagStick.getTag().putInt(FLAG_IDX, flagIndex);
 	}
 
 	private String getMode(ItemStack flagStick) {
-		return flagStick.getTag().getString(MODE_KEY);
+		return flagStick.getTag().getString(MODE);
 	}
 
 	private void setMode(ItemStack flagStick, String mode){
-		flagStick.getTag().putString(MODE_KEY, mode);
+		flagStick.getTag().putString(MODE, mode);
 	}
 
 	private String getSelectedFlag(ItemStack flagStick){
-		return flagStick.getTag().getString(FLAG_KEY);
+		return flagStick.getTag().getString(FLAG);
 	}
 
 	private void setDisplayName(ItemStack flagStick, String flag, String mode){
 		flagStick.setDisplayName(new StringTextComponent(TextFormatting.GREEN + "Flag Stick [" + flag + ", " + mode + "]"));
+	}
+
+	private void setDisplayName(ItemStack flagStick, RegionFlag flag, String mode){
+		setDisplayName(flagStick, flag.toString(), mode);
 	}
 }

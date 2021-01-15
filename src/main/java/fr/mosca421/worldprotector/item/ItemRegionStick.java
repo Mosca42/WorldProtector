@@ -37,14 +37,16 @@ public class ItemRegionStick extends Item {
 				.group(WorldProtector.WORLD_PROTECTOR_TAB));
 		this.cachedRegions = new ArrayList<>();
 		this.regionCount = 0;
-		this.regionCacheInitialized = false; // NBT?
+		this.regionCacheInitialized = false;
 	}
 
-	public static final String REGION_IDX_KEY = "region_idx";
-	public static final String MODE_KEY = "mode";
+	// nbt keys
+	public static final String REGION_IDX = "region_idx";
+	public static final String MODE = "mode";
+	public static final String REGION = "region";
+
 	public static final String MODE_ADD = "add";
 	public static final String MODE_REMOVE = "remove";
-	public static final String REGION_KEY = "region";
 
 	private List<String> cachedRegions;
 	private int regionCount;
@@ -134,18 +136,18 @@ public class ItemRegionStick extends Item {
 					.map(Region::getName)
 					.collect(Collectors.toList());
 			regionCount = cachedRegions.size();
-			int regionIndex = stack.getTag().getInt(REGION_IDX_KEY);
+			int regionIndex = stack.getTag().getInt(REGION_IDX);
 			regionIndex = Math.max(0, Math.min(regionIndex, regionCount - 1));
-			stack.getTag().putInt(REGION_IDX_KEY, regionIndex);
+			stack.getTag().putInt(REGION_IDX, regionIndex);
 		}
 		// init nbt tag
 		if (!worldIn.isRemote && !stack.hasTag()) {
 			CompoundNBT nbt = new CompoundNBT();
-			nbt.putString(MODE_KEY, MODE_ADD);
-			nbt.putInt(REGION_IDX_KEY, 0);
+			nbt.putString(MODE, MODE_ADD);
+			nbt.putInt(REGION_IDX, 0);
 			if (regionCount > 0) {
 				String region = cachedRegions.get(0);
-				nbt.putString(REGION_KEY, region);
+				nbt.putString(REGION, region);
 			}
 			stack.setTag(nbt);
 		}
@@ -156,24 +158,24 @@ public class ItemRegionStick extends Item {
 	}
 
 	public String getMode(ItemStack regionStick){
-		return regionStick.getTag().getString(MODE_KEY);
+		return regionStick.getTag().getString(MODE);
 	}
 
 	private void setMode(ItemStack regionStick, String mode){
-		regionStick.getTag().putString(MODE_KEY, mode);
+		regionStick.getTag().putString(MODE, mode);
 	}
 
 	public String getRegion(ItemStack regionStick) {
-		return regionStick.getTag().getString(REGION_KEY);
+		return regionStick.getTag().getString(REGION);
 	}
 
 	private void setRegion(ItemStack regionStick, String region){
-		regionStick.getTag().putString(REGION_KEY, region);
+		regionStick.getTag().putString(REGION, region);
 	}
 
 	private boolean cycleRegion(ItemStack regionStick){
 		if (regionCount > 0) {
-			int regionIndex = regionStick.getTag().getInt(REGION_IDX_KEY);
+			int regionIndex = regionStick.getTag().getInt(REGION_IDX);
 			// get region and set display name
 			String selectedRegion = cachedRegions.get(regionIndex);
 			setDisplayName(regionStick, selectedRegion, getMode(regionStick));
@@ -181,7 +183,7 @@ public class ItemRegionStick extends Item {
 			setRegion(regionStick, selectedRegion);
 			// increase region index and write nbt
 			regionIndex = (regionIndex + 1) % (regionCount);
-			regionStick.getTag().putInt(REGION_IDX_KEY, regionIndex);
+			regionStick.getTag().putInt(REGION_IDX, regionIndex);
 			return true;
 		} else {
 			return false;

@@ -37,6 +37,21 @@ public class ItemRegionMarker extends Item {
 				.group(WorldProtector.WORLD_PROTECTOR_TAB));
 	}
 
+	// nbt keys
+	public static final String VALID = "valid";
+	public static final String Y_DEFAULT_LOW = "y_low_default";
+	public static final String Y_DEFAULT_HIGH = "y_high_default";
+	public static final String CYCLE_POINT_ID = "id";
+	public static final String X1 = "x1";
+	public static final String Y1 = "y1";
+	public static final String Z1 = "z1";
+	public static final String X2 = "x2";
+	public static final String Y2 = "y2";
+	public static final String Z2 = "z2";
+
+	public static final int FIRST = 0;
+	public static final int SECOND = 1;
+
 	private Runnable onFinishUseAction = () -> {};
 
 	@Override
@@ -89,8 +104,8 @@ public class ItemRegionMarker extends Item {
 				return ActionResult.resultFail(markStick);
 			}
 			if (isMainHand(handIn) && isValidRegion(markStick)) {
-				int yLow = (int) markStick.getTag().getDouble("yLow_default");
-				int yHigh = (int) markStick.getTag().getDouble("yHigh_default");
+				int yLow = (int) markStick.getTag().getDouble(Y_DEFAULT_LOW);
+				int yHigh = (int) markStick.getTag().getDouble(Y_DEFAULT_HIGH);
 				this.onFinishUseAction = () -> ExpandUtils.expandVert(playerIn, markStick, yLow, yHigh);
 				playerIn.setActiveHand(handIn);
 				return super.onItemRightClick(worldIn, playerIn, handIn);
@@ -111,29 +126,29 @@ public class ItemRegionMarker extends Item {
 			ItemStack playerHeldItem = player.getHeldItem(hand);
 			if (playerHeldItem.hasTag()) {
 				CompoundNBT playerItemTag = playerHeldItem.getTag();
-				switch (playerItemTag.getInt("id")) {
-					case 0:
-						playerItemTag.putInt("x1", pos.getX());
-						playerItemTag.putInt("y1", pos.getY());
-						playerItemTag.putInt("z1", pos.getZ());
-						playerItemTag.putInt("id", 1);
-						playerItemTag.putBoolean("valid", false);
+				switch (playerItemTag.getInt(CYCLE_POINT_ID)) {
+					case FIRST:
+						playerItemTag.putInt(X1, pos.getX());
+						playerItemTag.putInt(Y1, pos.getY());
+						playerItemTag.putInt(Z1, pos.getZ());
+						playerItemTag.putInt(CYCLE_POINT_ID, SECOND);
+						playerItemTag.putBoolean(VALID, false);
 						MessageUtils.sendMessage(player, new StringTextComponent("Position 1 : x=" +
-								player.getHeldItem(hand).getTag().getInt("x1") + ", y=" +
-								player.getHeldItem(hand).getTag().getInt("y1") + ", z=" +
-								player.getHeldItem(hand).getTag().getInt("z1"))
+								player.getHeldItem(hand).getTag().getInt(X1) + ", y=" +
+								player.getHeldItem(hand).getTag().getInt(Y1) + ", z=" +
+								player.getHeldItem(hand).getTag().getInt(Z1))
 								.mergeStyle(TextFormatting.DARK_RED));
 						break;
-					case 1:
-						playerItemTag.putInt("x2", pos.getX());
-						playerItemTag.putInt("y2", pos.getY());
-						playerItemTag.putInt("z2", pos.getZ());
-						playerItemTag.putInt("id", 0);
-						playerItemTag.putBoolean("valid", true);
+					case SECOND:
+						playerItemTag.putInt(X2, pos.getX());
+						playerItemTag.putInt(Y2, pos.getY());
+						playerItemTag.putInt(Z2, pos.getZ());
+						playerItemTag.putInt(CYCLE_POINT_ID, 0);
+						playerItemTag.putBoolean(VALID, true);
 						MessageUtils.sendMessage(player, new StringTextComponent("Position 2 : x=" +
-								player.getHeldItem(hand).getTag().getInt("x2") + ", y=" +
-								player.getHeldItem(hand).getTag().getInt("y2") + ", z=" +
-								player.getHeldItem(hand).getTag().getInt("z2"))
+								player.getHeldItem(hand).getTag().getInt(X2) + ", y=" +
+								player.getHeldItem(hand).getTag().getInt(Y2) + ", z=" +
+								player.getHeldItem(hand).getTag().getInt(Z2))
 								.mergeStyle(TextFormatting.DARK_RED));
 						break;
 					default:
@@ -155,21 +170,21 @@ public class ItemRegionMarker extends Item {
 		super.inventoryTick(stack, worldIn, entityIn, itemSlot, isSelected);
 		if (!worldIn.isRemote && !stack.hasTag()) {
 			CompoundNBT nbt = new CompoundNBT();
-			nbt.putInt("id", 0);
-			nbt.putBoolean("valid", false);
-			nbt.putDouble("yLow_default", 0);
-			nbt.putDouble("yHigh_default", 255);
+			nbt.putInt(CYCLE_POINT_ID, 0);
+			nbt.putBoolean(VALID, false);
+			nbt.putDouble(Y_DEFAULT_LOW, 0);
+			nbt.putDouble(Y_DEFAULT_HIGH, 255);
 			stack.setTag(nbt);
 		}
 	}
 
 	private boolean isValidRegion(ItemStack markStick){
-		return markStick.getTag().getBoolean("valid");
+		return markStick.getTag().getBoolean(VALID);
 	}
 
 	public void setDefaultYValues(ItemStack regionMarker, int yLow, int yHigh) {
 		CompoundNBT itemTag = regionMarker.getTag();
-		itemTag.putDouble("yLow_default", yLow);
-		itemTag.putDouble("yHigh_default", yHigh);
+		itemTag.putDouble(Y_DEFAULT_LOW, yLow);
+		itemTag.putDouble(Y_DEFAULT_HIGH, yHigh);
 	}
 }

@@ -3,6 +3,7 @@ package fr.mosca421.worldprotector.item;
 import fr.mosca421.worldprotector.WorldProtector;
 import fr.mosca421.worldprotector.core.Region;
 import fr.mosca421.worldprotector.data.RegionSaver;
+import fr.mosca421.worldprotector.util.RegionUtils;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
@@ -70,7 +71,20 @@ public class ItemRegionStick extends Item {
 	public boolean onLeftClickEntity(ItemStack stack, PlayerEntity player, Entity entity) {
 		if (!player.world.isRemote) {
 			if ((entity instanceof PlayerEntity)) {
-				// TODO:
+				String mode = stack.getTag().getString(MODE);
+				PlayerEntity hitPlayer = (PlayerEntity) entity;
+				String regionName = stack.getTag().getString(REGION);
+				switch (mode) {
+					case MODE_ADD:
+						RegionUtils.addPlayer(regionName, player, hitPlayer);
+						break;
+					case MODE_REMOVE:
+						RegionUtils.removePlayer(regionName, player, hitPlayer);
+						break;
+					default:
+						/* should not happen */
+						break;
+				}
 			}
 		}
 		return true; // false will damage entity

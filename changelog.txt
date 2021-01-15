@@ -1,3 +1,5 @@
+1.16.4-2.0.7.4
+* Fix Sticks not working correctly on dedicated servers, causing errors and crashes.
 1.16.4-2.0.7.3
 * Prevent defining regions with whitespace in the name
 * Add feedback message if no regions were defined when using /wp region list

@@ -48,6 +48,7 @@
   "help.regionmarker.detail.3": "4. Define the region with the \"/wp region define <name>\" command or by renaming the Region Marker in an anvil.",
   "help.regionmarker.detail.4": "Keep the Region Marker in your hand while defining a region!",
   "message.region.list.entry": "Region '%s': ",
+  "message.region.info.no_regions": "No regions defined yet",
   "message.region.info.tpcenter": "Region center: ",
   "message.region.info.noplayers": "No players added yet",
   "message.region.info.noflags": "No flags added yet",

@@ -86,19 +86,19 @@ public class RegionUtils {
 
 	private static AxisAlignedBB getRegionFromNBT(CompoundNBT nbtTag){
 		return new AxisAlignedBB(
-				nbtTag.getInt("x1"), nbtTag.getInt("y1"), nbtTag.getInt("z1"),
-				nbtTag.getInt("x2"), nbtTag.getInt("y2"), nbtTag.getInt("z2"))
+				nbtTag.getInt(ItemRegionMarker.X1), nbtTag.getInt(ItemRegionMarker.Y1), nbtTag.getInt(ItemRegionMarker.Z1),
+				nbtTag.getInt(ItemRegionMarker.X2), nbtTag.getInt(ItemRegionMarker.Y2), nbtTag.getInt(ItemRegionMarker.Z2))
 				.grow(1);
 	}
 
 	public static void createRegion(String regionName, PlayerEntity player, ItemStack item) {
 		if (item.getItem() instanceof ItemRegionMarker) {
 			if (item.getTag() != null) {
-				if (item.getTag().getBoolean("valid")) {
+				if (item.getTag().getBoolean(ItemRegionMarker.VALID)) {
 					AxisAlignedBB regions = getRegionFromNBT(item.getTag());
 					Region region = new Region(regionName, regions, getDimension(player.world));
 					RegionSaver.addRegion(region);
-					item.getTag().putBoolean("valid", false); // reset flag for consistent command behaviour
+					item.getTag().putBoolean(ItemRegionMarker.VALID, false); // reset flag for consistent command behaviour
 					RegionSaver.save();
 					sendMessage(player, new TranslationTextComponent("message.region.define", regionName));
 				} else {
@@ -150,6 +150,10 @@ public class RegionUtils {
 	}
 
 	public static void giveRegionList(PlayerEntity player) {
+		if (RegionSaver.getRegions().isEmpty()) {
+			sendMessage(player, "message.region.info.no_regions");
+			return;
+		}
 		RegionSaver.getRegions().forEach(region -> {
 			BlockPos tpPos = region.getCenterPos();
 			sendTeleportLink(player, tpPos, new TranslationTextComponent("message.region.list.entry", region.getName()));
@@ -159,12 +163,12 @@ public class RegionUtils {
 	public static void redefineRegion(String regionName, PlayerEntity player, ItemStack item) {
 		if (item.getItem() instanceof ItemRegionMarker) {
 			if (item.getTag() != null) {
-				if (item.getTag().getBoolean("valid")) {
+				if (item.getTag().getBoolean(ItemRegionMarker.VALID)) {
 					if (RegionSaver.containsRegion(regionName)) {
 						AxisAlignedBB regions = getRegionFromNBT(item.getTag());
 						Region region = new Region(regionName, regions, getDimension(player.world));
 						RegionSaver.replaceRegion(region);
-						item.getTag().putBoolean("valid", false); // reset flag for consistent command behaviour
+						item.getTag().putBoolean(ItemRegionMarker.VALID, false); // reset flag for consistent command behaviour
 						RegionSaver.save();
 						sendMessage(player, new TranslationTextComponent("message.region.redefine", regionName));}
 					else {

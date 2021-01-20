@@ -1,19 +1,21 @@
 package fr.mosca421.worldprotector.util;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import fr.mosca421.worldprotector.WorldProtector;
 import fr.mosca421.worldprotector.core.Region;
 import fr.mosca421.worldprotector.item.ItemRegionMarker;
 import fr.mosca421.worldprotector.core.RegionFlag;
-import fr.mosca421.worldprotector.data.RegionSaver;
+import fr.mosca421.worldprotector.data.RegionManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.RegistryKey;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.*;
@@ -26,70 +28,17 @@ public class RegionUtils {
 
 	private RegionUtils(){}
 
-	public static void teleportRegion(String regionName, PlayerEntity player) {
-		if (RegionSaver.containsRegion(regionName)) {
-			Region region = RegionSaver.getRegion(regionName);
-			sendMessage(player, new TranslationTextComponent("message.region.teleport", regionName));
-			player.setPositionAndUpdate(region.getArea().minX, 200, region.getArea().minZ);
-		} else {
-			sendMessage(player, new TranslationTextComponent("message.region.unknown", regionName));
-		}
-	}
-
-	public static void addPlayer(String regionName, PlayerEntity sourcePlayer, PlayerEntity playerToAdd) {
-		if (RegionSaver.containsRegion(regionName)) {
-			Region region = RegionSaver.getRegion(regionName);
-			String playerToAddName = playerToAdd.getName().getString();
-			if (!region.addPlayer(playerToAdd.getUniqueID().toString())) {
-				// Player already defined in this region -> Message needed or silent acknowledgement?
-				sendMessage(sourcePlayer, new TranslationTextComponent("message.region.errorplayer", regionName, playerToAddName));
-			} else {
-				sendMessage(sourcePlayer, new TranslationTextComponent("message.region.addplayer", playerToAddName, regionName));
-				sendMessage(playerToAdd, new TranslationTextComponent("message.player.regionadded", regionName));
-				RegionSaver.save();
-			}
-		} else {
-			sendMessage(sourcePlayer,  new TranslationTextComponent("message.region.unknown", regionName));
-		}
-	}
-
-	public static void removePlayer(String regionName, PlayerEntity sourcePlayer, PlayerEntity playerToRemove) {
-		if (RegionSaver.containsRegion(regionName)) {
-			Region region = RegionSaver.getRegion(regionName);
-			String playerToRemoveName = playerToRemove.getName().getString();
-			if (!region.removePlayer(playerToRemove.getUniqueID().toString())) {
-				// Player was not present in this region -> Message needed or silent acknowledgement?
-				sendMessage(sourcePlayer, new TranslationTextComponent("message.region.unknownplayer", regionName, playerToRemoveName));
-			} else {
-				sendMessage(sourcePlayer, new TranslationTextComponent("message.region.removeplayer", playerToRemoveName, regionName));
-				sendMessage(playerToRemove, new TranslationTextComponent("message.player.regionremoved", regionName));
-				RegionSaver.save();
-			}
-		} else {
-			sendMessage(sourcePlayer, new TranslationTextComponent("message.region.unknown", regionName));
-		}
-	}
-
 	public static void removeRegion(String regionName, PlayerEntity player) {
-		if (RegionSaver.removeRegion(regionName) != null) {
+		if (RegionManager.get().removeRegion(regionName) != null) {
 			sendMessage(player, new TranslationTextComponent("message.region.remove", regionName));
-			RegionSaver.save();
 		} else {
 			sendMessage(player, new TranslationTextComponent("message.region.unknown", regionName));
 		}
 	}
 
 	public static void removeAllRegions(PlayerEntity player) {
-		RegionSaver.clearRegions();
+		RegionManager.get().clearRegions();
 		sendMessage(player, new TranslationTextComponent("message.region.removeall"));
-		RegionSaver.save();
-	}
-
-	private static AxisAlignedBB getRegionFromNBT(CompoundNBT nbtTag){
-		return new AxisAlignedBB(
-				nbtTag.getInt(ItemRegionMarker.X1), nbtTag.getInt(ItemRegionMarker.Y1), nbtTag.getInt(ItemRegionMarker.Z1),
-				nbtTag.getInt(ItemRegionMarker.X2), nbtTag.getInt(ItemRegionMarker.Y2), nbtTag.getInt(ItemRegionMarker.Z2))
-				.grow(1);
 	}
 
 	public static void createRegion(String regionName, PlayerEntity player, ItemStack item) {
@@ -100,11 +49,10 @@ public class RegionUtils {
 		if (item.getItem() instanceof ItemRegionMarker) {
 			if (item.getTag() != null) {
 				if (item.getTag().getBoolean(ItemRegionMarker.VALID)) {
-					AxisAlignedBB regions = getRegionFromNBT(item.getTag());
-					Region region = new Region(regionName, regions, getDimension(player.world));
-					RegionSaver.addRegion(region);
+					AxisAlignedBB regionArea = getAreaFromNBT(item.getTag());
+					Region region = new Region(regionName, regionArea, player.world.getDimensionKey());
+					RegionManager.get().addRegion(region);
 					item.getTag().putBoolean(ItemRegionMarker.VALID, false); // reset flag for consistent command behaviour
-					RegionSaver.save();
 					sendMessage(player, new TranslationTextComponent("message.region.define", regionName));
 				} else {
 					sendMessage(player, "message.itemhand.choose");
@@ -115,67 +63,19 @@ public class RegionUtils {
 		}
 	}
 
-	public static void giveHelpMessage(PlayerEntity player) {
-		sendMessage(player, "");
-		sendMessage(player, new TranslationTextComponent(TextFormatting.BLUE + "==WorldProtector Help=="));
-		sendMessage(player,"help.region.1");
-		sendMessage(player,"help.region.2");
-		sendMessage(player,"help.region.3");
-		sendMessage(player,"help.region.4");
-		sendMessage(player,"help.region.5");
-		sendMessage(player,"help.region.6");
-		sendMessage(player,"help.region.7");
-		sendMessage(player,"help.region.8");
-		sendMessage(player,"help.region.9");
-		sendMessage(player,"help.region.10");
-		sendMessage(player,"help.region.11");
-		sendMessage(player, new TranslationTextComponent(TextFormatting.BLUE + "==WorldProtector Help=="));
-	}
-
-	public static void giveRegionInfo(PlayerEntity player, String regionName) {
-		if (RegionSaver.containsRegion(regionName)) {
-			Region region = RegionSaver.getRegion(regionName);
-			String noFlagsText = new TranslationTextComponent("message.region.info.noflags").getString();
-			String noPlayersText = new TranslationTextComponent("message.region.info.noplayers").getString();
-			String regionFlags = region.getFlags().isEmpty() ? noFlagsText : String.join(", ", region.getFlags());
-			String regionPlayers = region.getPlayers().isEmpty() ? noPlayersText : String.join(",\n", region.getPlayers());
-			sendMessage(player, new StringTextComponent(TextFormatting.BLUE + "==Region '" + regionName + "' information=="));
-			BlockPos tpPos = region.getCenterPos();
-			sendTeleportLink(player, tpPos, new TranslationTextComponent("message.region.info.tpcenter"));
-			sendMessage(player, new TranslationTextComponent("message.region.info.area", region.getArea().toString().substring(4)));
-			sendMessage(player, new TranslationTextComponent("message.region.info.priority", region.getPriority()));
-			sendMessage(player, new TranslationTextComponent("message.region.info.flags", regionFlags));
-			sendMessage(player, new TranslationTextComponent("message.region.info.players", regionPlayers));
-			sendMessage(player, new StringTextComponent(TextFormatting.BLUE + "==Region '" + regionName + "' information=="));
-		}
-		else {
-			sendMessage(player, new TranslationTextComponent("message.region.unknown", regionName));
-		}
-
-	}
-
-	public static void giveRegionList(PlayerEntity player) {
-		if (RegionSaver.getRegions().isEmpty()) {
-			sendMessage(player, "message.region.info.no_regions");
-			return;
-		}
-		RegionSaver.getRegions().forEach(region -> {
-			BlockPos tpPos = region.getCenterPos();
-			sendTeleportLink(player, tpPos, new TranslationTextComponent("message.region.list.entry", region.getName()));
-		});
-	}
-
 	public static void redefineRegion(String regionName, PlayerEntity player, ItemStack item) {
 		if (item.getItem() instanceof ItemRegionMarker) {
 			if (item.getTag() != null) {
 				if (item.getTag().getBoolean(ItemRegionMarker.VALID)) {
-					if (RegionSaver.containsRegion(regionName)) {
-						AxisAlignedBB regions = getRegionFromNBT(item.getTag());
-						Region region = new Region(regionName, regions, getDimension(player.world));
-						RegionSaver.replaceRegion(region);
-						item.getTag().putBoolean(ItemRegionMarker.VALID, false); // reset flag for consistent command behaviour
-						RegionSaver.save();
-						sendMessage(player, new TranslationTextComponent("message.region.redefine", regionName));}
+					if (RegionManager.get().containsRegion(regionName)) {
+						RegionManager.get().getRegion(regionName).ifPresent(region -> {
+							region.setArea(getAreaFromNBT(item.getTag()));
+							RegionManager.get().updateRegion(new Region(region));
+							item.getTag().putBoolean(ItemRegionMarker.VALID, false); // reset flag for consistent command behaviour
+							sendMessage(player, new TranslationTextComponent("message.region.redefine", regionName));
+						});
+
+					}
 					else {
 						sendMessage(player, new TranslationTextComponent("message.region.unknown", regionName));
 					}
@@ -188,20 +88,153 @@ public class RegionUtils {
 		}
 	}
 
+	public static void setRegionPriority(String regionName, int priority, PlayerEntity player) {
+		if (RegionManager.get().containsRegion(regionName)) {
+			RegionManager.get().getRegion(regionName).ifPresent(region -> {
+				region.setPriority(priority);
+				sendMessage(player, new TranslationTextComponent("message.region.setpriority", priority, regionName));
+			});
+		} else {
+			sendMessage(player, "message.region.unknown");
+		}
+	}
+
+	public static void getPriority(String regionName, PlayerEntity player) {
+		if (RegionManager.get().containsRegion(regionName)) {
+			RegionManager.get().getRegion(regionName).ifPresent(region -> {
+				sendMessage(player, new TranslationTextComponent("message.region.infopriority", regionName,  region.getPriority()));
+			});
+		} else {
+			sendMessage(player, new TranslationTextComponent("message.region.unknown", regionName));
+		}
+	}
+
+	public static void activate(String regionName, PlayerEntity player) {
+		if (RegionManager.get().setActiveState(regionName, true)) {
+			sendMessage(player, new TranslationTextComponent( "message.region.activate", regionName));
+		} else {
+			sendMessage(player, new TranslationTextComponent("message.region.unknown", regionName));
+		}
+	}
+
+	public static void activateAll(Collection<Region> regions, PlayerEntity player) {
+		List<Region> deactiveRegions = regions.stream()
+				.filter(region -> !region.isActive())
+				.collect(Collectors.toList());
+		deactiveRegions.forEach(region -> region.setIsActive(true));
+		// TODO: move to region manager
+		List<String> activatedRegions = deactiveRegions.stream()
+				.map(Region::getName)
+				.collect(Collectors.toList());
+		String regionString = String.join(", ", activatedRegions);
+		if (!activatedRegions.isEmpty()) {
+			sendMessage(player, new TranslationTextComponent("message.region.activate.multiple", regionString));
+		} else {
+			sendMessage(player, "message.region.activate.none");
+		}
+	}
+
+	public static void deactivate(String regionName, PlayerEntity player) {
+		if (RegionManager.get().setActiveState(regionName, false)) {
+			sendMessage(player, new TranslationTextComponent( "message.region.deactivate", regionName));
+		} else {
+			sendMessage(player, new TranslationTextComponent("message.region.unknown", regionName));
+		}
+	}
+
+	public static void deactivateAll(Collection<Region> regions, PlayerEntity player) {
+		List<Region> activeRegions = regions.stream()
+				.filter(Region::isActive)
+				.collect(Collectors.toList());
+		activeRegions.forEach(region -> region.setIsActive(false));
+		// TODO: move to region manager
+		List<String> deactivatedRegions = activeRegions.stream()
+				.map(Region::getName)
+				.collect(Collectors.toList());
+		String regionString = String.join(", ", deactivatedRegions);
+		if (!deactivatedRegions.isEmpty()) {
+			sendMessage(player, new TranslationTextComponent("message.region.deactivate.multiple", regionString));
+		} else {
+			sendMessage(player, "message.region.deactivate.none");
+		}
+	}
+
+	public static void teleportRegion(String regionName, PlayerEntity player) {
+		if (RegionManager.get().containsRegion(regionName)) {
+			RegionManager.get().getRegion(regionName).ifPresent(region -> {
+				sendMessage(player, new TranslationTextComponent("message.region.teleport", regionName));
+				BlockPos tpPos = region.getMinBorderTpPos(player.world);
+				player.setPositionAndUpdate(tpPos.getX(), tpPos.getY(), tpPos.getZ());
+			});
+		} else {
+			sendMessage(player, new TranslationTextComponent("message.region.unknown", regionName));
+		}
+	}
+
+	public static void giveHelpMessage(PlayerEntity player) {
+		sendMessage(player, new TranslationTextComponent(TextFormatting.BLUE + "==WorldProtector Help=="));
+		sendMessage(player,"help.region.1");
+		sendMessage(player,"help.region.2");
+		sendMessage(player,"help.region.3");
+		sendMessage(player,"help.region.4");
+		sendMessage(player,"help.region.5");
+		sendMessage(player,"help.region.6");
+		sendMessage(player,"help.region.7");
+		sendMessage(player,"help.region.8");
+		sendMessage(player,"help.region.9");
+		sendMessage(player,"help.region.10");
+		sendMessage(player, new TranslationTextComponent(TextFormatting.BLUE + "==WorldProtector Help=="));
+	}
+
+	public static void giveRegionInfo(PlayerEntity player, String regionName) {
+		if (RegionManager.get().containsRegion(regionName)) {
+			RegionManager.get().getRegion(regionName).ifPresent(region -> {
+				String noFlagsText = new TranslationTextComponent("message.region.info.noflags").getString();
+				String noPlayersText = new TranslationTextComponent("message.region.info.noplayers").getString();
+				String regionFlags = region.getFlags().isEmpty() ? noFlagsText : String.join(", ", region.getFlags());
+				String regionPlayers = region.getPlayers().isEmpty() ? noPlayersText : String.join(",\n", region.getPlayers());
+				sendMessage(player, new StringTextComponent(TextFormatting.BLUE + "==Region '" + regionName + "' information=="));
+				BlockPos tpPos = region.getMinBorderTpPos(player.world);
+				sendTeleportLink(player, tpPos, new TranslationTextComponent("message.region.info.tpcenter"));
+				sendMessage(player, new TranslationTextComponent("message.region.info.area", region.getArea().toString().substring(4)));
+				sendMessage(player, new TranslationTextComponent("message.region.info.priority", region.getPriority()));
+				sendMessage(player, new TranslationTextComponent("message.region.info.flags", regionFlags));
+				sendMessage(player, new TranslationTextComponent("message.region.info.players", regionPlayers));
+				sendMessage(player, new TranslationTextComponent("message.region.info.active", region.isActive()));
+				sendMessage(player, new StringTextComponent(TextFormatting.BLUE + "==Region '" + regionName + "' information=="));
+			});
+		}
+		else {
+			sendMessage(player, new TranslationTextComponent("message.region.unknown", regionName));
+		}
+
+	}
+
+	// TODO: region list by dimension
+	public static void giveRegionList(PlayerEntity player) {
+		if (RegionManager.get().getAllRegions().isEmpty()) {
+			sendMessage(player, "message.region.info.no_regions");
+			return;
+		}
+		RegionManager.get().getAllRegions().forEach(region -> {
+			BlockPos tpPos = region.getMinBorderTpPos(player.world);
+			sendTeleportLink(player, tpPos, new TranslationTextComponent("message.region.list.entry", region.getName()));
+		});
+	}
+
 	public static List<Region> getHandlingRegionsFor(Entity entity, IWorld world){
-		return getHandlingRegionsFor(entity.getPosition(), RegionUtils.getDimension((World) world));
+		return getHandlingRegionsFor(entity.getPosition(), ((World)world).getDimensionKey());
 	}
 
-	public static List<Region> getHandlingRegionsFor(BlockPos position, IWorld world){
-		return getHandlingRegionsFor(position, RegionUtils.getDimension((World) world));
+	public static List<Region> getHandlingRegionsFor(BlockPos position, World world){
+		return getHandlingRegionsFor(position, world.getDimensionKey());
 	}
 
-	public static List<Region> getHandlingRegionsFor(BlockPos position, String dimension) {
+	public static List<Region> getHandlingRegionsFor(BlockPos position, RegistryKey<World> dimension) {
 		int maxPriority = 1;
 		List<Region> handlingRegions = new ArrayList<>();
-		List<Region> filteredRegions = RegionSaver.getRegions().stream()
+		List<Region> filteredRegions = RegionManager.get().getRegions(dimension).stream()
 				.filter(Region::isActive)
-				.filter(region -> region.getDimension().equals(dimension))
 				.filter(region -> region.containsPosition(position))
 				.collect(Collectors.toList());
 		for (Region region : filteredRegions) {
@@ -217,14 +250,14 @@ public class RegionUtils {
 	}
 
 	public static List<Region> filterHandlingRegions(BlockPos position, World world, RegionFlag flagFilter){
-		return getHandlingRegionsFor(position, getDimension(world))
+		return getHandlingRegionsFor(position, world)
 				.stream()
 				.filter(region -> region.containsFlag(flagFilter.toString()))
 				.collect(Collectors.toList());
 	}
 
 	public static List<Region> filterHandlingRegions(BlockPos position, World world, RegionFlag flagFilter, PlayerEntity player){
-		return getHandlingRegionsFor(position, getDimension(world))
+		return getHandlingRegionsFor(position, world)
 				.stream()
 				.filter(region -> region.containsFlag(flagFilter.toString()))
 				.filter(region -> !region.permits(player))
@@ -232,7 +265,7 @@ public class RegionUtils {
 	}
 
 	public static void cancelEventsInRegions(BlockPos eventPos, World worldIn, RegionFlag flagFilter, PlayerEntity player, Runnable cancelAction){
-		getHandlingRegionsFor(eventPos, getDimension(worldIn))
+		getHandlingRegionsFor(eventPos, worldIn)
 				.stream()
 				.filter(region -> region.containsFlag(flagFilter.toString()))
 				.filter(region -> !region.permits(player))
@@ -240,16 +273,15 @@ public class RegionUtils {
 	}
 
 	public static void cancelEventsInRegions(BlockPos eventPos, World worldIn, RegionFlag flagFilter, Predicate<Region> isPermittedInRegion, Runnable cancelAction){
-		getHandlingRegionsFor(eventPos, getDimension(worldIn))
+		getHandlingRegionsFor(eventPos, worldIn)
 				.stream()
 				.filter(region -> region.containsFlag(flagFilter.toString()))
 				.filter(isPermittedInRegion)
 				.forEach(region -> cancelAction.run());
 	}
 
-
 	public static boolean isActionProhibited(BlockPos position, IWorld world, RegionFlag flag) {
-		return RegionUtils.getHandlingRegionsFor(position, world).stream()
+		return RegionUtils.getHandlingRegionsFor(position, (World) world).stream()
 				.anyMatch(region -> region.containsFlag(flag));
 	}
 
@@ -263,93 +295,15 @@ public class RegionUtils {
 				.anyMatch(region -> region.containsFlag(flag) && region.forbids(player));
 	}
 
-	public static void setRegionPriority(String regionName, int priority, PlayerEntity player) {
-		if (RegionSaver.containsRegion(regionName)) {
-			Region region = RegionSaver.getRegion(regionName);
-			region.setPriority(priority);
-			sendMessage(player, new TranslationTextComponent("message.region.setpriority", priority, regionName));
-		} else {
-			sendMessage(player, "message.region.unknown");
-		}
-	}
-
-	public static void getPriority(String regionName, PlayerEntity player) {
-		if (RegionSaver.containsRegion(regionName)) {
-			Region region = RegionSaver.getRegion(regionName);
-			String priority = "" + region.getPriority();
-			sendMessage(player, new TranslationTextComponent("message.region.infopriority", regionName, priority));
-		} else {
-			sendMessage(player, new TranslationTextComponent("message.region.unknown", regionName));
-		}
-	}
-
-	public static boolean isInRegion(String regionName, PlayerEntity player) {
-		return RegionSaver.containsRegion(regionName)
-				&& RegionSaver.getRegion(regionName).permits(player);
-	}
-
-	public boolean isActive(String regionName) {
-		return RegionSaver.containsRegion(regionName)
-				&& RegionSaver.getRegion(regionName).isActive();
-	}
-
 	public static String getDimension(World world){
 		return world.getDimensionKey().getLocation().toString();
 	}
 
-	public static void activate(String regionName, PlayerEntity player) {
-		if (RegionSaver.containsRegion(regionName)) {
-			Region region = RegionSaver.getRegion(regionName);
-			region.setIsActive(true);
-			RegionSaver.save();
-			sendMessage(player, new TranslationTextComponent( "message.region.activate", regionName));
-		} else {
-			sendMessage(player, new TranslationTextComponent("message.region.unknown", regionName));
-		}
+	private static AxisAlignedBB getAreaFromNBT(CompoundNBT nbtTag){
+		return new AxisAlignedBB(
+				nbtTag.getInt(ItemRegionMarker.X1), nbtTag.getInt(ItemRegionMarker.Y1), nbtTag.getInt(ItemRegionMarker.Z1),
+				nbtTag.getInt(ItemRegionMarker.X2), nbtTag.getInt(ItemRegionMarker.Y2), nbtTag.getInt(ItemRegionMarker.Z2))
+				.grow(1);
 	}
 
-	public static void activateAll(List<Region> regions, PlayerEntity player) {
-		List<Region> deactiveRegions = regions.stream()
-				.filter(region -> !region.isActive())
-				.collect(Collectors.toList());
-		deactiveRegions.forEach(region -> region.setIsActive(true));
-		RegionSaver.save();
-		List<String> activatedRegions = deactiveRegions.stream()
-				.map(Region::getName)
-				.collect(Collectors.toList());
-		String regionString = String.join(", ", activatedRegions);
-		if (!activatedRegions.isEmpty()) {
-			sendMessage(player, new TranslationTextComponent("message.region.activate.multiple", regionString));
-		} else {
-			sendMessage(player, "message.region.activate.none");
-		}
-	}
-
-	public static void deactivate(String regionName, PlayerEntity player) {
-		if (RegionSaver.containsRegion(regionName)) {
-			Region region = RegionSaver.getRegion(regionName);
-			region.setIsActive(false);
-			RegionSaver.save();
-			sendMessage(player, new TranslationTextComponent( "message.region.deactivate", regionName));
-		} else {
-			sendMessage(player, new TranslationTextComponent("message.region.unknown", regionName));
-		}
-	}
-
-	public static void deactivateAll(List<Region> regions, PlayerEntity player) {
-		List<Region> activeRegions = regions.stream()
-				.filter(Region::isActive)
-				.collect(Collectors.toList());
-		activeRegions.forEach(region -> region.setIsActive(false));
-		RegionSaver.save();
-		List<String> deactivatedRegions = activeRegions.stream()
-				.map(Region::getName)
-				.collect(Collectors.toList());
-		String regionString = String.join(", ", deactivatedRegions);
-		if (!deactivatedRegions.isEmpty()) {
-			sendMessage(player, new TranslationTextComponent("message.region.deactivate.multiple", regionString));
-		} else {
-			sendMessage(player, "message.region.deactivate.none");
-		}
-	}
 }

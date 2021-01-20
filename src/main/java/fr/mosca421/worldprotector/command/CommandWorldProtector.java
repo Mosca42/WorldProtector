@@ -21,9 +21,10 @@ public class CommandWorldProtector {
                 .executes(ctx -> giveHelp(ctx.getSource()))
                 .then(Commands.literal(Command.HELP.toString())
                         .executes(ctx -> giveHelp(ctx.getSource())))
-                .then(CommandExpand.EXPAND_COMMAND)
                 .then(CommandRegion.REGION_COMMAND)
-                .then(CommandFlag.FLAG_COMMAND);
+                .then(CommandExpand.EXPAND_COMMAND)
+                .then(CommandFlag.FLAG_COMMAND)
+                .then(CommandPlayer.PLAYER_COMMAND);
     }
 
     private static int giveHelp(CommandSource source) {

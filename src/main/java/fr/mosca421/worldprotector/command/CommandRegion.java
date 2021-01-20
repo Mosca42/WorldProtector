@@ -7,7 +7,8 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import fr.mosca421.worldprotector.data.RegionSaver;
+import fr.mosca421.worldprotector.data.RegionManager;
+import fr.mosca421.worldprotector.util.RegionPlayerUtils;
 import fr.mosca421.worldprotector.util.RegionUtils;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
@@ -32,7 +33,7 @@ public class CommandRegion {
 				.then(Commands.literal(Command.INFO.toString())
 						.executes(ctx -> giveHelp(ctx.getSource()))
 						.then(Commands.argument(Command.REGION.toString(), StringArgumentType.string())
-								.suggests((ctx, builder) -> ISuggestionProvider.suggest(RegionSaver.getRegionNames(), builder))
+								.suggests((ctx, builder) -> ISuggestionProvider.suggest(RegionManager.get().getAllRegionNames(), builder))
 								.executes(ctx -> info(ctx.getSource(), StringArgumentType.getString(ctx, Command.REGION.toString())))))
 				.then(Commands.literal(Command.DEFINE.toString())
                         .executes(ctx -> giveHelp(ctx.getSource()))
@@ -40,56 +41,46 @@ public class CommandRegion {
                                 .executes(ctx -> define(ctx.getSource(), StringArgumentType.getString(ctx, Command.REGION.toString())))))
                 .then(Commands.literal(Command.REDEFINE.toString())
                         .then(Commands.argument(Command.REGION.toString(), StringArgumentType.string())
-								.suggests((ctx, builder) -> ISuggestionProvider.suggest(RegionSaver.getRegionNames(), builder))
+								.suggests((ctx, builder) -> ISuggestionProvider.suggest(RegionManager.get().getAllRegionNames(), builder))
                                 .executes(ctx -> redefine(ctx.getSource(), StringArgumentType.getString(ctx, Command.REGION.toString())))))
                 .then(Commands.literal(Command.REMOVE.toString())
                         .then(Commands.argument(Command.REGION.toString(), StringArgumentType.string())
-								.suggests((ctx, builder) -> ISuggestionProvider.suggest(RegionSaver.getRegionNames(), builder))
+								.suggests((ctx, builder) -> ISuggestionProvider.suggest(RegionManager.get().getAllRegionNames(), builder))
                                 .executes(ctx -> remove(ctx.getSource(), StringArgumentType.getString(ctx, Command.REGION.toString()))))
 						.then(Commands.literal("all").executes(ctx -> removeAll(ctx.getSource()))))
                 .then(Commands.literal(Command.TELEPORT.toString())
                         .then(Commands.argument(Command.REGION.toString(), StringArgumentType.string())
-								.suggests((ctx, builder) -> ISuggestionProvider.suggest(RegionSaver.getRegionNames(), builder))
+								.suggests((ctx, builder) -> ISuggestionProvider.suggest(RegionManager.get().getAllRegionNames(), builder))
                                 .executes(ctx -> teleport(ctx.getSource(), StringArgumentType.getString(ctx, Command.REGION.toString())))))
                 .then(Commands.literal("tp")
                         .then(Commands.argument(Command.REGION.toString(), StringArgumentType.string())
-								.suggests((ctx, builder) -> ISuggestionProvider.suggest(RegionSaver.getRegionNames(), builder))
+								.suggests((ctx, builder) -> ISuggestionProvider.suggest(RegionManager.get().getAllRegionNames(), builder))
                                 .executes(ctx -> teleport(ctx.getSource(), StringArgumentType.getString(ctx, Command.REGION.toString())))))
 				.then(Commands.literal(Command.ACTIVATE.toString())
 						.then(Commands.argument(Command.REGION.toString(), StringArgumentType.string())
-								.suggests((ctx, builder) -> ISuggestionProvider.suggest(RegionSaver.getRegionNames(), builder))
+								.suggests((ctx, builder) -> ISuggestionProvider.suggest(RegionManager.get().getAllRegionNames(), builder))
 								.executes(ctx -> activeRegion(ctx.getSource(), StringArgumentType.getString(ctx, Command.REGION.toString()))))
 						.then(Commands.literal("all").executes(ctx -> activateAll(ctx.getSource()))))
 				.then(Commands.literal(Command.ACTIVATE.toString())
 						.then(Commands.argument(Command.REGION.toString(), StringArgumentType.string())
-								.suggests((ctx, builder) -> ISuggestionProvider.suggest(RegionSaver.getRegionNames(), builder))
+								.suggests((ctx, builder) -> ISuggestionProvider.suggest(RegionManager.get().getAllRegionNames(), builder))
 								.executes(ctx -> activeRegion(ctx.getSource(), StringArgumentType.getString(ctx, Command.REGION.toString())))))
 				.then(Commands.literal(Command.DEACTIVATE.toString())
 						.then(Commands.argument(Command.REGION.toString(), StringArgumentType.string())
-								.suggests((ctx, builder) -> ISuggestionProvider.suggest(RegionSaver.getRegionNames(), builder))
+								.suggests((ctx, builder) -> ISuggestionProvider.suggest(RegionManager.get().getAllRegionNames(), builder))
 								.executes(ctx -> deactivateRegion(ctx.getSource(), StringArgumentType.getString(ctx, Command.REGION.toString())))))
 				.then(Commands.literal(Command.DEACTIVATE.toString())
 						.then(Commands.argument(Command.REGION.toString(), StringArgumentType.string())
-								.suggests((ctx, builder) -> ISuggestionProvider.suggest(RegionSaver.getRegionNames(), builder))
+								.suggests((ctx, builder) -> ISuggestionProvider.suggest(RegionManager.get().getAllRegionNames(), builder))
 								.executes(ctx -> deactivateRegion(ctx.getSource(), StringArgumentType.getString(ctx, Command.REGION.toString()))))
 						.then(Commands.literal("all").executes(ctx -> deactivateAll(ctx.getSource()))))
 				.then(Commands.literal(Command.PRIORITY_GET.toString())
 						.then(Commands.argument(Command.REGION.toString(), StringArgumentType.string())
-								.suggests((ctx, builder) -> ISuggestionProvider.suggest(RegionSaver.getRegionNames(), builder))
+								.suggests((ctx, builder) -> ISuggestionProvider.suggest(RegionManager.get().getAllRegionNames(), builder))
 								.executes(ctx -> getPriority(ctx.getSource(), StringArgumentType.getString(ctx, Command.REGION.toString())))))
-                .then(Commands.literal(Command.PLAYER_ADD.toString())
-                        .then(Commands.argument(Command.REGION.toString(), StringArgumentType.string())
-								.suggests((ctx, builder) -> ISuggestionProvider.suggest(RegionSaver.getRegionNames(), builder))
-                                .then(Commands.argument(Command.PLAYER.toString(), EntityArgument.players())
-                                        .executes(ctx -> addPlayer(ctx.getSource(), StringArgumentType.getString(ctx, Command.REGION.toString()), EntityArgument.getPlayers(ctx, Command.PLAYER.toString()))))))
-                .then(Commands.literal(Command.PLAYER_REMOVE.toString())
-                        .then(Commands.argument(Command.REGION.toString(), StringArgumentType.string())
-								.suggests((ctx, builder) -> ISuggestionProvider.suggest(RegionSaver.getRegionNames(), builder))
-                                .then(Commands.argument(Command.PLAYER.toString(), EntityArgument.players())
-                                        .executes(ctx -> removePlayer(ctx.getSource(), StringArgumentType.getString(ctx, Command.REGION.toString()), EntityArgument.getPlayers(ctx, Command.PLAYER.toString()))))))
                 .then(Commands.literal(Command.PRIORITY_SET.toString())
                         .then(Commands.argument(Command.REGION.toString(), StringArgumentType.string())
-								.suggests((ctx, builder) -> ISuggestionProvider.suggest(RegionSaver.getRegionNames(), builder))
+								.suggests((ctx, builder) -> ISuggestionProvider.suggest(RegionManager.get().getAllRegionNames(), builder))
                                 .then(Commands.argument(Command.PRIORITY.toString(), IntegerArgumentType.integer(1, 9))
                                         .executes(ctx -> setPriority(ctx.getSource(), StringArgumentType.getString(ctx, Command.REGION.toString()), IntegerArgumentType.getInteger(ctx, Command.PRIORITY.toString()))))));
     }
@@ -112,9 +103,10 @@ public class CommandRegion {
 		return 0;
 	}
 
+	// TODO: deactivate and activate all in specified dimension
 	private static int activateAll(CommandSource source) {
 		try {
-			RegionUtils.activateAll(new ArrayList<>(RegionSaver.getRegions()), source.asPlayer());
+			RegionUtils.activateAll(RegionManager.get().getAllRegions(), source.asPlayer());
 		} catch (CommandSyntaxException e) {
 			e.printStackTrace();
 		}
@@ -132,7 +124,7 @@ public class CommandRegion {
 
 	private static int deactivateAll(CommandSource source) {
 		try {
-			RegionUtils.deactivateAll(new ArrayList<>(RegionSaver.getRegions()), source.asPlayer());
+			RegionUtils.deactivateAll(RegionManager.get().getAllRegions(), source.asPlayer());
 		} catch (CommandSyntaxException e) {
 			e.printStackTrace();
 		}
@@ -142,7 +134,7 @@ public class CommandRegion {
 	private static int addPlayer(CommandSource source, String regionName, Collection<ServerPlayerEntity> players) {
 		try {
 			for (PlayerEntity playerToAdd : players) {
-				RegionUtils.addPlayer(regionName, source.asPlayer(), playerToAdd);
+				RegionPlayerUtils.addPlayer(regionName, source.asPlayer(), playerToAdd);
 			}
 		} catch (CommandSyntaxException e) {
 			e.printStackTrace();
@@ -153,7 +145,7 @@ public class CommandRegion {
 	private static int removePlayer(CommandSource source, String regionName, Collection<ServerPlayerEntity> players) {
 		try {
 			for (PlayerEntity playerToRemove : players) {
-				RegionUtils.removePlayer(regionName, source.asPlayer(), playerToRemove);
+				RegionPlayerUtils.removePlayer(regionName, source.asPlayer(), playerToRemove);
 			}
 		} catch (CommandSyntaxException e) {
 			e.printStackTrace();

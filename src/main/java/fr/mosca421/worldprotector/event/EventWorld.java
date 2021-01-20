@@ -39,7 +39,7 @@ public class EventWorld {
     @SubscribeEvent
     public static void onFarmLandTrampled(BlockEvent.FarmlandTrampleEvent event) {
         if (!event.getWorld().isRemote()) {
-            List<Region> regions = RegionUtils.getHandlingRegionsFor(event.getPos(), RegionUtils.getDimension((World) event.getWorld()));
+            List<Region> regions = RegionUtils.getHandlingRegionsFor(event.getPos(), (World) event.getWorld());
             for (Region r : regions) {
                 // cancel all trampling
                 if (r.containsFlag(RegionFlag.TRAMPLE_FARMLAND.toString())) {

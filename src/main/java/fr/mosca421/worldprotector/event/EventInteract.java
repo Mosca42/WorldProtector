@@ -21,7 +21,7 @@ public class EventInteract {
 
 	@SubscribeEvent
 	public static void onPlayerRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
-		List<Region> regions = RegionUtils.getHandlingRegionsFor(event.getPos(), RegionUtils.getDimension(event.getWorld()));
+		List<Region> regions = RegionUtils.getHandlingRegionsFor(event.getPos(), event.getWorld());
 		if (!event.getWorld().isRemote) {
 			for (Region region : regions) {
 				PlayerEntity player = event.getPlayer();
@@ -61,7 +61,7 @@ public class EventInteract {
 
 	@SubscribeEvent
 	public static void onPlayerEntityInteract(PlayerInteractEvent.EntityInteract event) {
-		List<Region> regions = RegionUtils.getHandlingRegionsFor(event.getPos(), RegionUtils.getDimension(event.getWorld()));
+		List<Region> regions = RegionUtils.getHandlingRegionsFor(event.getPos(), event.getWorld());
 		if (!event.getWorld().isRemote) {
 			for (Region region : regions) {
 				PlayerEntity player = event.getPlayer();

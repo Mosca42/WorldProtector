@@ -49,7 +49,7 @@ public class EventProtection {
 	@SubscribeEvent
 	public static void onPlayerPlaceBlock(EntityPlaceEvent event) {
 		if (!event.getWorld().isRemote()) {
-			List<Region> regions = RegionUtils.getHandlingRegionsFor(event.getPos(), RegionUtils.getDimension((World) event.getWorld()));
+			List<Region> regions = RegionUtils.getHandlingRegionsFor(event.getPos(), (World) event.getWorld());
 			if (event.getEntity() instanceof PlayerEntity) {
 				PlayerEntity player = (PlayerEntity) event.getEntity();
 				boolean isPlayerPlacementProhibited = regions.stream()
@@ -75,7 +75,7 @@ public class EventProtection {
 	@SubscribeEvent
 	public static void onExplosionStarted(ExplosionEvent.Start event) {
 		if (!event.getWorld().isRemote) {
-			List<Region> regions = RegionUtils.getHandlingRegionsFor(new BlockPos(event.getExplosion().getPosition()), RegionUtils.getDimension(event.getWorld()));
+			List<Region> regions = RegionUtils.getHandlingRegionsFor(new BlockPos(event.getExplosion().getPosition()), event.getWorld());
 			if (event.getExplosion().getExplosivePlacedBy() instanceof PlayerEntity) {
 				PlayerEntity player = (PlayerEntity) event.getExplosion().getExplosivePlacedBy();
 				for (Region region : regions) {
@@ -118,7 +118,7 @@ public class EventProtection {
 	public static void onPlayerUseToolSecondary(BlockEvent.BlockToolInteractEvent event) {
 		if (!event.getWorld().isRemote()) {
 			PlayerEntity player = event.getPlayer();
-			List<Region> regions = RegionUtils.getHandlingRegionsFor(event.getPos(), RegionUtils.getDimension(player.getEntityWorld()));
+			List<Region> regions = RegionUtils.getHandlingRegionsFor(event.getPos(), player.getEntityWorld());
 			for (Region region : regions){ // iterate through regions, if a region contains a specified flag, cancel event
 				boolean playerNotPermitted = !region.permits(player);
 				if (region.containsFlag(RegionFlag.TOOL_SECONDARY_USE) && playerNotPermitted) {
@@ -150,7 +150,7 @@ public class EventProtection {
 	public static void onBucketFill(FillBucketEvent event) {
 		PlayerEntity player = event.getPlayer();
 		if (!event.getWorld().isRemote && event.getTarget() != null) {
-			List<Region> regions = RegionUtils.getHandlingRegionsFor(new BlockPos(event.getTarget().getHitVec()), RegionUtils.getDimension(event.getWorld()));
+			List<Region> regions = RegionUtils.getHandlingRegionsFor(new BlockPos(event.getTarget().getHitVec()), event.getWorld());
 			for (Region region : regions) {
 				int bucketItemMaxStackCount = event.getEmptyBucket().getMaxStackSize();
 				// MaxStackSize: 1 -> full bucket so only placeable; >1 -> empty bucket, only fillable
@@ -189,7 +189,7 @@ public class EventProtection {
 	private static List<BlockPos> filterExplosionAffectedBlocks(ExplosionEvent.Detonate event, String flag){
 		return event.getAffectedBlocks().stream()
 				.filter(blockPos -> anyRegionContainsFlag(
-						RegionUtils.getHandlingRegionsFor(blockPos, RegionUtils.getDimension(event.getWorld())),
+						RegionUtils.getHandlingRegionsFor(blockPos, event.getWorld()),
 						flag))
 				.collect(Collectors.toList());
 	}
@@ -197,7 +197,7 @@ public class EventProtection {
 	private static List<Entity> filterAffectedEntities(List<Entity> entities, String flag){
 		return entities.stream()
 				.filter(entity -> anyRegionContainsFlag(
-						RegionUtils.getHandlingRegionsFor(entity.getPosition(), RegionUtils.getDimension(entity.world)), flag))
+						RegionUtils.getHandlingRegionsFor(entity.getPosition(), entity.world), flag))
 				.collect(Collectors.toList());
 	}
 }

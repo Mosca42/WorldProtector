@@ -10,6 +10,7 @@ import net.minecraft.entity.monster.ShulkerEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
+import net.minecraft.world.World;
 import net.minecraftforge.event.entity.living.EnderTeleportEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -24,7 +25,7 @@ public class EventTeleport {
 
     @SubscribeEvent
     public static void onEnderTeleportTo(EnderTeleportEvent event) {
-        IWorld world = event.getEntity().world;
+        World world = event.getEntity().world;
         if (!world.isRemote()) {
             BlockPos teleportTarget = new BlockPos(event.getTargetX(), event.getTargetY(), event.getTargetZ());
             BlockPos teleportSource = event.getEntity().getPosition();

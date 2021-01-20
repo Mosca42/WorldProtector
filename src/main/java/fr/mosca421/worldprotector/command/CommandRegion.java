@@ -131,28 +131,6 @@ public class CommandRegion {
 		return 0;
 	}
 
-	private static int addPlayer(CommandSource source, String regionName, Collection<ServerPlayerEntity> players) {
-		try {
-			for (PlayerEntity playerToAdd : players) {
-				RegionPlayerUtils.addPlayer(regionName, source.asPlayer(), playerToAdd);
-			}
-		} catch (CommandSyntaxException e) {
-			e.printStackTrace();
-		}
-		return 0;
-	}
-
-	private static int removePlayer(CommandSource source, String regionName, Collection<ServerPlayerEntity> players) {
-		try {
-			for (PlayerEntity playerToRemove : players) {
-				RegionPlayerUtils.removePlayer(regionName, source.asPlayer(), playerToRemove);
-			}
-		} catch (CommandSyntaxException e) {
-			e.printStackTrace();
-		}
-		return 0;
-	}
-
 	private static int giveHelp(CommandSource source) {
 		try {
 			RegionUtils.giveHelpMessage(source.asPlayer());

@@ -3,7 +3,6 @@ package fr.mosca421.worldprotector.command;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import fr.mosca421.worldprotector.core.RegionFlag;
 import fr.mosca421.worldprotector.data.RegionManager;
 import fr.mosca421.worldprotector.util.RegionPlayerUtils;
 import net.minecraft.command.CommandSource;
@@ -21,6 +20,7 @@ public class CommandPlayer {
 
     public static final LiteralArgumentBuilder<CommandSource> PLAYER_COMMAND = register();
 
+    // TODO: test adding/removing multiple players
     // TODO: update help message and readme with new command structure
     public static LiteralArgumentBuilder<CommandSource> register() {
         return Commands.literal(Command.PLAYER.toString())
@@ -49,10 +49,10 @@ public class CommandPlayer {
                                 .then(Commands.argument(Command.PLAYER.toString(), EntityArgument.player())
                                         .suggests((ctx, builder) -> ISuggestionProvider.suggest(RegionManager.get().getRegionPlayers(ctx.getArgument(Command.REGION.toString(), String.class)), builder))
                                         .executes(ctx -> removePlayer(ctx.getSource(), StringArgumentType.getString(ctx, Command.REGION.toString()), EntityArgument.getPlayer(ctx, Command.PLAYER.toString()))))))
-                .then(Commands.literal(Command.INFO.toString())
+                .then(Commands.literal(Command.LIST.toString())
                         .then(Commands.argument(Command.REGION.toString(), StringArgumentType.word())
                                 .suggests((ctx, builder) -> ISuggestionProvider.suggest(RegionManager.get().getAllRegionNames(), builder))
-                                .executes(ctx -> info(ctx.getSource(), StringArgumentType.getString(ctx, Command.REGION.toString())))));
+                                .executes(ctx -> list(ctx.getSource(), StringArgumentType.getString(ctx, Command.REGION.toString())))));
     }
 
     private static int removePlayer(CommandSource source, String regionName, ServerPlayerEntity player) {
@@ -94,9 +94,9 @@ public class CommandPlayer {
         return 0;
     }
 
-    private static int info(CommandSource source, String string) {
+    private static int list(CommandSource source, String regionName) {
         try {
-            RegionPlayerUtils.listPlayersInRegion("", source.asPlayer());
+            RegionPlayerUtils.listPlayersInRegion(regionName, source.asPlayer());
         } catch (CommandSyntaxException e) {
             e.printStackTrace();
         }

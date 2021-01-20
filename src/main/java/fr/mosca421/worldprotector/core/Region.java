@@ -1,37 +1,42 @@
 package fr.mosca421.worldprotector.core;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
-import fr.mosca421.worldprotector.util.RegionFlagUtils;
+import fr.mosca421.worldprotector.util.RegionPlayerUtils;
 import joptsimple.internal.Strings;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.StringNBT;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.RegistryKey;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.registry.Registry;
+import net.minecraft.world.World;
+import net.minecraft.world.gen.Heightmap;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.common.util.INBTSerializable;
 
 public class Region implements INBTSerializable<CompoundNBT> {
 
-	private AxisAlignedBB area;
 	private String name;
+	private RegistryKey<World> dimension;
+	private AxisAlignedBB area;
+	private final Set<String> flags;
+	private final Map<UUID, String> players;
+	private boolean isActive;
 	private int priority = 2;
-	private String dimension;
 	private String enterMessage = Strings.EMPTY;
 	private String exitMessage = Strings.EMPTY;
 	private String enterMessageSmall = Strings.EMPTY;
 	private String exitMessageSmall = Strings.EMPTY;
-	private final Set<String> flags;
-	private final Set<String> players;
-	private boolean isActive;
-
 	// nbt keys
 	public static final String NAME = "name";
+	public static final String UUID = "uuid";
 	public static final String DIM = "dimension";
 	public static final String MIN_X = "minX";
 	public static final String MIN_Y = "minY";
@@ -49,40 +54,81 @@ public class Region implements INBTSerializable<CompoundNBT> {
 	public static final String EXIT_MSG_2 = "exit_msg_small";
 
 	public Region(CompoundNBT nbt) {
-		this.players = new HashSet<>();
 		this.flags = new HashSet<>();
+		this.players = new HashMap<>();
 		deserializeNBT(nbt);
 	}
 
-	public Region(String name, AxisAlignedBB area, String dimension) {
+	public Region(String name, AxisAlignedBB area, RegistryKey<World> dimension) {
 		this.name = name;
 		this.area = area;
 		this.dimension = dimension;
 		this.isActive = true;
-		this.players = new HashSet<>();
+		this.players = new HashMap<>();
 		this.flags = new HashSet<>();
+	}
+
+	public Region(Region copy){
+		this.name = copy.name;
+		this.area = copy.area;
+		this.dimension = copy.dimension;
+		this.isActive = copy.isActive;
+		this.players = copy.players;
+		this.flags = copy.flags;
+		this.priority = copy.priority;
+		this.enterMessage = copy.enterMessage;
+		this.exitMessage = copy.exitMessage;
+		this.enterMessageSmall = copy.enterMessageSmall;
+		this.exitMessageSmall = copy.exitMessageSmall;
 	}
 
 	public AxisAlignedBB getArea() {
 		return area;
 	}
 
-	// TODO: Try to get lowest possible safe Y position
-	public BlockPos getCenterPos(){
-		double middleX = (this.area.maxX + this.area.minX) / 2;
-		double middleZ = (this.area.maxZ + this.area.minZ) / 2;
-		// area.getCenter()
-		return new BlockPos(middleX, this.area.maxY, middleZ);
+	public void setArea(AxisAlignedBB area) {
+		this.area = area;
+	}
+
+	/**
+	 * Does not check for harmful blocks though
+	 * @param world
+	 * @return
+	 */
+	public BlockPos getCenterSaveTpPos(World world){
+		Vector3d center = area.getCenter();
+		int highestNonBlockingY =  world.getHeight(Heightmap.Type.MOTION_BLOCKING, (int) area.minX, (int) area.minZ);
+		return new BlockPos(center.x, highestNonBlockingY + 1, center.z);
+	}
+
+	/**
+	 *
+	 * @param world
+	 * @return
+	 */
+	public BlockPos getMinBorderTpPos(World world){
+		int highestNonBlockingY =  world.getHeight(Heightmap.Type.MOTION_BLOCKING, (int) area.minX, (int) area.minZ);
+		return new BlockPos(area.minX, highestNonBlockingY + 1, area.minZ);
 	}
 
 	public Set<String> getFlags() {
 		return flags;
 	}
 
+	/**
+	 * True if added
+	 * @param flag
+	 * @return
+	 */
 	public boolean addFlag(String flag) {
 		return this.flags.add(flag);
 	}
 
+	/**
+	 * true if removed
+	 * @param flag
+	 * @return
+	 */
 	public boolean removeFlag(String flag) {
 		return this.flags.remove(flag);
 	}
@@ -103,12 +149,20 @@ public class Region implements INBTSerializable<CompoundNBT> {
 		return priority;
 	}
 
-	public String getDimension() {
+	public String getDimensionString() {
+		return dimension.getLocation().toString();
+	}
+
+	public RegistryKey<World> getDimension() {
 		return dimension;
 	}
 
 	public Set<String> getPlayers() {
-		return players;
+		return (Set<String>) this.players.values();
+	}
+
+	public Set<UUID> getPlayerUUIDs() {
+		return this.players.keySet();
 	}
 
 	/**
@@ -119,10 +173,10 @@ public class Region implements INBTSerializable<CompoundNBT> {
 	 * @return true if player is in region list or is an operator, false otherwise
 	 */
 	public boolean permits(PlayerEntity player) {
-		if (RegionFlagUtils.isOp(player)) {
+		if (RegionPlayerUtils.isOp(player)) {
 			return true;
 		}
-		return players.contains(player.getUniqueID().toString());
+		return players.containsKey(player.getUniqueID());
 	}
 
 	public boolean forbids(PlayerEntity player) {
@@ -137,12 +191,22 @@ public class Region implements INBTSerializable<CompoundNBT> {
 		this.isActive = isActive;
 	}
 
-	public boolean addPlayer(String playerUUID) {
-		return players.add(playerUUID);
+	public void activate(){
+		this.isActive = true;
 	}
 
-	public boolean removePlayer(String playerUUID) {
-		return players.remove(playerUUID);
+	public void deactivate(){
+		this.isActive = false;
+	}
+
+	public boolean addPlayer(PlayerEntity player) {
+		String added = this.players.put(player.getUniqueID(), player.getName().toString());
+		return added != null;
+	}
+
+	public boolean removePlayer(PlayerEntity player) {
+		String removed = this.players.remove(player.getUniqueID());
+		return removed != null;
 	}
 
 	@Override
@@ -156,7 +220,7 @@ public class Region implements INBTSerializable<CompoundNBT> {
 		nbt.putInt(MAX_Y, (int) area.maxY);
 		nbt.putInt(MAX_Z, (int) area.maxZ);
 		nbt.putInt(PRIORITY, priority);
-		nbt.putString(DIM, dimension);
+		nbt.putString(DIM, dimension.getLocation().toString());
 		nbt.putBoolean(ACTIVE, isActive);
 		nbt.putString(ENTER_MSG_1, enterMessage);
 		nbt.putString(ENTER_MSG_2, enterMessageSmall);
@@ -168,11 +232,15 @@ public class Region implements INBTSerializable<CompoundNBT> {
 				.collect(Collectors.toSet()));
 		nbt.put(FLAGS, flagsNBT);
 
-		ListNBT playersNBT = new ListNBT();
-		playersNBT.addAll(players.stream()
-				.map(StringNBT::valueOf)
-				.collect(Collectors.toSet()));
-		nbt.put(PLAYERS, playersNBT);
+		// serialize player data
+		ListNBT playerList = nbt.getList(PLAYERS, NBT.TAG_COMPOUND);
+		players.forEach( (uuid, name) -> {
+			CompoundNBT playerNBT = new CompoundNBT();
+			playerNBT.putUniqueId(UUID, uuid);
+			playerNBT.putString(NAME, name);
+			playerList.add(playerNBT);
+		});
+		nbt.put(PLAYERS, playerList);
 		return nbt;
 	}
 
@@ -188,7 +256,7 @@ public class Region implements INBTSerializable<CompoundNBT> {
 		this.name = nbt.getString(NAME);
 		this.area = areaFromNBT(nbt);
 		this.priority = nbt.getInt(PRIORITY);
-		this.dimension = nbt.getString(DIM);
+		this.dimension = RegistryKey.getOrCreateKey(Registry.WORLD_KEY, new ResourceLocation(nbt.getString(DIM)));
 		this.isActive = nbt.getBoolean(ACTIVE);
 		this.enterMessage = nbt.getString(ENTER_MSG_2);
 		this.enterMessageSmall = nbt.getString(ENTER_MSG_2);
@@ -199,10 +267,12 @@ public class Region implements INBTSerializable<CompoundNBT> {
 		for (int i = 0; i < flagsList.size(); i++) {
 			flags.add(flagsList.getString(i));
 		}
+		// deserialize player data
 		this.players.clear();
-		ListNBT playerLists = nbt.getList(PLAYERS, NBT.TAG_STRING);
+		ListNBT playerLists = nbt.getList(PLAYERS, NBT.TAG_COMPOUND);
 		for (int i = 0; i < playerLists.size(); i++) {
-			players.add(playerLists.getString(i));
+			CompoundNBT playerMapping = playerLists.getCompound(i);
+			players.put(playerMapping.getUniqueId(UUID), playerMapping.getString(NAME));
 		}
 	}
 
@@ -216,5 +286,33 @@ public class Region implements INBTSerializable<CompoundNBT> {
 
 	public boolean containsPosition(BlockPos position){
 		return this.area.contains(new Vector3d(position.getX(), position.getY(), position.getZ()));
+	}
+
+	// TODO:
+	public static Region read(PacketBuffer buf) {
+		/*
+		UUID waystoneUid = buf.readUniqueId();
+		String name = buf.readString();
+		boolean isGlobal = buf.readBoolean();
+		RegistryKey<World> dimension = RegistryKey.getOrCreateKey(Registry.WORLD_KEY, new ResourceLocation(buf.readString(250)));
+		BlockPos pos = buf.readBlockPos();
+
+		Waystone waystone = new Waystone(waystoneUid, dimension, pos, false, null);
+		waystone.setName(name);
+		waystone.setGlobal(isGlobal);
+		return waystone;
+		*/
+		return null;
+	}
+
+	public static void write(PacketBuffer buf, Region waystone) {
+		/*
+		buf.writeUniqueId(waystone.getWaystoneUid());
+		buf.writeString(waystone.getName());
+		buf.writeBoolean(waystone.isGlobal());
+		buf.writeResourceLocation(waystone.getDimension().getLocation());
+		buf.writeBlockPos(waystone.getPos());
+		*/
+
 	}
 }

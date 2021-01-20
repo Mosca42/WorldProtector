@@ -3,6 +3,7 @@ package fr.mosca421.worldprotector.core;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import fr.mosca421.worldprotector.WorldProtector;
 import fr.mosca421.worldprotector.util.RegionPlayerUtils;
 import joptsimple.internal.Strings;
 import net.minecraft.entity.player.PlayerEntity;
@@ -158,7 +159,7 @@ public class Region implements INBTSerializable<CompoundNBT> {
 	}
 
 	public Set<String> getPlayers() {
-		return (Set<String>) this.players.values();
+		return new HashSet<>(this.players.values());
 	}
 
 	public Set<UUID> getPlayerUUIDs() {
@@ -200,13 +201,16 @@ public class Region implements INBTSerializable<CompoundNBT> {
 	}
 
 	public boolean addPlayer(PlayerEntity player) {
-		String added = this.players.put(player.getUniqueID(), player.getName().toString());
-		return added != null;
+		String oldPlayer = this.players.put(player.getUniqueID(), player.getName().getString());
+		return !player.getName().getString().equals(oldPlayer);
 	}
 
 	public boolean removePlayer(PlayerEntity player) {
-		String removed = this.players.remove(player.getUniqueID());
-		return removed != null;
+		if (this.players.containsKey(player.getUniqueID())) {
+			String oldPlayer = this.players.remove(player.getUniqueID());
+			return oldPlayer != null;
+		}
+		return false;
 	}
 
 	@Override

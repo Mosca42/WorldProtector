@@ -1,7 +1,7 @@
 package fr.mosca421.worldprotector;
 
 import fr.mosca421.worldprotector.command.CommandsRegister;
-import fr.mosca421.worldprotector.data.RegionSaver;
+import fr.mosca421.worldprotector.data.RegionManager;
 import fr.mosca421.worldprotector.registry.ItemRegister;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
@@ -39,7 +39,7 @@ public class WorldProtector {
 	@SubscribeEvent
 	public void serverStarting(FMLServerStartingEvent event) {
 		CommandsRegister.init(event.getServer().getCommandManager().getDispatcher());
-		RegionSaver.onServerStarting(event);
+		RegionManager.onServerStarting(event);
 	}
 
 	/*

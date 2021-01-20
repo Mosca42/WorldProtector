@@ -2,7 +2,8 @@ package fr.mosca421.worldprotector.item;
 
 import fr.mosca421.worldprotector.WorldProtector;
 import fr.mosca421.worldprotector.core.Region;
-import fr.mosca421.worldprotector.data.RegionSaver;
+import fr.mosca421.worldprotector.data.RegionManager;
+import fr.mosca421.worldprotector.util.RegionPlayerUtils;
 import fr.mosca421.worldprotector.util.RegionUtils;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.ITooltipFlag;
@@ -47,10 +48,11 @@ public class ItemRegionStick extends Item {
 	private static List<String> cachedRegions;
 	private static int regionCount;
 
+	// TODO: rework with sync in place
 	static {
 		// init region cache
 		WorldProtector.LOGGER.debug("Region Stick cache initialized");
-		cachedRegions = RegionSaver.getRegions().stream()
+		cachedRegions = RegionManager.get().getAllRegions().stream()
 				.map(Region::getName)
 				.collect(Collectors.toList());
 		Collections.sort(cachedRegions);
@@ -80,10 +82,10 @@ public class ItemRegionStick extends Item {
 				String regionName = stack.getTag().getString(REGION);
 				switch (mode) {
 					case MODE_ADD:
-						RegionUtils.addPlayer(regionName, player, hitPlayer);
+						RegionPlayerUtils.addPlayer(regionName, player, hitPlayer);
 						break;
 					case MODE_REMOVE:
-						RegionUtils.removePlayer(regionName, player, hitPlayer);
+						RegionPlayerUtils.removePlayer(regionName, player, hitPlayer);
 						break;
 					default:
 						/* should not happen */
@@ -155,9 +157,10 @@ public class ItemRegionStick extends Item {
 			}
 		} else {
 			// check if region data was changed and update cache
-			if (regionCount != RegionSaver.getRegions().size()) {
+			Collection<Region> regions = RegionManager.get().getAllRegions();
+			if (regionCount != regions.size()) {
 				WorldProtector.LOGGER.info("Region Stick cache updated");
-				cachedRegions = RegionSaver.getRegions().stream()
+				cachedRegions = regions.stream()
 						.map(Region::getName)
 						.collect(Collectors.toList());
 				regionCount = cachedRegions.size();

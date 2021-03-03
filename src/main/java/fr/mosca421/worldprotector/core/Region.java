@@ -175,7 +175,7 @@ public class Region implements INBTSerializable<CompoundNBT> {
 		for (String player : playerList) {
 			playerLists.add(StringNBT.valueOf(player));
 		}
-		nbt.put("playerList", flagList);
+		nbt.put("playerList", playerLists);
 		return nbt;
 	}
 

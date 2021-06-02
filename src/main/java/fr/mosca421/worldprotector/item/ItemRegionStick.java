@@ -1,10 +1,9 @@
 package fr.mosca421.worldprotector.item;
 
 import fr.mosca421.worldprotector.WorldProtector;
-import fr.mosca421.worldprotector.core.Region;
+import fr.mosca421.worldprotector.core.IRegion;
 import fr.mosca421.worldprotector.data.RegionManager;
 import fr.mosca421.worldprotector.util.RegionPlayerUtils;
-import fr.mosca421.worldprotector.util.RegionUtils;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
@@ -53,7 +52,7 @@ public class ItemRegionStick extends Item {
 		// init region cache
 		WorldProtector.LOGGER.debug("Region Stick cache initialized");
 		cachedRegions = RegionManager.get().getAllRegions().stream()
-				.map(Region::getName)
+				.map(IRegion::getName)
 				.collect(Collectors.toList());
 		Collections.sort(cachedRegions);
 		regionCount = cachedRegions.size();
@@ -157,11 +156,11 @@ public class ItemRegionStick extends Item {
 			}
 		} else {
 			// check if region data was changed and update cache
-			Collection<Region> regions = RegionManager.get().getAllRegions();
+			Collection<IRegion> regions = RegionManager.get().getAllRegions();
 			if (regionCount != regions.size()) {
 				WorldProtector.LOGGER.info("Region Stick cache updated");
 				cachedRegions = regions.stream()
-						.map(Region::getName)
+						.map(IRegion::getName)
 						.collect(Collectors.toList());
 				regionCount = cachedRegions.size();
 				int regionIndex = stack.getTag().getInt(REGION_IDX);

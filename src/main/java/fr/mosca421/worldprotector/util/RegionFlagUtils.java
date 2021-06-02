@@ -1,14 +1,12 @@
 package fr.mosca421.worldprotector.util;
 
 import com.google.common.base.Joiner;
-import fr.mosca421.worldprotector.core.Region;
+import fr.mosca421.worldprotector.core.IRegion;
 import fr.mosca421.worldprotector.core.RegionFlag;
 import fr.mosca421.worldprotector.data.RegionManager;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.server.management.OpEntry;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import net.minecraft.util.text.TextFormatting;
 
 import java.util.List;
@@ -63,7 +61,7 @@ public class RegionFlagUtils {
 		}
 	}
 
-	public static void addFlag(Region region, PlayerEntity player, String flag) {
+	public static void addFlag(IRegion region, PlayerEntity player, String flag) {
 		if (RegionManager.get().addFlag(region, flag)) {
 			sendMessage(player, new TranslationTextComponent("message.flags.add", flag, region.getName()));
 		} else {
@@ -71,7 +69,7 @@ public class RegionFlagUtils {
 		}
 	}
 
-	public static void removeFlag(Region region, PlayerEntity player, String flag){
+	public static void removeFlag(IRegion region, PlayerEntity player, String flag){
 			if (RegionManager.get().removeFlag(region, flag)) {
 				sendMessage(player, new TranslationTextComponent("message.flags.remove", flag, region.getName()));
 			} else {
@@ -101,7 +99,7 @@ public class RegionFlagUtils {
 		sendMessage(player, new TranslationTextComponent(TextFormatting.BLUE + "==WorldProtector Help=="));
 	}
 
-	public static String getFlagString(Region region) {
+	public static String getFlagString(IRegion region) {
 		return Joiner.on(", ").join(region.getFlags());
 	}
 

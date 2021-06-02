@@ -3,10 +3,10 @@ package fr.mosca421.worldprotector.util;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import fr.mosca421.worldprotector.core.IRegion;
 import fr.mosca421.worldprotector.core.Region;
 import fr.mosca421.worldprotector.item.ItemRegionMarker;
 import fr.mosca421.worldprotector.core.RegionFlag;
@@ -69,7 +69,7 @@ public class RegionUtils {
 				if (item.getTag().getBoolean(ItemRegionMarker.VALID)) {
 					if (RegionManager.get().containsRegion(regionName)) {
 						RegionManager.get().getRegion(regionName).ifPresent(region -> {
-							region.setArea(getAreaFromNBT(item.getTag()));
+							region.setArea(getAreaFromNBT(item.getTag())); // TODO: maybe better in Manager/DRC
 							RegionManager.get().updateRegion(new Region(region));
 							item.getTag().putBoolean(ItemRegionMarker.VALID, false); // reset flag for consistent command behaviour
 							sendMessage(player, new TranslationTextComponent("message.region.redefine", regionName));
@@ -90,6 +90,7 @@ public class RegionUtils {
 
 	public static void setRegionPriority(String regionName, int priority, PlayerEntity player) {
 		if (RegionManager.get().containsRegion(regionName)) {
+			// TODO: Move to Manager/DimensionalRegionCache - no markdirty is done here
 			RegionManager.get().getRegion(regionName).ifPresent(region -> {
 				region.setPriority(priority);
 				sendMessage(player, new TranslationTextComponent("message.region.setpriority", priority, regionName));
@@ -117,14 +118,14 @@ public class RegionUtils {
 		}
 	}
 
-	public static void activateAll(Collection<Region> regions, PlayerEntity player) {
-		List<Region> deactiveRegions = regions.stream()
+	public static void activateAll(Collection<IRegion> regions, PlayerEntity player) {
+		List<IRegion> deactiveRegions = regions.stream()
 				.filter(region -> !region.isActive())
 				.collect(Collectors.toList());
 		deactiveRegions.forEach(region -> region.setIsActive(true));
 		// TODO: move to region manager
 		List<String> activatedRegions = deactiveRegions.stream()
-				.map(Region::getName)
+				.map(IRegion::getName)
 				.collect(Collectors.toList());
 		String regionString = String.join(", ", activatedRegions);
 		if (!activatedRegions.isEmpty()) {
@@ -142,14 +143,14 @@ public class RegionUtils {
 		}
 	}
 
-	public static void deactivateAll(Collection<Region> regions, PlayerEntity player) {
-		List<Region> activeRegions = regions.stream()
-				.filter(Region::isActive)
+	public static void deactivateAll(Collection<IRegion> regions, PlayerEntity player) {
+		List<IRegion> activeRegions = regions.stream()
+				.filter(IRegion::isActive)
 				.collect(Collectors.toList());
 		activeRegions.forEach(region -> region.setIsActive(false));
 		// TODO: move to region manager
 		List<String> deactivatedRegions = activeRegions.stream()
-				.map(Region::getName)
+				.map(IRegion::getName)
 				.collect(Collectors.toList());
 		String regionString = String.join(", ", deactivatedRegions);
 		if (!deactivatedRegions.isEmpty()) {
@@ -163,7 +164,7 @@ public class RegionUtils {
 		if (RegionManager.get().containsRegion(regionName)) {
 			RegionManager.get().getRegion(regionName).ifPresent(region -> {
 				sendMessage(player, new TranslationTextComponent("message.region.teleport", regionName));
-				BlockPos tpPos = region.getMinBorderTpPos(player.world);
+				BlockPos tpPos = region.getTpPos(player.world);
 				player.setPositionAndUpdate(tpPos.getX(), tpPos.getY(), tpPos.getZ());
 			});
 		} else {
@@ -192,9 +193,9 @@ public class RegionUtils {
 				String noFlagsText = new TranslationTextComponent("message.region.info.noflags").getString();
 				String noPlayersText = new TranslationTextComponent("message.region.info.noplayers").getString();
 				String regionFlags = region.getFlags().isEmpty() ? noFlagsText : String.join(", ", region.getFlags());
-				String regionPlayers = region.getPlayers().isEmpty() ? noPlayersText : String.join(",\n", region.getPlayers());
+				String regionPlayers = region.getPlayers().isEmpty() ? noPlayersText : String.join(",\n", region.getPlayers().values());
 				sendMessage(player, new StringTextComponent(TextFormatting.BLUE + "==Region '" + regionName + "' information=="));
-				BlockPos tpPos = region.getMinBorderTpPos(player.world);
+				BlockPos tpPos = region.getTpPos(player.world);
 				sendTeleportLink(player, tpPos, new TranslationTextComponent("message.region.info.tpcenter"));
 				sendMessage(player, new TranslationTextComponent("message.region.info.area", region.getArea().toString().substring(4)));
 				sendMessage(player, new TranslationTextComponent("message.region.info.priority", region.getPriority()));
@@ -217,27 +218,27 @@ public class RegionUtils {
 			return;
 		}
 		RegionManager.get().getAllRegions().forEach(region -> {
-			BlockPos tpPos = region.getMinBorderTpPos(player.world);
+			BlockPos tpPos = region.getTpPos(player.world);
 			sendTeleportLink(player, tpPos, new TranslationTextComponent("message.region.list.entry", region.getName()));
 		});
 	}
 
-	public static List<Region> getHandlingRegionsFor(Entity entity, IWorld world){
+	public static List<IRegion> getHandlingRegionsFor(Entity entity, IWorld world){
 		return getHandlingRegionsFor(entity.getPosition(), ((World)world).getDimensionKey());
 	}
 
-	public static List<Region> getHandlingRegionsFor(BlockPos position, World world){
+	public static List<IRegion> getHandlingRegionsFor(BlockPos position, World world){
 		return getHandlingRegionsFor(position, world.getDimensionKey());
 	}
 
-	public static List<Region> getHandlingRegionsFor(BlockPos position, RegistryKey<World> dimension) {
+	public static List<IRegion> getHandlingRegionsFor(BlockPos position, RegistryKey<World> dimension) {
 		int maxPriority = 1;
-		List<Region> handlingRegions = new ArrayList<>();
-		List<Region> filteredRegions = RegionManager.get().getRegions(dimension).stream()
-				.filter(Region::isActive)
+		List<IRegion> handlingRegions = new ArrayList<>();
+		List<IRegion> filteredRegions = RegionManager.get().getRegions(dimension).stream()
+				.filter(IRegion::isActive)
 				.filter(region -> region.containsPosition(position))
 				.collect(Collectors.toList());
-		for (Region region : filteredRegions) {
+		for (IRegion region : filteredRegions) {
 			if (region.getPriority() == maxPriority) {
 				handlingRegions.add(region);
 			} else if (region.getPriority() > maxPriority) {
@@ -249,14 +250,14 @@ public class RegionUtils {
 		return handlingRegions;
 	}
 
-	public static List<Region> filterHandlingRegions(BlockPos position, World world, RegionFlag flagFilter){
+	public static List<IRegion> filterHandlingRegions(BlockPos position, World world, RegionFlag flagFilter){
 		return getHandlingRegionsFor(position, world)
 				.stream()
 				.filter(region -> region.containsFlag(flagFilter.toString()))
 				.collect(Collectors.toList());
 	}
 
-	public static List<Region> filterHandlingRegions(BlockPos position, World world, RegionFlag flagFilter, PlayerEntity player){
+	public static List<IRegion> filterHandlingRegions(BlockPos position, World world, RegionFlag flagFilter, PlayerEntity player){
 		return getHandlingRegionsFor(position, world)
 				.stream()
 				.filter(region -> region.containsFlag(flagFilter.toString()))
@@ -272,7 +273,7 @@ public class RegionUtils {
 				.forEach(region -> cancelAction.run());
 	}
 
-	public static void cancelEventsInRegions(BlockPos eventPos, World worldIn, RegionFlag flagFilter, Predicate<Region> isPermittedInRegion, Runnable cancelAction){
+	public static void cancelEventsInRegions(BlockPos eventPos, World worldIn, RegionFlag flagFilter, Predicate<IRegion> isPermittedInRegion, Runnable cancelAction){
 		getHandlingRegionsFor(eventPos, worldIn)
 				.stream()
 				.filter(region -> region.containsFlag(flagFilter.toString()))

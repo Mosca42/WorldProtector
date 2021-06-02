@@ -1,6 +1,7 @@
 package fr.mosca421.worldprotector.event;
 
 import fr.mosca421.worldprotector.WorldProtector;
+import fr.mosca421.worldprotector.core.IRegion;
 import fr.mosca421.worldprotector.core.Region;
 import fr.mosca421.worldprotector.core.RegionFlag;
 import fr.mosca421.worldprotector.util.MessageUtils;
@@ -29,8 +30,8 @@ public class EventTeleport {
         if (!world.isRemote()) {
             BlockPos teleportTarget = new BlockPos(event.getTargetX(), event.getTargetY(), event.getTargetZ());
             BlockPos teleportSource = event.getEntity().getPosition();
-            List<Region> regionsTo = RegionUtils.getHandlingRegionsFor(teleportTarget, world);
-            List<Region> regionsFrom = RegionUtils.getHandlingRegionsFor(teleportSource, world);
+            List<IRegion> regionsTo = RegionUtils.getHandlingRegionsFor(teleportTarget, world);
+            List<IRegion> regionsFrom = RegionUtils.getHandlingRegionsFor(teleportSource, world);
             // handle player teleportation using ender pearls
             if (event.getEntityLiving() instanceof PlayerEntity) {
                 handlePlayerEnderPearlUse(event, regionsFrom, regionsTo);
@@ -46,7 +47,7 @@ public class EventTeleport {
         }
     }
 
-    private static void handlePlayerEnderPearlUse(EnderTeleportEvent event, List<Region> regionsFrom, List<Region> regionsTo) {
+    private static void handlePlayerEnderPearlUse(EnderTeleportEvent event, List<IRegion> regionsFrom, List<IRegion> regionsTo) {
         PlayerEntity player = (PlayerEntity) event.getEntityLiving();
         boolean playerTpToProhibited = regionsTo.stream()
                 .anyMatch(region -> region.containsFlag(RegionFlag.USE_ENDERPEARL_TO_REGION) && region.forbids(player));
@@ -67,7 +68,7 @@ public class EventTeleport {
         }
     }
 
-    private static void handleShulkerTp(EnderTeleportEvent event, List<Region> regionsFrom, List<Region> regionsTo) {
+    private static void handleShulkerTp(EnderTeleportEvent event, List<IRegion> regionsFrom, List<IRegion> regionsTo) {
         boolean shulkerTpFromProhibited = regionsFrom.stream()
                 .anyMatch(region -> region.containsFlag(RegionFlag.SHULKER_TELEPORT_FROM_REGION));
         if (shulkerTpFromProhibited) {
@@ -80,7 +81,7 @@ public class EventTeleport {
         }
     }
 
-    private static void handleEndermanTp(EnderTeleportEvent event, List<Region> regionsFrom, List<Region> regionsTo) {
+    private static void handleEndermanTp(EnderTeleportEvent event, List<IRegion> regionsFrom, List<IRegion> regionsTo) {
         boolean endermanTpFromProhibited = regionsFrom.stream()
                 .anyMatch(region -> region.containsFlag(RegionFlag.ENDERMAN_TELEPORT_FROM_REGION));
         if (endermanTpFromProhibited) {

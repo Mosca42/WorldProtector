@@ -1,6 +1,7 @@
 package fr.mosca421.worldprotector.event;
 
 import fr.mosca421.worldprotector.WorldProtector;
+import fr.mosca421.worldprotector.core.IRegion;
 import fr.mosca421.worldprotector.core.Region;
 import fr.mosca421.worldprotector.core.RegionFlag;
 import fr.mosca421.worldprotector.util.MessageUtils;
@@ -21,9 +22,9 @@ public class EventInteract {
 
 	@SubscribeEvent
 	public static void onPlayerRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
-		List<Region> regions = RegionUtils.getHandlingRegionsFor(event.getPos(), event.getWorld());
+		List<IRegion> regions = RegionUtils.getHandlingRegionsFor(event.getPos(), event.getWorld());
 		if (!event.getWorld().isRemote) {
-			for (Region region : regions) {
+			for (IRegion region : regions) {
 				PlayerEntity player = event.getPlayer();
 				TileEntity targetEntity = event.getWorld().getTileEntity(event.getPos());
 				boolean isLockableTileEntity = targetEntity instanceof LockableTileEntity;
@@ -61,9 +62,9 @@ public class EventInteract {
 
 	@SubscribeEvent
 	public static void onPlayerEntityInteract(PlayerInteractEvent.EntityInteract event) {
-		List<Region> regions = RegionUtils.getHandlingRegionsFor(event.getPos(), event.getWorld());
+		List<IRegion> regions = RegionUtils.getHandlingRegionsFor(event.getPos(), event.getWorld());
 		if (!event.getWorld().isRemote) {
-			for (Region region : regions) {
+			for (IRegion region : regions) {
 				PlayerEntity player = event.getPlayer();
 				boolean containsChestAccess = region.containsFlag(RegionFlag.CONTAINER_ACCESS);
 				boolean playerHasPermission = region.permits(player);

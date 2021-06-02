@@ -1,6 +1,7 @@
 package fr.mosca421.worldprotector.event;
 
 import fr.mosca421.worldprotector.WorldProtector;
+import fr.mosca421.worldprotector.core.IRegion;
 import fr.mosca421.worldprotector.core.Region;
 import fr.mosca421.worldprotector.core.RegionFlag;
 import fr.mosca421.worldprotector.util.MessageUtils;
@@ -38,8 +39,8 @@ public class EventMobs {
 	@SubscribeEvent
 	public static void onEntityJoinWorld(EntityJoinWorldEvent event) {
 		Entity eventEntity = event.getEntity();
-		List<Region> affectedRegions = RegionUtils.getHandlingRegionsFor(event.getEntity().getPosition(), event.getWorld());
-		for (Region region : affectedRegions) {
+		List<IRegion> affectedRegions = RegionUtils.getHandlingRegionsFor(event.getEntity().getPosition(), event.getWorld());
+		for (IRegion region : affectedRegions) {
 				if (region.containsFlag(RegionFlag.SPAWNING_ALL) && eventEntity instanceof MobEntity) {
 					event.setCanceled(true);
 					return;
@@ -101,7 +102,7 @@ public class EventMobs {
 				|| entity instanceof ShulkerEntity;
 	}
 
-	private static boolean regionContainsEntity(Region region, Entity entity){
+	private static boolean regionContainsEntity(IRegion region, Entity entity){
 		return region.getArea().contains(entity.getPositionVec());
 	}
 
@@ -109,10 +110,10 @@ public class EventMobs {
 	public static void onAttackEntityAnimal(AttackEntityEvent event) {
 		PlayerEntity player = event.getPlayer();
 		Entity eventEntity = event.getTarget();
-		List<Region> affectedRegions = RegionUtils.getHandlingRegionsFor(event.getTarget().getPosition(), event.getTarget().world);
+		List<IRegion> affectedRegions = RegionUtils.getHandlingRegionsFor(event.getTarget().getPosition(), event.getTarget().world);
 		if (!event.getTarget().world.isRemote) {
 			if (isAnimal(eventEntity)) {
-				for (Region region : affectedRegions) {
+				for (IRegion region : affectedRegions) {
 					boolean flagDamageAnimals = region.containsFlag(RegionFlag.DAMAGE_ANIMALS.toString());
 					if (flagDamageAnimals && regionContainsEntity(region, eventEntity) && region.forbids(player)) {
 						player.sendMessage(new TranslationTextComponent("message.event.mobs.hurt_animal"), player.getUniqueID());
@@ -122,7 +123,7 @@ public class EventMobs {
 			}
 
 			if (isMonster(eventEntity)) {
-				for (Region region : affectedRegions) {
+				for (IRegion region : affectedRegions) {
 					boolean flagDamageMonsters = region.containsFlag(RegionFlag.DAMAGE_MONSTERS.toString());
 					if (flagDamageMonsters && regionContainsEntity(region, eventEntity) && region.forbids(player)) {
 						player.sendMessage(new TranslationTextComponent("message.event.mobs.hurt_monster"), player.getUniqueID());
@@ -133,7 +134,7 @@ public class EventMobs {
 
 			if (event.getTarget() instanceof VillagerEntity) { // exclude pesky wandering trader >:-)
 				VillagerEntity villager = (VillagerEntity) event.getTarget();
-				for (Region region : affectedRegions) {
+				for (IRegion region : affectedRegions) {
 					boolean flagDamageMonsters = region.containsFlag(RegionFlag.DAMAGE_VILLAGERS.toString());
 					if (flagDamageMonsters && regionContainsEntity(region, villager) && region.forbids(player)) {
 						player.sendMessage(new TranslationTextComponent("message.event.mobs.hurt_villager"), player.getUniqueID());

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import fr.mosca421.worldprotector.WorldProtector;
+import fr.mosca421.worldprotector.core.IRegion;
 import fr.mosca421.worldprotector.core.Region;
 import fr.mosca421.worldprotector.core.RegionFlag;
 import fr.mosca421.worldprotector.util.RegionUtils;
@@ -49,7 +50,7 @@ public class EventProtection {
 	@SubscribeEvent
 	public static void onPlayerPlaceBlock(EntityPlaceEvent event) {
 		if (!event.getWorld().isRemote()) {
-			List<Region> regions = RegionUtils.getHandlingRegionsFor(event.getPos(), (World) event.getWorld());
+			List<IRegion> regions = RegionUtils.getHandlingRegionsFor(event.getPos(), (World) event.getWorld());
 			if (event.getEntity() instanceof PlayerEntity) {
 				PlayerEntity player = (PlayerEntity) event.getEntity();
 				boolean isPlayerPlacementProhibited = regions.stream()
@@ -75,10 +76,10 @@ public class EventProtection {
 	@SubscribeEvent
 	public static void onExplosionStarted(ExplosionEvent.Start event) {
 		if (!event.getWorld().isRemote) {
-			List<Region> regions = RegionUtils.getHandlingRegionsFor(new BlockPos(event.getExplosion().getPosition()), event.getWorld());
+			List<IRegion> regions = RegionUtils.getHandlingRegionsFor(new BlockPos(event.getExplosion().getPosition()), event.getWorld());
 			if (event.getExplosion().getExplosivePlacedBy() instanceof PlayerEntity) {
 				PlayerEntity player = (PlayerEntity) event.getExplosion().getExplosivePlacedBy();
-				for (Region region : regions) {
+				for (IRegion region : regions) {
 					boolean cancelEvent = region.containsFlag(RegionFlag.IGNITE_EXPLOSIVES) && !region.permits(player);
 					event.setCanceled(cancelEvent);
 					if (cancelEvent) {
@@ -118,8 +119,8 @@ public class EventProtection {
 	public static void onPlayerUseToolSecondary(BlockEvent.BlockToolInteractEvent event) {
 		if (!event.getWorld().isRemote()) {
 			PlayerEntity player = event.getPlayer();
-			List<Region> regions = RegionUtils.getHandlingRegionsFor(event.getPos(), player.getEntityWorld());
-			for (Region region : regions){ // iterate through regions, if a region contains a specified flag, cancel event
+			List<IRegion> regions = RegionUtils.getHandlingRegionsFor(event.getPos(), player.getEntityWorld());
+			for (IRegion region : regions){ // iterate through regions, if a region contains a specified flag, cancel event
 				boolean playerNotPermitted = !region.permits(player);
 				if (region.containsFlag(RegionFlag.TOOL_SECONDARY_USE) && playerNotPermitted) {
 					event.setCanceled(true);
@@ -150,8 +151,8 @@ public class EventProtection {
 	public static void onBucketFill(FillBucketEvent event) {
 		PlayerEntity player = event.getPlayer();
 		if (!event.getWorld().isRemote && event.getTarget() != null) {
-			List<Region> regions = RegionUtils.getHandlingRegionsFor(new BlockPos(event.getTarget().getHitVec()), event.getWorld());
-			for (Region region : regions) {
+			List<IRegion> regions = RegionUtils.getHandlingRegionsFor(new BlockPos(event.getTarget().getHitVec()), event.getWorld());
+			for (IRegion region : regions) {
 				int bucketItemMaxStackCount = event.getEmptyBucket().getMaxStackSize();
 				// MaxStackSize: 1 -> full bucket so only placeable; >1 -> empty bucket, only fillable
 				if (bucketItemMaxStackCount == 1 && region.containsFlag(RegionFlag.PLACE.toString()) && !region.permits(player)) {
@@ -175,7 +176,7 @@ public class EventProtection {
 	 * @param flag flag to be checked for
 	 * @return true if any region contains the specified flag, false otherwise
 	 */
-	private static boolean anyRegionContainsFlag(List<Region> regions, String flag){
+	private static boolean anyRegionContainsFlag(List<IRegion> regions, String flag){
 		return regions.stream()
 				.anyMatch(region -> region.containsFlag(flag));
 	}

@@ -1,6 +1,7 @@
 package fr.mosca421.worldprotector.event;
 
 import fr.mosca421.worldprotector.WorldProtector;
+import fr.mosca421.worldprotector.core.IRegion;
 import fr.mosca421.worldprotector.core.Region;
 import fr.mosca421.worldprotector.core.RegionFlag;
 import fr.mosca421.worldprotector.util.MessageUtils;
@@ -39,8 +40,8 @@ public class EventWorld {
     @SubscribeEvent
     public static void onFarmLandTrampled(BlockEvent.FarmlandTrampleEvent event) {
         if (!event.getWorld().isRemote()) {
-            List<Region> regions = RegionUtils.getHandlingRegionsFor(event.getPos(), (World) event.getWorld());
-            for (Region r : regions) {
+            List<IRegion> regions = RegionUtils.getHandlingRegionsFor(event.getPos(), (World) event.getWorld());
+            for (IRegion r : regions) {
                 // cancel all trampling
                 if (r.containsFlag(RegionFlag.TRAMPLE_FARMLAND.toString())) {
                     event.setCanceled(true);
@@ -92,9 +93,9 @@ public class EventWorld {
         if (!event.getEntityLiving().world.isRemote) {
             PlayerEntity player = event.getAttackingPlayer();
             Entity entity = event.getEntity();
-            List<Region> regions = RegionUtils.getHandlingRegionsFor(entity, entity.world);
+            List<IRegion> regions = RegionUtils.getHandlingRegionsFor(entity, entity.world);
             boolean entityDroppingXpIsPlayer = event.getEntityLiving() instanceof PlayerEntity;
-            for (Region region : regions) {
+            for (IRegion region : regions) {
                 // prevent all xp drops
                 if (region.containsFlag(RegionFlag.EXP_DROP_ALL)) {
                     if (entityDroppingXpIsPlayer) {
@@ -142,8 +143,8 @@ public class EventWorld {
     public static void onEntityDestroyBlock(LivingDestroyBlockEvent event){
         if (!event.getEntityLiving().world.isRemote) {
             LivingEntity destroyer = event.getEntityLiving();
-            List<Region> regions = RegionUtils.getHandlingRegionsFor(destroyer, destroyer.world);
-            for (Region region : regions) {
+            List<IRegion> regions = RegionUtils.getHandlingRegionsFor(destroyer, destroyer.world);
+            for (IRegion region : regions) {
                 if (region.containsFlag(RegionFlag.DRAGON_BLOCK_PROT) && destroyer instanceof EnderDragonEntity) {
                     event.setCanceled(true);
                     WorldProtector.LOGGER.debug("STOP YOU DRAGON!");

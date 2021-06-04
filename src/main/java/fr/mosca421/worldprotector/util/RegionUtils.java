@@ -1,16 +1,10 @@
 package fr.mosca421.worldprotector.util;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-
 import fr.mosca421.worldprotector.core.IRegion;
 import fr.mosca421.worldprotector.core.Region;
-import fr.mosca421.worldprotector.item.ItemRegionMarker;
 import fr.mosca421.worldprotector.core.RegionFlag;
 import fr.mosca421.worldprotector.data.RegionManager;
+import fr.mosca421.worldprotector.item.ItemRegionMarker;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -18,18 +12,27 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.*;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 
-import static fr.mosca421.worldprotector.util.MessageUtils.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
+import static fr.mosca421.worldprotector.util.MessageUtils.sendMessage;
+import static fr.mosca421.worldprotector.util.MessageUtils.sendTeleportLink;
 
 public class RegionUtils {
 
 	private RegionUtils(){}
 
 	public static void removeRegion(String regionName, PlayerEntity player) {
-		if (RegionManager.get().removeRegion(regionName) != null) {
+		if (RegionManager.get().removeRegion(regionName, player) != null) {
 			sendMessage(player, new TranslationTextComponent("message.region.remove", regionName));
 		} else {
 			sendMessage(player, new TranslationTextComponent("message.region.unknown", regionName));
@@ -51,7 +54,7 @@ public class RegionUtils {
 				if (item.getTag().getBoolean(ItemRegionMarker.VALID)) {
 					AxisAlignedBB regionArea = getAreaFromNBT(item.getTag());
 					Region region = new Region(regionName, regionArea, player.world.getDimensionKey());
-					RegionManager.get().addRegion(region);
+					RegionManager.get().addRegion(region, player);
 					item.getTag().putBoolean(ItemRegionMarker.VALID, false); // reset flag for consistent command behaviour
 					sendMessage(player, new TranslationTextComponent("message.region.define", regionName));
 				} else {
@@ -70,7 +73,7 @@ public class RegionUtils {
 					if (RegionManager.get().containsRegion(regionName)) {
 						RegionManager.get().getRegion(regionName).ifPresent(region -> {
 							region.setArea(getAreaFromNBT(item.getTag())); // TODO: maybe better in Manager/DRC
-							RegionManager.get().updateRegion(new Region(region));
+							RegionManager.get().updateRegion(new Region(region), player);
 							item.getTag().putBoolean(ItemRegionMarker.VALID, false); // reset flag for consistent command behaviour
 							sendMessage(player, new TranslationTextComponent("message.region.redefine", regionName));
 						});

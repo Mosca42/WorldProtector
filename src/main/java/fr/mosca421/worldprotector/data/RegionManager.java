@@ -1,6 +1,7 @@
 package fr.mosca421.worldprotector.data;
 
 import fr.mosca421.worldprotector.WorldProtector;
+import fr.mosca421.worldprotector.api.event.RegionEvent;
 import fr.mosca421.worldprotector.core.IRegion;
 import fr.mosca421.worldprotector.core.Region;
 import net.minecraft.entity.player.PlayerEntity;
@@ -13,6 +14,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.storage.DimensionSavedDataManager;
 import net.minecraft.world.storage.WorldSavedData;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 
@@ -141,15 +143,17 @@ public class RegionManager extends WorldSavedData {
 		return false;
 	}
 
-	public IRegion removeRegion(String regionName) {
-		Optional<IRegion> maybeRegion = getRegion(regionName);
-		if (maybeRegion.isPresent()) {
-			IRegion region = maybeRegion.get();
-			IRegion removed = regionMap.get(region.getDimension()).removeRegion(regionName);
-			markDirty();
-			return removed;
-		} else {
-			return null;
+	public static void onServerStarting(FMLServerStartingEvent event) {
+		try {
+			ServerWorld world = Objects.requireNonNull(event.getServer().getWorld(World.OVERWORLD));
+			if (!world.isRemote) {
+				DimensionSavedDataManager storage = world.getSavedData();
+				RegionManager data = storage.getOrCreate(RegionManager::new, DATA_NAME);
+				WorldProtector.LOGGER.debug("Loaded dimension regions successfully");
+				clientRegionCopy = data;
+			}
+		} catch (NullPointerException npe) {
+			WorldProtector.LOGGER.error("Loading dimension regions failed");
 		}
 	}
 
@@ -165,11 +169,16 @@ public class RegionManager extends WorldSavedData {
 		}
 	}
 
-	public void updateRegion(IRegion newRegion) {
-		RegistryKey<World> dim = newRegion.getDimension();
-		if (regionMap.containsKey(dim)) {
-			regionMap.get(dim).updateRegion(newRegion);
+	public IRegion removeRegion(String regionName, PlayerEntity player) {
+		Optional<IRegion> maybeRegion = getRegion(regionName);
+		if (maybeRegion.isPresent()) {
+			IRegion region = maybeRegion.get();
+			IRegion removed = regionMap.get(region.getDimension()).removeRegion(regionName);
 			markDirty();
+			MinecraftForge.EVENT_BUS.post(new RegionEvent.RemoveRegionEvent(region, player));
+			return removed;
+		} else {
+			return null;
 		}
 	}
 
@@ -224,14 +233,13 @@ public class RegionManager extends WorldSavedData {
 		return new HashSet<>();
 	}
 
-	public void addRegion(IRegion region) {
-		if (regionMap.containsKey(region.getDimension())) {
-			regionMap.get(region.getDimension()).addRegion(region);
-		} else {
-			DimensionRegionCache newCache = new DimensionRegionCache(region);
-			regionMap.put(region.getDimension(), newCache);
+	public void updateRegion(IRegion newRegion, PlayerEntity player) {
+		RegistryKey<World> dim = newRegion.getDimension();
+		if (regionMap.containsKey(dim)) {
+			regionMap.get(dim).updateRegion(newRegion);
+			MinecraftForge.EVENT_BUS.post(new RegionEvent.UpdateRegionEvent(newRegion, player));
+			markDirty();
 		}
-		markDirty();
 	}
 
 	/**
@@ -363,6 +371,17 @@ public class RegionManager extends WorldSavedData {
 		return new HashSet<>();
 	}
 
+	public void addRegion(IRegion region, PlayerEntity player) {
+		if (regionMap.containsKey(region.getDimension())) {
+			regionMap.get(region.getDimension()).addRegion(region);
+		} else {
+			DimensionRegionCache newCache = new DimensionRegionCache(region);
+			regionMap.put(region.getDimension(), newCache);
+		}
+		MinecraftForge.EVENT_BUS.post(new RegionEvent.CreateRegionEvent(region, player));
+		markDirty();
+	}
+
 	/**
 	 * Reads region compound nbt and puts it back into the regionMap
 	 *
@@ -383,20 +402,6 @@ public class RegionManager extends WorldSavedData {
 			regionMap.put(dimensionKey, dimRegionCache);
 		});
 		markDirty();
-	}
-
-	public static void onServerStarting(FMLServerStartingEvent event) {
-		try {
-			ServerWorld world = Objects.requireNonNull(event.getServer().getWorld(World.OVERWORLD));
-			if (!world.isRemote) {
-				DimensionSavedDataManager storage = world.getSavedData();
-				RegionManager data = storage.getOrCreate(RegionManager::new, DATA_NAME);
-				WorldProtector.LOGGER.debug("Loaded dimension regions successfully");
-				clientRegionCopy = data;
-			}
-		} catch (NullPointerException npe) {
-			WorldProtector.LOGGER.error("Loading dimension regions failed");
-		}
 	}
 
 	/**

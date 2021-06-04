@@ -1,3 +1,9 @@
+1.16.4-2.1.0.0
+* Add events for creating, removing and updating a region (API)
+1.16.4-2.0.8.0
+* Region data is now stored more efficient (e.g. Regions per dimension). This leads to a significant performance improvement when dealing with a large amount of regions
+* Fix a bug with RegionStick on client side not getting region data when playing on dedicated server
+* Fix adding/removing of single and multiple players to/from a region not working properly
 1.16.4-2.0.7.4
 * Fix Sticks not working correctly on dedicated servers, causing errors and crashes.
 1.16.4-2.0.7.3

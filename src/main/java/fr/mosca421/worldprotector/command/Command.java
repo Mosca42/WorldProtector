@@ -3,6 +3,7 @@ package fr.mosca421.worldprotector.command;
 public enum Command {
     WP("wp"),
     REGION("region"),
+    DIMENSION("dimension"),
     FLAG("flag"),
     HELP("help"),
     ADD("add"),

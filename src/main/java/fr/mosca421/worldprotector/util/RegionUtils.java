@@ -217,7 +217,6 @@ public class RegionUtils {
 
 	}
 
-	// TODO: region list by dimension
 	public static void giveRegionList(PlayerEntity player) {
 		if (RegionManager.get().getAllRegions().isEmpty()) {
 			sendMessage(player, "message.region.info.no_regions");
@@ -229,11 +228,28 @@ public class RegionUtils {
 		});
 	}
 
-	public static List<IRegion> getHandlingRegionsFor(Entity entity, IWorld world){
-		return getHandlingRegionsFor(entity.getPosition(), ((World)world).getDimensionKey());
+	public static Collection<String> getDimensionList() {
+		return RegionManager.get().getDimensionList();
 	}
 
-	public static List<IRegion> getHandlingRegionsFor(BlockPos position, World world){
+	public static void giveRegionListForDim(PlayerEntity player, RegistryKey<World> dim) {
+		Collection<IRegion> regions = RegionManager.get().getAllRegionsFor(dim);
+		if (regions.isEmpty()) {
+			sendMessage(player, "message.region.info.no_regions");
+			return;
+		}
+		sendMessage(player, new TranslationTextComponent("message.region.info.regions_for_dim", dim.getLocation().toString()));
+		regions.forEach(region -> {
+			BlockPos tpPos = region.getTpPos(player.world);
+			sendTeleportLink(player, tpPos, new TranslationTextComponent("message.region.list.entry", region.getName()));
+		});
+	}
+
+	public static List<IRegion> getHandlingRegionsFor(Entity entity, IWorld world) {
+		return getHandlingRegionsFor(entity.getPosition(), ((World) world).getDimensionKey());
+	}
+
+	public static List<IRegion> getHandlingRegionsFor(BlockPos position, World world) {
 		return getHandlingRegionsFor(position, world.getDimensionKey());
 	}
 

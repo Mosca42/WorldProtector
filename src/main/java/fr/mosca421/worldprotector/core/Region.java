@@ -1,16 +1,11 @@
 package fr.mosca421.worldprotector.core;
 
-import java.util.*;
-import java.util.stream.Collectors;
-
-import fr.mosca421.worldprotector.WorldProtector;
 import fr.mosca421.worldprotector.util.RegionPlayerUtils;
 import joptsimple.internal.Strings;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.StringNBT;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -20,9 +15,11 @@ import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.Heightmap;
 import net.minecraftforge.common.util.Constants.NBT;
-import net.minecraftforge.common.util.INBTSerializable;
 
-public class Region implements INBTSerializable<CompoundNBT> {
+import java.util.*;
+import java.util.stream.Collectors;
+
+public class Region implements IRegion {
 
 	private String name;
 	private RegistryKey<World> dimension;
@@ -69,20 +66,31 @@ public class Region implements INBTSerializable<CompoundNBT> {
 		this.flags = new HashSet<>();
 	}
 
-	public Region(Region copy){
-		this.name = copy.name;
-		this.area = copy.area;
-		this.dimension = copy.dimension;
-		this.isActive = copy.isActive;
-		this.players = copy.players;
-		this.flags = copy.flags;
-		this.priority = copy.priority;
-		this.enterMessage = copy.enterMessage;
-		this.exitMessage = copy.exitMessage;
-		this.enterMessageSmall = copy.enterMessageSmall;
-		this.exitMessageSmall = copy.exitMessageSmall;
+	public Region(Region copy) {
+		this.name = copy.getName();
+		this.area = copy.getArea();
+		this.dimension = copy.getDimension();
+		this.isActive = copy.isActive();
+		this.players = copy.getPlayers();
+		this.flags = copy.getFlags();
+		this.priority = copy.getPriority();
+		this.enterMessage = copy.getEnterMessage();
+		this.exitMessage = copy.getExitMessage();
+		this.enterMessageSmall = copy.getEnterMessageSmall();
+		this.exitMessageSmall = copy.getExitMessageSmall();
 	}
 
+	public Region(IRegion copy) {
+		this.name = copy.getName();
+		this.area = copy.getArea();
+		this.dimension = copy.getDimension();
+		this.isActive = copy.isActive();
+		this.players = copy.getPlayers();
+		this.flags = copy.getFlags();
+		this.priority = copy.getPriority();
+	}
+
+	@Override
 	public AxisAlignedBB getArea() {
 		return area;
 	}
@@ -92,7 +100,8 @@ public class Region implements INBTSerializable<CompoundNBT> {
 	}
 
 	/**
-	 * Does not check for harmful blocks though
+	 * TODO: Does not check for harmful blocks though
+	 *
 	 * @param world
 	 * @return
 	 */
@@ -103,49 +112,52 @@ public class Region implements INBTSerializable<CompoundNBT> {
 	}
 
 	/**
-	 *
 	 * @param world
 	 * @return
 	 */
-	public BlockPos getMinBorderTpPos(World world){
-		int highestNonBlockingY =  world.getHeight(Heightmap.Type.MOTION_BLOCKING, (int) area.minX, (int) area.minZ);
+	@Override
+	public BlockPos getTpPos(World world) {
+		int highestNonBlockingY = world.getHeight(Heightmap.Type.MOTION_BLOCKING, (int) area.minX, (int) area.minZ);
 		return new BlockPos(area.minX, highestNonBlockingY + 1, area.minZ);
 	}
 
+	@Override
 	public Set<String> getFlags() {
 		return flags;
 	}
 
 	/**
 	 * True if added
+	 *
 	 * @param flag
 	 * @return
 	 */
+	@Override
 	public boolean addFlag(String flag) {
 		return this.flags.add(flag);
 	}
 
 	/**
 	 * true if removed
+	 *
 	 * @param flag
 	 * @return
 	 */
+	@Override
 	public boolean removeFlag(String flag) {
 		return this.flags.remove(flag);
 	}
 
+	@Override
 	public String getName() {
 		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
 	}
 
 	public void setPriority(int priority) {
 		this.priority = priority;
 	}
 
+	@Override
 	public int getPriority() {
 		return priority;
 	}
@@ -154,25 +166,50 @@ public class Region implements INBTSerializable<CompoundNBT> {
 		return dimension.getLocation().toString();
 	}
 
+	public String getEnterMessage() {
+		return enterMessage;
+	}
+
+	public String getExitMessage() {
+		return exitMessage;
+	}
+
+	public String getEnterMessageSmall() {
+		return enterMessageSmall;
+	}
+
+	public String getExitMessageSmall() {
+		return exitMessageSmall;
+	}
+
+	@Override
 	public RegistryKey<World> getDimension() {
 		return dimension;
 	}
 
-	public Set<String> getPlayers() {
-		return new HashSet<>(this.players.values());
+	@Override
+	public Map<UUID, String> getPlayers() {
+		return Collections.unmodifiableMap(this.players);
 	}
 
 	public Set<UUID> getPlayerUUIDs() {
-		return this.players.keySet();
+		return Collections.unmodifiableSet(new HashSet<>(this.players.keySet()));
+	}
+
+	@Override
+	public Set<String> getPlayerNames() {
+		return Collections.unmodifiableSet(new HashSet<>(this.players.values()));
 	}
 
 	/**
 	 * Checks if the player is defined in the regions player list OR whether the player is an operator.
 	 * Usually this check is needed when an event occurs and it needs to be checked whether
 	 * the player has a specific permission to perform an action in the region.
+	 *
 	 * @param player to be checked
 	 * @return true if player is in region list or is an operator, false otherwise
 	 */
+	@Override
 	public boolean permits(PlayerEntity player) {
 		if (RegionPlayerUtils.isOp(player)) {
 			return true;
@@ -180,31 +217,36 @@ public class Region implements INBTSerializable<CompoundNBT> {
 		return players.containsKey(player.getUniqueID());
 	}
 
+	@Override
 	public boolean forbids(PlayerEntity player) {
 		return !this.permits(player);
 	}
 
+	@Override
 	public boolean isActive() {
 		return isActive;
 	}
 
-	public void setIsActive(boolean isActive){
+	@Override
+	public void setIsActive(boolean isActive) {
 		this.isActive = isActive;
 	}
 
-	public void activate(){
+	public void activate() {
 		this.isActive = true;
 	}
 
-	public void deactivate(){
+	public void deactivate() {
 		this.isActive = false;
 	}
 
+	@Override
 	public boolean addPlayer(PlayerEntity player) {
 		String oldPlayer = this.players.put(player.getUniqueID(), player.getName().getString());
 		return !player.getName().getString().equals(oldPlayer);
 	}
 
+	@Override
 	public boolean removePlayer(PlayerEntity player) {
 		if (this.players.containsKey(player.getUniqueID())) {
 			String oldPlayer = this.players.remove(player.getUniqueID());
@@ -280,43 +322,34 @@ public class Region implements INBTSerializable<CompoundNBT> {
 		}
 	}
 
-    public boolean containsFlag(String flag) {
+	@Override
+	public boolean containsFlag(String flag) {
 		return flags.contains(flag);
-    }
+	}
 
 	public boolean containsFlag(RegionFlag flag) {
 		return flags.contains(flag.toString());
 	}
 
-	public boolean containsPosition(BlockPos position){
+	@Override
+	public boolean containsPosition(BlockPos position) {
 		return this.area.contains(new Vector3d(position.getX(), position.getY(), position.getZ()));
 	}
 
-	// TODO:
-	public static Region read(PacketBuffer buf) {
-		/*
-		UUID waystoneUid = buf.readUniqueId();
-		String name = buf.readString();
-		boolean isGlobal = buf.readBoolean();
-		RegistryKey<World> dimension = RegistryKey.getOrCreateKey(Registry.WORLD_KEY, new ResourceLocation(buf.readString(250)));
-		BlockPos pos = buf.readBlockPos();
-
-		Waystone waystone = new Waystone(waystoneUid, dimension, pos, false, null);
-		waystone.setName(name);
-		waystone.setGlobal(isGlobal);
-		return waystone;
-		*/
-		return null;
-	}
-
-	public static void write(PacketBuffer buf, Region waystone) {
-		/*
-		buf.writeUniqueId(waystone.getWaystoneUid());
-		buf.writeString(waystone.getName());
-		buf.writeBoolean(waystone.isGlobal());
-		buf.writeResourceLocation(waystone.getDimension().getLocation());
-		buf.writeBlockPos(waystone.getPos());
-		*/
-
+	@Override
+	public String toString() {
+		return new StringJoiner(", ", Region.class.getSimpleName() + "[", "]")
+				.add("name='" + name + "'")
+				.add("dimension=" + dimension)
+				.add("area=" + area)
+				.add("flags=" + flags)
+				.add("players=" + players)
+				.add("isActive=" + isActive)
+				.add("priority=" + priority)
+				.add("enterMessage='" + enterMessage + "'")
+				.add("exitMessage='" + exitMessage + "'")
+				.add("enterMessageSmall='" + enterMessageSmall + "'")
+				.add("exitMessageSmall='" + exitMessageSmall + "'")
+				.toString();
 	}
 }

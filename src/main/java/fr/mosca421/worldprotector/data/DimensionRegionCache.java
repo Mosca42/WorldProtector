@@ -1,15 +1,20 @@
 package fr.mosca421.worldprotector.data;
 
-import fr.mosca421.worldprotector.core.Region;
+import fr.mosca421.worldprotector.core.IRegion;
 import net.minecraft.entity.player.PlayerEntity;
 
 import java.util.*;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-public class DimensionRegionCache extends HashMap<String, Region> {
+public class DimensionRegionCache extends HashMap<String, IRegion> {
+
+    public DimensionRegionCache(IRegion region) {
+        super();
+        addRegion(region);
+    }
 
     public DimensionRegionCache() {
+        super();
     }
 
     public boolean isActive(String regionName) {
@@ -27,7 +32,7 @@ public class DimensionRegionCache extends HashMap<String, Region> {
         return false;
     }
 
-    public Collection<Region> getRegions() {
+    public Collection<IRegion> getRegions() {
         return Collections.unmodifiableCollection(this.values());
     }
 
@@ -35,7 +40,7 @@ public class DimensionRegionCache extends HashMap<String, Region> {
         return Collections.unmodifiableCollection(this.keySet());
     }
 
-    public Region removeRegion(String regionName) {
+    public IRegion removeRegion(String regionName) {
         return this.remove(regionName);
     }
 
@@ -44,7 +49,7 @@ public class DimensionRegionCache extends HashMap<String, Region> {
     }
 
     // TODO: remork to only update area? see usages
-    public void updateRegion(Region newRegion) {
+    public void updateRegion(IRegion newRegion) {
         if (this.containsKey(newRegion.getName())) {
             this.put(newRegion.getName(), newRegion);
         }
@@ -56,11 +61,11 @@ public class DimensionRegionCache extends HashMap<String, Region> {
      * @param regionName regionName to get corresponding region object for
      * @return region object corresponding to region name
      */
-    public Region getRegion(String regionName) {
+    public IRegion getRegion(String regionName) {
         return this.get(regionName);
     }
 
-    public void addRegion(Region region) {
+    public void addRegion(IRegion region) {
         this.put(region.getName(), region);
     }
 
@@ -72,14 +77,14 @@ public class DimensionRegionCache extends HashMap<String, Region> {
         return new HashSet<>();
     }
 
-    public boolean removeFlag(Region region, String flag){
+    public boolean removeFlag(IRegion region, String flag) {
         if (this.containsKey(region.getName())) {
             return this.get(region.getName()).removeFlag(flag);
         }
         return false;
     }
 
-    public boolean addFlag(Region region, String flag){
+    public boolean addFlag(IRegion region, String flag) {
         if (this.containsKey(region.getName())) {
             return this.get(region.getName()).addFlag(flag);
         }
@@ -148,7 +153,7 @@ public class DimensionRegionCache extends HashMap<String, Region> {
 
     public Set<String> getPlayers(String regionName) {
         if (this.containsKey(regionName)) {
-            return getRegion(regionName).getPlayers();
+            return new HashSet<>(getRegion(regionName).getPlayers().values());
         }
         return new HashSet<>();
     }

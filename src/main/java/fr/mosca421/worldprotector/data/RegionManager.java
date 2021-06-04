@@ -207,6 +207,13 @@ public class RegionManager extends WorldSavedData {
 				.anyMatch(regionCache -> regionCache.containsKey(regionName));
 	}
 
+	public void setActiveStateForRegionsInDim(RegistryKey<World> dim, boolean activeState) {
+		if (regionMap.containsKey(dim)) {
+			regionMap.get(dim).setActiveStateForRegions(activeState);
+			markDirty();
+		}
+	}
+
 	/**
 	 * Prefer this getRegion
 	 *

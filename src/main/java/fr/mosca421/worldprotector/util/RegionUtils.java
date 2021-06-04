@@ -127,6 +127,7 @@ public class RegionUtils {
 				.filter(region -> !region.isActive())
 				.collect(Collectors.toList());
 		deactiveRegions.forEach(region -> region.setIsActive(true));
+		RegionManager.get().markDirty();
 		// TODO: move to region manager
 		List<String> activatedRegions = deactiveRegions.stream()
 				.map(IRegion::getName)
@@ -152,6 +153,7 @@ public class RegionUtils {
 				.filter(IRegion::isActive)
 				.collect(Collectors.toList());
 		activeRegions.forEach(region -> region.setIsActive(false));
+		RegionManager.get().markDirty();
 		// TODO: move to region manager
 		List<String> deactivatedRegions = activeRegions.stream()
 				.map(IRegion::getName)
@@ -300,11 +302,11 @@ public class RegionUtils {
 				.anyMatch(region -> region.containsFlag(flag) && region.forbids(player));
 	}
 
-	public static String getDimension(World world){
+	public static String getDimensionString(World world) {
 		return world.getDimensionKey().getLocation().toString();
 	}
 
-	private static AxisAlignedBB getAreaFromNBT(CompoundNBT nbtTag){
+	private static AxisAlignedBB getAreaFromNBT(CompoundNBT nbtTag) {
 		return new AxisAlignedBB(
 				nbtTag.getInt(ItemRegionMarker.X1), nbtTag.getInt(ItemRegionMarker.Y1), nbtTag.getInt(ItemRegionMarker.Z1),
 				nbtTag.getInt(ItemRegionMarker.X2), nbtTag.getInt(ItemRegionMarker.Y2), nbtTag.getInt(ItemRegionMarker.Z2))

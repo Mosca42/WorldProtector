@@ -55,6 +55,10 @@ public class DimensionRegionCache extends HashMap<String, IRegion> {
         }
     }
 
+    public void setActiveStateForRegions(boolean activeState) {
+        values().forEach(region -> region.setIsActive(activeState));
+    }
+
     /**
      * Make sure region exists with RegionManager.get().containsRegion() before
      *

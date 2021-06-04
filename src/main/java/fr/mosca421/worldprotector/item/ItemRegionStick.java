@@ -1,7 +1,6 @@
 package fr.mosca421.worldprotector.item;
 
 import fr.mosca421.worldprotector.WorldProtector;
-import fr.mosca421.worldprotector.core.IRegion;
 import fr.mosca421.worldprotector.data.RegionManager;
 import fr.mosca421.worldprotector.util.RegionPlayerUtils;
 import net.minecraft.client.gui.screen.Screen;
@@ -22,8 +21,8 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.List;
 
 import static fr.mosca421.worldprotector.util.MessageUtils.sendMessage;
 
@@ -45,24 +44,13 @@ public class ItemRegionStick extends Item {
 	public static final String MODE_REMOVE = "remove";
 
 	private static List<String> cachedRegions;
-	private static int regionCount;
-
-	// TODO: rework with sync in place
-	static {
-		// init region cache
-		WorldProtector.LOGGER.debug("Region Stick cache initialized");
-		cachedRegions = RegionManager.get().getAllRegions().stream()
-				.map(IRegion::getName)
-				.collect(Collectors.toList());
-		Collections.sort(cachedRegions);
-		regionCount = cachedRegions.size();
-	}
+	private static int regionCount = -1;
 
 	@Override
 	public void addInformation(ItemStack stack, World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
-		if(Screen.hasShiftDown()) {
-			tooltip.add(new TranslationTextComponent( "Select an existing region by right clicking."));
-			tooltip.add(new TranslationTextComponent(TextFormatting.AQUA +  "Switch" + TextFormatting.RESET + " modes by " +
+		if (Screen.hasShiftDown()) {
+			tooltip.add(new TranslationTextComponent("Select an existing region by right clicking."));
+			tooltip.add(new TranslationTextComponent(TextFormatting.AQUA + "Switch" + TextFormatting.RESET + " modes by " +
 					TextFormatting.AQUA + TextFormatting.ITALIC + "SHIFT" + TextFormatting.RESET + " right clicking."));
 			tooltip.add(new TranslationTextComponent("Hit the player you want to add/remove (don't worry it wont hurt)."));
 			tooltip.add(new TranslationTextComponent("For the secondary functionality keep the Region Stick in your offhand and read the Flag Stick tooltip."));
@@ -142,8 +130,23 @@ public class ItemRegionStick extends Item {
 	public void inventoryTick(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
 		super.inventoryTick(stack, worldIn, entityIn, itemSlot, isSelected);
 		if (!worldIn.isRemote) {
-			// init nbt tag
-			if (!stack.hasTag()) {
+			if (stack.hasTag()) {
+				// update region name list
+				List<String> regionNames = new ArrayList<>(RegionManager.get().getRegionNames(worldIn.getDimensionKey()));
+				if (regionCount != regionNames.size()) {
+					WorldProtector.LOGGER.info("Region Stick cache updated");
+					cachedRegions = regionNames;
+					regionCount = cachedRegions.size();
+					if (stack.getTag().contains(REGION_IDX)) {
+						int regionIndex = stack.getTag().getInt(REGION_IDX);
+						regionIndex = Math.max(0, Math.min(regionIndex, regionCount - 1));
+						stack.getTag().putInt(REGION_IDX, regionIndex);
+					} else {
+						stack.getTag().putInt(REGION_IDX, 0);
+					}
+				}
+			} else {
+				// init nbt tag of RegionStick
 				WorldProtector.LOGGER.info("Region Stick nbt initialized");
 				CompoundNBT nbt = new CompoundNBT();
 				nbt.putString(MODE, MODE_ADD);
@@ -152,20 +155,10 @@ public class ItemRegionStick extends Item {
 					String region = cachedRegions.get(0);
 					nbt.putString(REGION, region);
 				}
+				if (regionCount == 0) {
+					nbt.putString(REGION, "N/A");
+				}
 				stack.setTag(nbt);
-			}
-		} else {
-			// check if region data was changed and update cache
-			Collection<IRegion> regions = RegionManager.get().getAllRegions();
-			if (regionCount != regions.size()) {
-				WorldProtector.LOGGER.info("Region Stick cache updated");
-				cachedRegions = regions.stream()
-						.map(IRegion::getName)
-						.collect(Collectors.toList());
-				regionCount = cachedRegions.size();
-				int regionIndex = stack.getTag().getInt(REGION_IDX);
-				regionIndex = Math.max(0, Math.min(regionIndex, regionCount - 1));
-				stack.getTag().putInt(REGION_IDX, regionIndex);
 			}
 		}
 	}

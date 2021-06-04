@@ -24,11 +24,13 @@ public enum Command {
     PRIORITY_SET("setpriority"),
     PLAYER("player"),
     PLAYER_REMOVE("removeplayer"),
-    PLAYER_ADD("addplayer");
+    PLAYER_ADD("addplayer"),
+    Y1("Y1"),
+    Y2("Y2");
 
     private final String cmdString;
 
-    Command(final String cmdString){
+    Command(final String cmdString) {
         this.cmdString = cmdString;
     }
 

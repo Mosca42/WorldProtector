@@ -98,6 +98,7 @@ public class RegionUtils {
 				region.setPriority(priority);
 				sendMessage(player, new TranslationTextComponent("message.region.setpriority", priority, regionName));
 			});
+			RegionManager.get().markDirty();
 		} else {
 			sendMessage(player, "message.region.unknown");
 		}

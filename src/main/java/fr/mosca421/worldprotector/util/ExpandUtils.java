@@ -2,13 +2,13 @@ package fr.mosca421.worldprotector.util;
 
 import fr.mosca421.worldprotector.item.ItemRegionMarker;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 
-import static fr.mosca421.worldprotector.util.MessageUtils.*;
+import static fr.mosca421.worldprotector.item.ItemRegionMarker.*;
+import static fr.mosca421.worldprotector.util.MessageUtils.sendMessage;
 
 public class ExpandUtils {
 
@@ -25,9 +25,9 @@ public class ExpandUtils {
 	public static void expandVert(PlayerEntity player, ItemStack item, int y1, int y2) {
 		if (isValidRegionMarker(item)) {
 			CompoundNBT itemTag = item.getTag();
-			if (itemTag.getBoolean("valid")) {
-				itemTag.putDouble("y1", y1);
-				itemTag.putDouble("y2", y2);
+			if (itemTag.getBoolean(VALID)) {
+				itemTag.putDouble(Y1, y1);
+				itemTag.putDouble(Y2, y2);
 				sendMessage(player, new TranslationTextComponent("message.itemhand.expand", y1, y2));
 			} else {
 				sendMessage(player, "message.itemhand.choose");

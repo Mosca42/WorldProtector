@@ -24,8 +24,7 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import static fr.mosca421.worldprotector.util.MessageUtils.sendMessage;
-import static fr.mosca421.worldprotector.util.MessageUtils.sendTeleportLink;
+import static fr.mosca421.worldprotector.util.MessageUtils.*;
 
 public class RegionUtils {
 
@@ -53,7 +52,8 @@ public class RegionUtils {
 			if (item.getTag() != null) {
 				if (item.getTag().getBoolean(ItemRegionMarker.VALID)) {
 					AxisAlignedBB regionArea = getAreaFromNBT(item.getTag());
-					Region region = new Region(regionName, regionArea, player.world.getDimensionKey());
+					BlockPos tpPos = getTpTargetFromNBT(item.getTag());
+					Region region = new Region(regionName, regionArea, tpPos, player.world.getDimensionKey());
 					RegionManager.get().addRegion(region, player);
 					item.getTag().putBoolean(ItemRegionMarker.VALID, false); // reset flag for consistent command behaviour
 					sendMessage(player, new TranslationTextComponent("message.region.define", regionName));
@@ -72,7 +72,8 @@ public class RegionUtils {
 				if (item.getTag().getBoolean(ItemRegionMarker.VALID)) {
 					if (RegionManager.get().containsRegion(regionName)) {
 						RegionManager.get().getRegion(regionName).ifPresent(region -> {
-							region.setArea(getAreaFromNBT(item.getTag())); // TODO: maybe better in Manager/DRC
+							region.setArea(getAreaFromNBT(item.getTag()));
+							region.setTpTarget(getTpTargetFromNBT(item.getTag()));
 							RegionManager.get().updateRegion(new Region(region), player);
 							item.getTag().putBoolean(ItemRegionMarker.VALID, false); // reset flag for consistent command behaviour
 							sendMessage(player, new TranslationTextComponent("message.region.redefine", regionName));
@@ -166,12 +167,11 @@ public class RegionUtils {
 		}
 	}
 
-	public static void teleportRegion(String regionName, PlayerEntity player) {
+	public static void teleportToRegion(String regionName, PlayerEntity player) {
 		if (RegionManager.get().containsRegion(regionName)) {
 			RegionManager.get().getRegion(regionName).ifPresent(region -> {
-				sendMessage(player, new TranslationTextComponent("message.region.teleport", regionName));
-				BlockPos tpPos = region.getTpPos(player.world);
-				player.setPositionAndUpdate(tpPos.getX(), tpPos.getY(), tpPos.getZ());
+				sendStatusMessage(player, new TranslationTextComponent("message.region.teleport", region.getName()));
+				player.setPositionAndUpdate(region.getTpTarget().getX(), region.getTpTarget().getY(), region.getTpTarget().getZ());
 			});
 		} else {
 			sendMessage(player, new TranslationTextComponent("message.region.unknown", regionName));
@@ -200,15 +200,16 @@ public class RegionUtils {
 				String noPlayersText = new TranslationTextComponent("message.region.info.noplayers").getString();
 				String regionFlags = region.getFlags().isEmpty() ? noFlagsText : String.join(", ", region.getFlags());
 				String regionPlayers = region.getPlayers().isEmpty() ? noPlayersText : String.join(",\n", region.getPlayers().values());
-				sendMessage(player, new StringTextComponent(TextFormatting.BLUE + "==Region '" + regionName + "' information=="));
-				BlockPos tpPos = region.getTpPos(player.world);
-				sendTeleportLink(player, tpPos, new TranslationTextComponent("message.region.info.tpcenter"));
+				sendMessage(player, new StringTextComponent(TextFormatting.BLUE + "== Region '" + regionName + "' information =="));
+				sendDimensionTeleportLink(player, region, new TranslationTextComponent("message.region.list.entry", region.getName()));
 				sendMessage(player, new TranslationTextComponent("message.region.info.area", region.getArea().toString().substring(4)));
 				sendMessage(player, new TranslationTextComponent("message.region.info.priority", region.getPriority()));
 				sendMessage(player, new TranslationTextComponent("message.region.info.flags", regionFlags));
 				sendMessage(player, new TranslationTextComponent("message.region.info.players", regionPlayers));
-				sendMessage(player, new TranslationTextComponent("message.region.info.active", region.isActive()));
-				sendMessage(player, new StringTextComponent(TextFormatting.BLUE + "==Region '" + regionName + "' information=="));
+				sendMessage(player, new TranslationTextComponent("message.region.info.active", region.isActive()
+						? new TranslationTextComponent("message.region.info.active.true")
+						: new TranslationTextComponent("message.region.info.active.false")));
+				sendMessage(player, new StringTextComponent(TextFormatting.BLUE + "== Region '" + regionName + "' information =="));
 			});
 		}
 		else {
@@ -223,26 +224,26 @@ public class RegionUtils {
 			return;
 		}
 		RegionManager.get().getAllRegions().forEach(region -> {
-			BlockPos tpPos = region.getTpPos(player.world);
-			sendTeleportLink(player, tpPos, new TranslationTextComponent("message.region.list.entry", region.getName()));
+			sendDimensionTeleportLink(player, region, new TranslationTextComponent("message.region.list.entry", region.getName()));
+		});
+	}
+
+	public static void giveRegionListForDim(PlayerEntity player, String dim) {
+		List<IRegion> regionsForDim = RegionManager.get().getAllRegions()
+				.stream()
+				.filter(region -> region.getDimension().getLocation().toString().equals(dim))
+				.collect(Collectors.toList());
+		if (regionsForDim.isEmpty()) {
+			sendMessage(player, new TranslationTextComponent("message.region.info.regions_for_dim", dim));
+			return;
+		}
+		regionsForDim.forEach(region -> {
+			sendDimensionTeleportLink(player, region, new TranslationTextComponent("message.region.list.entry", region.getName()));
 		});
 	}
 
 	public static Collection<String> getDimensionList() {
 		return RegionManager.get().getDimensionList();
-	}
-
-	public static void giveRegionListForDim(PlayerEntity player, RegistryKey<World> dim) {
-		Collection<IRegion> regions = RegionManager.get().getAllRegionsFor(dim);
-		if (regions.isEmpty()) {
-			sendMessage(player, "message.region.info.no_regions");
-			return;
-		}
-		sendMessage(player, new TranslationTextComponent("message.region.info.regions_for_dim", dim.getLocation().toString()));
-		regions.forEach(region -> {
-			BlockPos tpPos = region.getTpPos(player.world);
-			sendTeleportLink(player, tpPos, new TranslationTextComponent("message.region.list.entry", region.getName()));
-		});
 	}
 
 	public static List<IRegion> getHandlingRegionsFor(Entity entity, IWorld world) {
@@ -329,4 +330,15 @@ public class RegionUtils {
 				.grow(1);
 	}
 
+	private static BlockPos getTpTargetFromNBT(CompoundNBT nbtTag) {
+		if (nbtTag.getBoolean(ItemRegionMarker.TP_TARGET_SET)) {
+			return new BlockPos(nbtTag.getInt(ItemRegionMarker.TP_X), nbtTag.getInt(ItemRegionMarker.TP_Y), nbtTag.getInt(ItemRegionMarker.TP_Z));
+		} else {
+			AxisAlignedBB area = getAreaFromNBT(nbtTag);
+			int centerX = (int) area.getCenter().getX();
+			int centerY = (int) area.getCenter().getY();
+			int centerZ = (int) area.getCenter().getZ();
+			return new BlockPos(centerX, centerY, centerZ);
+		}
+	}
 }

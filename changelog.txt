@@ -1,5 +1,8 @@
 1.16.4-2.1.0.0
 * Add events for creating, removing and updating a region (API)
+* Fix region teleport link not working across dimensions.
+* Add SHIFT-Click feature for RegionMarker to set teleport target for the region (see tooltip).
+* Fix RegionStick and FlagStick not properly displaying correct region/flag and color.
 1.16.4-2.0.8.0
 * Region data is now stored more efficient (e.g. Regions per dimension). This leads to a significant performance improvement when dealing with a large amount of regions
 * Fix a bug with RegionStick on client side not getting region data when playing on dedicated server

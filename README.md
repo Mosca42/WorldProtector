@@ -14,9 +14,9 @@ The most common task can also be done without commands!
 
 ### Region Marker
 
-The Region Marker allows you to mark an area (cuboid) for which you can then specify a name.
-For a region it is possible to apply flags that prevent certain actions/events from happening to protect it.
-This can be done with the Flag Stick in conjunction with the Region Stick.
+The Region Marker allows you to mark an area (cuboid) for which you can then specify a name. For a region it is possible
+to apply flags that prevent certain actions/events from happening to protect it. This can be done with the Flag Stick in
+conjunction with the Region Stick.
 
 ### Region Stick
 
@@ -46,22 +46,30 @@ Type /wp help for more information.
 
 ## Create a region
 
-To create your region, follow these instructions :
+To define a region, follow these instructions:
 
 1. Use the Region Marker to mark the two blocks which define the area of the region.
 
-2. [Optional] Expand the Y level (height) of your marked region with the ```/wp expand vert [<Y1>] [<Y2>]``` command (default is 0 to 255) or by using the secondary function of the Region Marker (see Region Marker tooltip).
+2. [Optional] Expand the Y level (height) of your marked region with the ```/wp expand vert [<Y1>] [<Y2>]``` command (
+   default is 0 to 255) or by using the secondary function of the Region Marker (see Region Marker tooltip).
 
-3. Define your region: ```/wp region define <your region's name>``` or by renaming the Region Marker in an anvil.
+3. [Optional] Set the teleportation target of the region with SHIFT right-click on a block. You can teleport to this
+   region later by using ```/wp region tp <your region's name>```. When not set, a default teleportation position will
+   be calculated.
 
-4. Add flags to your region by using the appropriate command ```/wp flag add <your region's name> <flag name>``` or by using the Flag Stick in conjunction with the Region Stick (see Flag Stick and Region Stick tooltips).
+4. Define your region: ```/wp region define <your region's name>``` or by renaming the Region Marker in an anvil.
 
-5. [Optional] Add players to your region which are allowed to bypass the flags by using the command ````/wp region addplayer <playername>```` or by using the Region Stick (see Region Stick tooltip for more details).
+5. Add flags to your region by using the appropriate command ```/wp flag add <your region's name> <flag name>``` or by
+   using the Flag Stick in conjunction with the Region Stick (see Flag Stick and Region Stick tooltips).
+
+6. [Optional] Add players to your region which are allowed to bypass the flags by using the
+   command ````/wp player add <your region's name> <playername>```` or by using the Region Stick (see Region Stick
+   tooltip for more details).
 
 
 ## Flags
 
-Currently, there are forty-eight flags available:
+Currently, there are **48 flags** available:
 
 - break: prevents players from breaking blocks
 - place: prevents players from placing blocks
@@ -133,16 +141,15 @@ Therefore, the arena region needs to have a higher priority than the spawn regio
 
 # Additional information
 
-- The mod has to be installed on the client and on the server too
-- You can use this mod in a custom modpack
-
+- The mod has to be installed on the client and on the server.
+- You can use this mod in a custom modpack.
 
 # Contribution
 
 Found a bug? Or do you have an idea for a new flag or just a general suggestions for the mod?
 
-Don't hesitate to propose them to me. Or even better: Open a new [issue](https://github.com/Mosca42/WorldProtector/issues)!
-
+Don't hesitate to propose them to me. Or even better: Open a
+new [issue](https://github.com/Mosca42/WorldProtector/issues)!
 
 # Special thanks
 
@@ -150,8 +157,9 @@ Thanks to BrokenSwing for his help about regions and safeguard in the world.
 
 Thanks to TheBossMax2 for the mod logo.
 
-DISCORD: [WorldProtector Discord](https://discord.gg/MsA8XPc)
+Thanks to z0rdak for porting the mod to version 1.16.5 and adding new features in the process.
 
+DISCORD: [WorldProtector Discord](https://discord.gg/MsA8XPc)
 
 # License
 
@@ -181,6 +189,6 @@ Under the following conditions:
 *  CLI: flags per dimension
 *  CLI: add command to list regions you are standing in
 *  CLI: make region info commands available for all players
-*  CLI: add and remove multiple flags at once
-*  Regions are saved with their name, but this is not considered when defining a new region with the same name in a different dimension.
-*  Add configuration option to disable specific event checks completely for optimization
+* CLI: add and remove multiple flags at once
+* CLI: add option to define a region without the region marker
+* Add configuration option to disable specific event checks completely for optimization

@@ -59,10 +59,13 @@ public class ItemRegionMarker extends Item {
 		if (Screen.hasShiftDown()) {
 			tooltip.add(new TranslationTextComponent("help.regionmarker.detail.1"));
 			tooltip.add(new TranslationTextComponent("help.regionmarker.detail.2"));
-			tooltip.add(new TranslationTextComponent("help.regionmarker.optional.1").mergeStyle(TextFormatting.GRAY));
+			tooltip.add(new TranslationTextComponent("help.regionmarker.optional.1")
+					.mergeStyle(TextFormatting.GRAY));
+			tooltip.add(new TranslationTextComponent("help.regionmarker.optional.2")
+					.mergeStyle(TextFormatting.GRAY));
 			tooltip.add(new TranslationTextComponent("help.regionmarker.detail.3"));
-			tooltip.add(new TranslationTextComponent("help.regionmarker.detail.4").mergeStyle(TextFormatting.RED));
-
+			tooltip.add(new TranslationTextComponent("help.regionmarker.detail.4")
+					.mergeStyle(TextFormatting.RED));
 		} else {
 			tooltip.add(new TranslationTextComponent("help.regionmarker.simple.1"));
 			tooltip.add(new TranslationTextComponent("help.regionmarker.simple.2"));

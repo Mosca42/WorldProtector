@@ -96,7 +96,6 @@ public class RegionUtils {
 
 	public static void setRegionPriority(String regionName, int priority, PlayerEntity player) {
 		if (RegionManager.get().containsRegion(regionName)) {
-			// TODO: Move to Manager/DimensionalRegionCache - no markdirty is done here
 			RegionManager.get().getRegion(regionName).ifPresent(region -> {
 				region.setPriority(priority);
 				sendMessage(player, new TranslationTextComponent("message.region.setpriority", priority, regionName));
@@ -131,7 +130,6 @@ public class RegionUtils {
 				.collect(Collectors.toList());
 		deactiveRegions.forEach(region -> region.setIsActive(true));
 		RegionManager.get().markDirty();
-		// TODO: move to region manager
 		List<String> activatedRegions = deactiveRegions.stream()
 				.map(IRegion::getName)
 				.collect(Collectors.toList());
@@ -157,7 +155,6 @@ public class RegionUtils {
 				.collect(Collectors.toList());
 		activeRegions.forEach(region -> region.setIsActive(false));
 		RegionManager.get().markDirty();
-		// TODO: move to region manager
 		List<String> deactivatedRegions = activeRegions.stream()
 				.map(IRegion::getName)
 				.collect(Collectors.toList());

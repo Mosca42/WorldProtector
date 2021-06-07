@@ -57,12 +57,57 @@ public class RegionManager extends WorldSavedData {
             if (!world.isRemote) {
                 DimensionSavedDataManager storage = world.getSavedData();
                 RegionManager data = storage.getOrCreate(RegionManager::new, DATA_NAME);
-                WorldProtector.LOGGER.debug("Loaded dimension regions successfully");
+                storage.set(data);
                 clientRegionCopy = data;
+                WorldProtector.LOGGER.debug("Loaded dimension regions successfully");
             }
         } catch (NullPointerException npe) {
             WorldProtector.LOGGER.error("Loading dimension regions failed");
         }
+    }
+
+
+    /**
+     * Reads region compound nbt and puts it back into the regionMap
+     *
+     * @param nbt
+     */
+    @Override
+    public void read(CompoundNBT nbt) {
+        clearRegions();
+        CompoundNBT dimensionRegions = nbt.getCompound(TAG_REGIONS);
+        for (String dimKey : dimensionRegions.keySet()) {
+            CompoundNBT dimRegionMap = dimensionRegions.getCompound(dimKey);
+            DimensionRegionCache dimCache = new DimensionRegionCache();
+            for (String regionKey : dimRegionMap.keySet()) {
+                CompoundNBT regionNbt = dimRegionMap.getCompound(regionKey);
+                Region region = new Region(regionNbt);
+                dimCache.addRegion(region);
+            }
+            RegistryKey<World> dimension = RegistryKey.getOrCreateKey(Registry.WORLD_KEY, new ResourceLocation(dimKey));
+            regionMap.put(dimension, dimCache);
+        }
+    }
+
+    /**
+     * Writes the content (regions) of the regionMap to a compound nbt object
+     *
+     * @param compound
+     * @return
+     */
+    @Override
+    public CompoundNBT write(CompoundNBT compound) {
+        CompoundNBT dimRegionNbtData = new CompoundNBT();
+        for (Map.Entry<RegistryKey<World>, DimensionRegionCache> entry : regionMap.entrySet()) {
+            String dim = entry.getKey().getLocation().toString();
+            CompoundNBT dimCompound = new CompoundNBT();
+            for (Map.Entry<String, IRegion> regionEntry : entry.getValue().entrySet()) {
+                dimCompound.put(regionEntry.getKey(), regionEntry.getValue().serializeNBT());
+            }
+            dimRegionNbtData.put(dim, dimCompound);
+        }
+        compound.put(TAG_REGIONS, dimRegionNbtData);
+        return compound;
     }
 
     public Optional<DimensionRegionCache> getRegionsForDim(RegistryKey<World> dim) {
@@ -398,48 +443,5 @@ public class RegionManager extends WorldSavedData {
         }
         MinecraftForge.EVENT_BUS.post(new RegionEvent.CreateRegionEvent(region, player));
         markDirty();
-    }
-
-    /**
-     * Reads region compound nbt and puts it back into the regionMap
-     *
-     * @param nbt
-     */
-    @Override
-    public void read(CompoundNBT nbt) {
-        clearRegions();
-        CompoundNBT dimensionRegions = nbt.getCompound(TAG_REGIONS);
-        dimensionRegions.keySet().forEach(dim -> {
-            CompoundNBT regionsInDim = dimensionRegions.getCompound(dim);
-            DimensionRegionCache dimRegionCache = new DimensionRegionCache();
-            RegistryKey<World> dimensionKey = RegistryKey.getOrCreateKey(Registry.WORLD_KEY, new ResourceLocation(nbt.getString(dim)));
-            regionsInDim.keySet().forEach(regionName -> {
-                CompoundNBT regionNbt = regionsInDim.getCompound(regionName);
-                dimRegionCache.addRegion(new Region(regionNbt));
-            });
-            regionMap.put(dimensionKey, dimRegionCache);
-        });
-        markDirty();
-    }
-
-    /**
-     * Writes the content (regions) of the regionMap to a compound nbt object
-     *
-     * @param compound
-     * @return
-     */
-    @Override
-    public CompoundNBT write(CompoundNBT compound) {
-        CompoundNBT dimensionRegionNbt = new CompoundNBT();
-        regionMap.forEach((key, value) -> {
-            CompoundNBT regionsNbt = new CompoundNBT();
-            String dimension = key.getLocation().toString();
-            dimensionRegionNbt.put(dimension, regionsNbt);
-            value.getRegions().forEach(region -> {
-                regionsNbt.put(region.getName(), region.serializeNBT());
-            });
-        });
-        compound.put(TAG_REGIONS, dimensionRegionNbt);
-        return compound;
     }
 }

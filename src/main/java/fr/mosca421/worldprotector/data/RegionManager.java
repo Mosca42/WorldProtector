@@ -59,7 +59,7 @@ public class RegionManager extends WorldSavedData {
                 RegionManager data = storage.getOrCreate(RegionManager::new, DATA_NAME);
                 storage.set(data);
                 clientRegionCopy = data;
-                WorldProtector.LOGGER.debug("Loaded dimension regions successfully");
+                WorldProtector.LOGGER.info("Loaded " + data.getAllRegionNames().size() + " regions for " + data.getDimensionList().size() + " different dimensions");
             }
         } catch (NullPointerException npe) {
             WorldProtector.LOGGER.error("Loading dimension regions failed");

@@ -15,11 +15,12 @@ import java.util.stream.Collectors;
 
 import static fr.mosca421.worldprotector.util.MessageUtils.sendMessage;
 
-public class RegionPlayerUtils {
+public final class RegionPlayerUtils {
 
-    private RegionPlayerUtils() {}
+    private RegionPlayerUtils() {
+    }
 
-    public static void addPlayers(String regionName, PlayerEntity sourcePlayer, List<PlayerEntity> playersToAdd){
+    public static void addPlayers(String regionName, PlayerEntity sourcePlayer, List<PlayerEntity> playersToAdd) {
         if (RegionManager.get().containsRegion(regionName)) {
             List<PlayerEntity> addedPlayers = RegionManager.get().addPlayers(regionName, playersToAdd);
             List<String> playerNames = addedPlayers.stream()
@@ -107,11 +108,11 @@ public class RegionPlayerUtils {
     }
 
     public static void giveHelpMessage(PlayerEntity player) {
-        sendMessage(player, new TranslationTextComponent(TextFormatting.BLUE + "==WorldProtector Help=="));
+        sendMessage(player, new TranslationTextComponent(TextFormatting.BLUE + "== WorldProtector Help =="));
         sendMessage(player, "help.players.1");
         sendMessage(player, "help.players.2");
         sendMessage(player, "help.players.3");
-        sendMessage(player, new TranslationTextComponent(TextFormatting.BLUE + "==WorldProtector Help=="));
+        sendMessage(player, new TranslationTextComponent(TextFormatting.BLUE + "== WorldProtector Help =="));
     }
 
 }

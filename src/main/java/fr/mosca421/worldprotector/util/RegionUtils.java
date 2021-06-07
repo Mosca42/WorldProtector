@@ -28,15 +28,16 @@ import java.util.stream.Collectors;
 
 import static fr.mosca421.worldprotector.util.MessageUtils.*;
 
-public class RegionUtils {
+public final class RegionUtils {
 
-	private RegionUtils(){}
+	private RegionUtils() {
+	}
 
 	public static void removeRegion(String regionName, PlayerEntity player) {
 		if (RegionManager.get().removeRegion(regionName, player) != null) {
 			sendMessage(player, new TranslationTextComponent("message.region.remove", regionName));
 		} else {
-			sendMessage(player, new TranslationTextComponent("message.region.unknown", regionName));
+			sendStatusMessage(player, new TranslationTextComponent("message.region.unknown", regionName));
 		}
 	}
 
@@ -46,8 +47,8 @@ public class RegionUtils {
 	}
 
 	public static void createRegion(String regionName, PlayerEntity player, ItemStack item) {
-		if (regionName.contains(" ")){ // region contains whitespace
-			sendMessage(player,   "message.region.define.error");
+		if (regionName.contains(" ")) { // region contains whitespace
+			sendStatusMessage(player, "message.region.define.error");
 			return;
 		}
 		if (item.getItem() instanceof ItemRegionMarker) {
@@ -60,7 +61,7 @@ public class RegionUtils {
 					item.getTag().putBoolean(ItemRegionMarker.VALID, false); // reset flag for consistent command behaviour
 					sendMessage(player, new TranslationTextComponent("message.region.define", regionName));
 				} else {
-					sendMessage(player, "message.itemhand.choose");
+					sendStatusMessage(player, "message.itemhand.choose");
 				}
 			}
 		} else {
@@ -83,14 +84,14 @@ public class RegionUtils {
 
 					}
 					else {
-						sendMessage(player, new TranslationTextComponent("message.region.unknown", regionName));
+						sendStatusMessage(player, new TranslationTextComponent("message.region.unknown", regionName));
 					}
 				} else {
-					sendMessage(player, "message.itemhand.choose");
+					sendStatusMessage(player, "message.itemhand.choose");
 				}
 			}
 		} else {
-			sendMessage(player,"message.itemhand.take");
+			sendStatusMessage(player, "message.itemhand.take");
 		}
 	}
 
@@ -102,7 +103,7 @@ public class RegionUtils {
 			});
 			RegionManager.get().markDirty();
 		} else {
-			sendMessage(player, "message.region.unknown");
+			sendStatusMessage(player, "message.region.unknown");
 		}
 	}
 
@@ -112,7 +113,7 @@ public class RegionUtils {
 				sendMessage(player, new TranslationTextComponent("message.region.infopriority", regionName,  region.getPriority()));
 			});
 		} else {
-			sendMessage(player, new TranslationTextComponent("message.region.unknown", regionName));
+			sendStatusMessage(player, new TranslationTextComponent("message.region.unknown", regionName));
 		}
 	}
 
@@ -120,7 +121,7 @@ public class RegionUtils {
 		if (RegionManager.get().setActiveState(regionName, true)) {
 			sendMessage(player, new TranslationTextComponent( "message.region.activate", regionName));
 		} else {
-			sendMessage(player, new TranslationTextComponent("message.region.unknown", regionName));
+			sendStatusMessage(player, new TranslationTextComponent("message.region.unknown", regionName));
 		}
 	}
 
@@ -137,7 +138,7 @@ public class RegionUtils {
 		if (!activatedRegions.isEmpty()) {
 			sendMessage(player, new TranslationTextComponent("message.region.activate.multiple", regionString));
 		} else {
-			sendMessage(player, "message.region.activate.none");
+			sendStatusMessage(player, "message.region.activate.none");
 		}
 	}
 
@@ -145,7 +146,7 @@ public class RegionUtils {
 		if (RegionManager.get().setActiveState(regionName, false)) {
 			sendMessage(player, new TranslationTextComponent( "message.region.deactivate", regionName));
 		} else {
-			sendMessage(player, new TranslationTextComponent("message.region.unknown", regionName));
+			sendStatusMessage(player, new TranslationTextComponent("message.region.unknown", regionName));
 		}
 	}
 
@@ -162,7 +163,7 @@ public class RegionUtils {
 		if (!deactivatedRegions.isEmpty()) {
 			sendMessage(player, new TranslationTextComponent("message.region.deactivate.multiple", regionString));
 		} else {
-			sendMessage(player, "message.region.deactivate.none");
+			sendStatusMessage(player, "message.region.deactivate.none");
 		}
 	}
 
@@ -180,23 +181,24 @@ public class RegionUtils {
 				}
 			});
 		} else {
-			sendMessage(player, new TranslationTextComponent("message.region.unknown", regionName));
+			sendStatusMessage(player, new TranslationTextComponent("message.region.unknown", regionName));
 		}
 	}
 
 	public static void giveHelpMessage(PlayerEntity player) {
-		sendMessage(player, new TranslationTextComponent(TextFormatting.BLUE + "==WorldProtector Help=="));
+		sendMessage(player, new TranslationTextComponent(TextFormatting.BLUE + "== WorldProtector Help =="));
 		sendMessage(player, "help.region.1");
 		sendMessage(player, "help.region.2");
 		sendMessage(player, "help.region.3");
 		sendMessage(player, "help.region.4");
+		sendMessage(player, "help.region.4a");
 		sendMessage(player, "help.region.5");
 		sendMessage(player, "help.region.6");
-		sendMessage(player,"help.region.7");
-		sendMessage(player,"help.region.8");
-		sendMessage(player,"help.region.9");
-		sendMessage(player,"help.region.10");
-		sendMessage(player, new TranslationTextComponent(TextFormatting.BLUE + "==WorldProtector Help=="));
+		sendMessage(player, "help.region.7");
+		sendMessage(player, "help.region.8");
+		sendMessage(player, "help.region.9");
+		sendMessage(player, "help.region.10");
+		sendMessage(player, new TranslationTextComponent(TextFormatting.BLUE + "== WorldProtector Help =="));
 	}
 
 	public static void giveRegionInfo(PlayerEntity player, String regionName) {
@@ -219,14 +221,14 @@ public class RegionUtils {
 			});
 		}
 		else {
-			sendMessage(player, new TranslationTextComponent("message.region.unknown", regionName));
+			sendStatusMessage(player, new TranslationTextComponent("message.region.unknown", regionName));
 		}
 
 	}
 
 	public static void giveRegionList(PlayerEntity player) {
 		if (RegionManager.get().getAllRegions().isEmpty()) {
-			sendMessage(player, "message.region.info.no_regions");
+			sendStatusMessage(player, "message.region.info.no_regions");
 			return;
 		}
 		RegionManager.get().getAllRegions().forEach(region -> {

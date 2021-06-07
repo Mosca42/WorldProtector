@@ -10,16 +10,17 @@ import net.minecraft.util.text.TranslationTextComponent;
 import static fr.mosca421.worldprotector.item.ItemRegionMarker.*;
 import static fr.mosca421.worldprotector.util.MessageUtils.sendMessage;
 
-public class ExpandUtils {
+public final class ExpandUtils {
 
-	private ExpandUtils() {}
-	
+	private ExpandUtils() {
+	}
+
 	public static void giveHelpMessage(PlayerEntity player) {
 		sendMessage(player, "");
-		sendMessage(player, new TranslationTextComponent(TextFormatting.BLUE + "==WorldProtector Help=="));
-		sendMessage(player,"help.expand.1");
-		sendMessage(player,"help.expand.2");
-		sendMessage(player, new TranslationTextComponent(TextFormatting.BLUE + "==WorldProtector Help=="));
+		sendMessage(player, new TranslationTextComponent(TextFormatting.BLUE + "== WorldProtector Help =="));
+		sendMessage(player, "help.expand.1");
+		sendMessage(player, "help.expand.2");
+		sendMessage(player, new TranslationTextComponent(TextFormatting.BLUE + "== WorldProtector Help =="));
 	}
 
 	public static void expandVert(PlayerEntity player, ItemStack item, int y1, int y2) {

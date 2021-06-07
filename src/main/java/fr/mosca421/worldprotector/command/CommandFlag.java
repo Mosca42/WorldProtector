@@ -3,8 +3,6 @@ package fr.mosca421.worldprotector.command;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-
-import fr.mosca421.worldprotector.core.Region;
 import fr.mosca421.worldprotector.core.RegionFlag;
 import fr.mosca421.worldprotector.data.RegionManager;
 import fr.mosca421.worldprotector.util.RegionFlagUtils;
@@ -13,11 +11,11 @@ import net.minecraft.command.Commands;
 import net.minecraft.command.ISuggestionProvider;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.RegistryKey;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 
-import static fr.mosca421.worldprotector.util.MessageUtils.*;
+import static fr.mosca421.worldprotector.util.MessageUtils.sendMessage;
+import static fr.mosca421.worldprotector.util.MessageUtils.sendStatusMessage;
 
 public class CommandFlag {
 
@@ -170,15 +168,16 @@ public class CommandFlag {
 
 	private static int info(CommandSource source, String regionName) {
 		try {
+			// TODO: only works in active dimension
 			PlayerEntity player = source.asPlayer();
 			RegistryKey<World> dimension = player.world.getDimensionKey();
 			if (RegionManager.get().containsRegion(regionName, dimension)) {
-				RegionManager.get().getRegion(regionName).ifPresent( region -> {
+				RegionManager.get().getRegion(regionName).ifPresent(region -> {
 					String flagsInRegion = RegionFlagUtils.getFlagString(region);
-					sendMessage(player, new TranslationTextComponent(TextFormatting.DARK_RED + region.getName() + " Flags: " + flagsInRegion));
+					sendMessage(player, new TranslationTextComponent("Flags defined in region '" + region.getName() + "': " + flagsInRegion));
 				});
 			} else {
-				sendMessage(player, new TranslationTextComponent("message.region.unknown", regionName));
+				sendStatusMessage(player, new TranslationTextComponent("message.region.unknown", regionName));
 			}
 		} catch (CommandSyntaxException e) {
 			e.printStackTrace();

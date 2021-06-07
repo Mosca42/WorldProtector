@@ -6,16 +6,17 @@ import fr.mosca421.worldprotector.core.RegionFlag;
 import fr.mosca421.worldprotector.data.RegionManager;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.TranslationTextComponent;
 
 import java.util.List;
 
-import static fr.mosca421.worldprotector.util.MessageUtils.*;
+import static fr.mosca421.worldprotector.util.MessageUtils.sendMessage;
 
-public class RegionFlagUtils {
+public final class RegionFlagUtils {
 
-	private RegionFlagUtils(){}
+	private RegionFlagUtils() {
+	}
 
 	public static void addFlag(String regionName, PlayerEntity player, String flag) {
 		if (RegionManager.get().containsRegion(regionName)) {
@@ -91,12 +92,12 @@ public class RegionFlagUtils {
 	}
 
 	public static void giveHelpMessage(PlayerEntity player) {
-		sendMessage(player, new TranslationTextComponent(TextFormatting.BLUE + "==WorldProtector Help=="));
+		sendMessage(player, new TranslationTextComponent(TextFormatting.BLUE + "== WorldProtector Help =="));
 		sendMessage(player, "help.flags.1");
 		sendMessage(player, "help.flags.2");
 		sendMessage(player, "help.flags.3");
 		sendMessage(player, "help.flags.4");
-		sendMessage(player, new TranslationTextComponent(TextFormatting.BLUE + "==WorldProtector Help=="));
+		sendMessage(player, new TranslationTextComponent(TextFormatting.BLUE + "== WorldProtector Help =="));
 	}
 
 	public static String getFlagString(IRegion region) {

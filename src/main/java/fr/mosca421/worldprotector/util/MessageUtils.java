@@ -7,15 +7,16 @@ import net.minecraft.util.text.*;
 import net.minecraft.util.text.event.ClickEvent;
 import net.minecraft.util.text.event.HoverEvent;
 
-public class MessageUtils {
+public final class MessageUtils {
 
-    private MessageUtils(){}
+    private MessageUtils() {
+    }
 
-    public static void sendMessage(PlayerEntity player, ITextComponent textComponent){
+    public static void sendMessage(PlayerEntity player, ITextComponent textComponent) {
         player.sendMessage(textComponent, player.getUniqueID());
     }
 
-    public static void sendMessage(PlayerEntity player, String translationKey){
+    public static void sendMessage(PlayerEntity player, String translationKey) {
         player.sendMessage(new TranslationTextComponent(translationKey), player.getUniqueID());
     }
 

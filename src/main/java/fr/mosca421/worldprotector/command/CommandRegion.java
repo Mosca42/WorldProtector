@@ -121,6 +121,7 @@ public class CommandRegion {
         return 0;
     }
 
+    // TODO: deactivate and activate all in specified dimension
     private static int deactivateAll(CommandSource source) {
         try {
             RegionUtils.deactivateAll(RegionManager.get().getAllRegions(), source.asPlayer());

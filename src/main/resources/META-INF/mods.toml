@@ -1,32 +1,32 @@
-modLoader="javafml" #mandatory
-loaderVersion="[33,)" #mandatory
-license="CC BY-NC 3.0" # https://www.curseforge.com/project/278829/license
-logoFile="worldprotector.png" #optional
-credits="Thanks to BrokenSwing for helping me and TheBossMax2 for the logo"
-authors="Mosca42, BrokenSwing" #optional
+modLoader = "javafml" #mandatory
+loaderVersion = "[36,)" #mandatory
+license = "CC BY-NC 3.0" # https://www.curseforge.com/project/278829/license
+logoFile = "worldprotector.png" #optional
+credits = "Thanks to BrokenSwing for helping me and TheBossMax2 for the logo"
+authors = "Mosca42, BrokenSwing" #optional
 
 [[mods]] #mandatory
-modId="worldprotector"
-version="${file.jarVersion}" #mandatory
-displayName="WorldProtector" #mandatory
-description='''
+modId = "worldprotector"
+version = "${file.jarVersion}" #mandatory
+displayName = "WorldProtector" #mandatory
+description = '''
 Protect your server'''
 
 [[dependencies.worldprotector]] #optional
-    # the modid of the dependency
-    modId="forge" #mandatory
-    # Does this dependency have to exist - if not, ordering below must be specified
-    mandatory=true #mandatory
-    # The version range of the dependency
-    versionRange="[35.1.10,)" #mandatory
-    # An ordering relationship for the dependency - BEFORE or AFTER required if the relationship is not mandatory
-    ordering="NONE"
-    # Side this dependency is applied on - BOTH, CLIENT or SERVER
-    side="BOTH"
+# the modid of the dependency
+modId = "forge" #mandatory
+# Does this dependency have to exist - if not, ordering below must be specified
+mandatory = true #mandatory
+# The version range of the dependency
+versionRange = "[36.1.25,)" #mandatory
+# An ordering relationship for the dependency - BEFORE or AFTER required if the relationship is not mandatory
+ordering = "NONE"
+# Side this dependency is applied on - BOTH, CLIENT or SERVER
+side = "BOTH"
 # Here's another dependency
 [[dependencies.worldprotector]]
     modId="minecraft"
-    mandatory=true
-    versionRange="[1.16.4]"
-    ordering="NONE"
+mandatory = true
+versionRange = "[1.16.5]"
+ordering = "NONE"
     side="BOTH"

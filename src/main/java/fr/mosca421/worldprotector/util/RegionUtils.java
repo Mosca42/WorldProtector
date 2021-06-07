@@ -1,10 +1,12 @@
 package fr.mosca421.worldprotector.util;
 
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import fr.mosca421.worldprotector.core.IRegion;
 import fr.mosca421.worldprotector.core.Region;
 import fr.mosca421.worldprotector.core.RegionFlag;
 import fr.mosca421.worldprotector.data.RegionManager;
 import fr.mosca421.worldprotector.item.ItemRegionMarker;
+import net.minecraft.command.CommandSource;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -167,11 +169,18 @@ public class RegionUtils {
 		}
 	}
 
-	public static void teleportToRegion(String regionName, PlayerEntity player) {
+	public static void teleportToRegion(String regionName, PlayerEntity player, CommandSource source) {
 		if (RegionManager.get().containsRegion(regionName)) {
 			RegionManager.get().getRegion(regionName).ifPresent(region -> {
-				sendStatusMessage(player, new TranslationTextComponent("message.region.teleport", region.getName()));
-				player.setPositionAndUpdate(region.getTpTarget().getX(), region.getTpTarget().getY(), region.getTpTarget().getZ());
+				try {
+					BlockPos target = region.getTpTarget();
+					String command = "execute in " + region.getDimension().getLocation().toString() + " run tp " + player.getName().getString() + " " + target.getX() + " " + target.getY() + " " + target.getZ();
+					sendStatusMessage(player, new TranslationTextComponent("message.region.teleport", region.getName()));
+					source.getServer().getCommandManager().getDispatcher().execute(command, source);
+					//player.setPositionAndUpdate(region.getTpTarget().getX(), region.getTpTarget().getY(), region.getTpTarget().getZ());
+				} catch (CommandSyntaxException e) {
+					e.printStackTrace();
+				}
 			});
 		} else {
 			sendMessage(player, new TranslationTextComponent("message.region.unknown", regionName));
@@ -180,12 +189,12 @@ public class RegionUtils {
 
 	public static void giveHelpMessage(PlayerEntity player) {
 		sendMessage(player, new TranslationTextComponent(TextFormatting.BLUE + "==WorldProtector Help=="));
-		sendMessage(player,"help.region.1");
-		sendMessage(player,"help.region.2");
-		sendMessage(player,"help.region.3");
-		sendMessage(player,"help.region.4");
-		sendMessage(player,"help.region.5");
-		sendMessage(player,"help.region.6");
+		sendMessage(player, "help.region.1");
+		sendMessage(player, "help.region.2");
+		sendMessage(player, "help.region.3");
+		sendMessage(player, "help.region.4");
+		sendMessage(player, "help.region.5");
+		sendMessage(player, "help.region.6");
 		sendMessage(player,"help.region.7");
 		sendMessage(player,"help.region.8");
 		sendMessage(player,"help.region.9");

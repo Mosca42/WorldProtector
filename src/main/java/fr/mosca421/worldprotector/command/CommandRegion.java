@@ -197,7 +197,7 @@ public class CommandRegion {
 
     private static int teleport(CommandSource source, String regionName) {
         try {
-            RegionUtils.teleportToRegion(regionName, source.asPlayer());
+            RegionUtils.teleportToRegion(regionName, source.asPlayer(), source);
         } catch (CommandSyntaxException e) {
             e.printStackTrace();
         }

@@ -35,11 +35,13 @@ Analogous you can also put a bunch of name tags, named with the corresponding fl
 
 Currently, there are three types of commands :
 
-- /wp region: allows to define, edit, remove a region.
+- ```/wp region```: allows to define, edit, remove a region.
 
-- /wp expand: allows to modify the Y level (height) of the marked region.
+- ```/wp expand```: allows to modify the Y level (height) of the marked region.
 
-- /wp flag: allows to define one or several flags (rules) for a region to protect it.
+- ```/wp flag```: allows to define one or several flags (rules) for a region to protect it.
+
+- ```/wp player```: allows to add/remove players to/from regions
 
 Type /wp help for more information.
 

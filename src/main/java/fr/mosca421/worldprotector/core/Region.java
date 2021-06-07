@@ -32,6 +32,9 @@ public class Region implements IRegion {
 	private String exitMessage = Strings.EMPTY;
 	private String enterMessageSmall = Strings.EMPTY;
 	private String exitMessageSmall = Strings.EMPTY;
+	public static final String TP_X = "tp_x";
+	public static final String TP_Y = "tp_y";
+	public static final String TP_Z = "tp_z";
 	// nbt keys
 	public static final String NAME = "name";
 	public static final String UUID = "uuid";
@@ -42,6 +45,9 @@ public class Region implements IRegion {
 	public static final String MAX_X = "maxX";
 	public static final String MAX_Y = "maxY";
 	public static final String MAX_Z = "maxZ";
+	private int tpTargetX;
+	private int tpTargetY;
+	private int tpTargetZ;
 	public static final String PRIORITY = "priority";
 	public static final String ACTIVE = "active";
 	public static final String PLAYERS = "players";
@@ -60,6 +66,21 @@ public class Region implements IRegion {
 	public Region(String name, AxisAlignedBB area, RegistryKey<World> dimension) {
 		this.name = name;
 		this.area = area;
+		this.tpTargetX = (int) this.area.getCenter().getX();
+		this.tpTargetY = (int) this.area.getCenter().getY();
+		this.tpTargetZ = (int) this.area.getCenter().getZ();
+		this.dimension = dimension;
+		this.isActive = true;
+		this.players = new HashMap<>();
+		this.flags = new HashSet<>();
+	}
+
+	public Region(String name, AxisAlignedBB area, BlockPos tpPos, RegistryKey<World> dimension) {
+		this.tpTargetX = tpPos.getX();
+		this.tpTargetY = tpPos.getY();
+		this.tpTargetZ = tpPos.getZ();
+		this.name = name;
+		this.area = area;
 		this.dimension = dimension;
 		this.isActive = true;
 		this.players = new HashMap<>();
@@ -67,6 +88,9 @@ public class Region implements IRegion {
 	}
 
 	public Region(Region copy) {
+		this.tpTargetX = copy.getTpTarget().getX();
+		this.tpTargetY = copy.getTpTarget().getY();
+		this.tpTargetZ = copy.getTpTarget().getZ();
 		this.name = copy.getName();
 		this.area = copy.getArea();
 		this.dimension = copy.getDimension();
@@ -81,6 +105,9 @@ public class Region implements IRegion {
 	}
 
 	public Region(IRegion copy) {
+		this.tpTargetX = copy.getTpTarget().getX();
+		this.tpTargetY = copy.getTpTarget().getY();
+		this.tpTargetZ = copy.getTpTarget().getZ();
 		this.name = copy.getName();
 		this.area = copy.getArea();
 		this.dimension = copy.getDimension();
@@ -119,6 +146,18 @@ public class Region implements IRegion {
 	public BlockPos getTpPos(World world) {
 		int highestNonBlockingY = world.getHeight(Heightmap.Type.MOTION_BLOCKING, (int) area.minX, (int) area.minZ);
 		return new BlockPos(area.minX, highestNonBlockingY + 1, area.minZ);
+	}
+
+	@Override
+	public BlockPos getTpTarget() {
+		return new BlockPos(this.tpTargetX, this.tpTargetY, this.tpTargetZ);
+	}
+
+	@Override
+	public void setTpTarget(BlockPos tpPos) {
+		this.tpTargetX = tpPos.getX();
+		this.tpTargetY = tpPos.getY();
+		this.tpTargetZ = tpPos.getZ();
 	}
 
 	@Override
@@ -265,6 +304,9 @@ public class Region implements IRegion {
 		nbt.putInt(MAX_X, (int) area.maxX);
 		nbt.putInt(MAX_Y, (int) area.maxY);
 		nbt.putInt(MAX_Z, (int) area.maxZ);
+		nbt.putInt(TP_X, this.tpTargetX);
+		nbt.putInt(TP_Y, this.tpTargetY);
+		nbt.putInt(TP_Z, this.tpTargetZ);
 		nbt.putInt(PRIORITY, priority);
 		nbt.putString(DIM, dimension.getLocation().toString());
 		nbt.putBoolean(ACTIVE, isActive);
@@ -301,6 +343,9 @@ public class Region implements IRegion {
 	public void deserializeNBT(CompoundNBT nbt) {
 		this.name = nbt.getString(NAME);
 		this.area = areaFromNBT(nbt);
+		this.tpTargetX = nbt.getInt(TP_X);
+		this.tpTargetY = nbt.getInt(TP_Y);
+		this.tpTargetZ = nbt.getInt(TP_Z);
 		this.priority = nbt.getInt(PRIORITY);
 		this.dimension = RegistryKey.getOrCreateKey(Registry.WORLD_KEY, new ResourceLocation(nbt.getString(DIM)));
 		this.isActive = nbt.getBoolean(ACTIVE);
@@ -340,8 +385,8 @@ public class Region implements IRegion {
 	public String toString() {
 		return new StringJoiner(", ", Region.class.getSimpleName() + "[", "]")
 				.add("name='" + name + "'")
-				.add("dimension=" + dimension)
-				.add("area=" + area)
+				.add("dimension=" + dimension.getLocation().toString())
+				.add("area=" + area.toString())
 				.add("flags=" + flags)
 				.add("players=" + players)
 				.add("isActive=" + isActive)
@@ -350,6 +395,7 @@ public class Region implements IRegion {
 				.add("exitMessage='" + exitMessage + "'")
 				.add("enterMessageSmall='" + enterMessageSmall + "'")
 				.add("exitMessageSmall='" + exitMessageSmall + "'")
+				.add("tpTarget=[" + tpTargetX + ", " + tpTargetY + ", " + tpTargetZ + "]")
 				.toString();
 	}
 }

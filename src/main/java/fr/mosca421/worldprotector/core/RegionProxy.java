@@ -126,6 +126,16 @@ public class RegionProxy implements IRegion{
     }
 
     @Override
+    public BlockPos getTpTarget() {
+        return null;
+    }
+
+    @Override
+    public void setTpTarget(BlockPos pos) {
+
+    }
+
+    @Override
     public CompoundNBT serializeNBT() {
         return null;
     }

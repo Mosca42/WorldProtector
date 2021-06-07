@@ -55,4 +55,7 @@ public interface IRegion extends INBTSerializable<CompoundNBT> {
 
     void setArea(AxisAlignedBB areaFromNBT);
 
+    BlockPos getTpTarget();
+
+    void setTpTarget(BlockPos pos);
 }

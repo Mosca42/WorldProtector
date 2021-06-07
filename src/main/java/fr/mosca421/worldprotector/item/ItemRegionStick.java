@@ -147,8 +147,9 @@ public class ItemRegionStick extends Item {
 					} else {
 						stack.getTag().putInt(REGION_IDX, 0);
 					}
-					cycleRegion(stack);
+
 				}
+				setDisplayName(stack, stack.getTag().getString(REGION), stack.getTag().getString(MODE));
 			} else {
 				// init nbt tag of RegionStick
 				CompoundNBT nbt = new CompoundNBT();
@@ -156,11 +157,11 @@ public class ItemRegionStick extends Item {
 				nbt.putInt(REGION_IDX, 0);
 				nbt.putString(LAST_DIM, worldIn.getDimensionKey().getLocation().toString());
 				if (regionCount > 0) {
-					String region = cachedRegions.get(0);
-					nbt.putString(REGION, region);
+					nbt.putString(REGION, cachedRegions.get(0));
+				} else {
+					nbt.putString(REGION, "N/A");
 				}
 				stack.setTag(nbt);
-				setDisplayName(stack, "N/A", MODE_ADD);
 			}
 		}
 	}

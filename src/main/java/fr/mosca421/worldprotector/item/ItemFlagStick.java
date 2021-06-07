@@ -234,15 +234,21 @@ public class ItemFlagStick extends Item {
 		super.inventoryTick(stack, worldIn, entityIn, itemSlot, isSelected);
 		if (!worldIn.isRemote) {
 			// ensure flag stick has a nbt tag and is initialized as needed
-			if (!stack.hasTag()){
+			if (!stack.hasTag()) {
 				CompoundNBT nbt = new CompoundNBT();
 				nbt.putString(MODE, MODE_ADD);
 				nbt.putString(FLAG, RegionFlag.ALL.toString());
 				nbt.putInt(FLAG_IDX, 0);
 				nbt.putInt("finish_action", 0);
-				setDisplayName(stack, RegionFlag.ALL.toString(), MODE_ADD);
 				stack.setTag(nbt);
+				setDisplayName(stack, RegionFlag.ALL, MODE_ADD);
+			} else {
+				int flagIdx = stack.getTag().getInt(FLAG_IDX);
+				String flag = flags.get(flagIdx);
+				String mode = stack.getTag().getString(MODE);
+				setDisplayName(stack, flag, mode);
 			}
+
 		}
 
 	}

@@ -54,7 +54,6 @@ public class ItemRegionMarker extends Item {
 	public static final int SECOND = 1;
 
 	@Override
-	// TODO: update tooltip for teleport target
 	public void addInformation(ItemStack stack, World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
 		if (Screen.hasShiftDown()) {
 			tooltip.add(new TranslationTextComponent("help.regionmarker.detail.1"));

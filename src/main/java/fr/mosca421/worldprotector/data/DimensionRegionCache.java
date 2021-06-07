@@ -48,7 +48,7 @@ public class DimensionRegionCache extends HashMap<String, IRegion> {
         this.clear();
     }
 
-    // TODO: remork to only update area? see usages
+    // TODO: rework to only update area?
     public void updateRegion(IRegion newRegion) {
         if (this.containsKey(newRegion.getName())) {
             this.put(newRegion.getName(), newRegion);

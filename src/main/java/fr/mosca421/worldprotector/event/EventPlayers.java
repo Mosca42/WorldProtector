@@ -25,7 +25,6 @@ import net.minecraftforge.fml.common.Mod;
 
 import java.util.List;
 
-
 import static fr.mosca421.worldprotector.util.MessageUtils.sendMessage;
 import static fr.mosca421.worldprotector.util.MessageUtils.sendStatusMessage;
 
@@ -43,7 +42,7 @@ public class EventPlayers {
                 List<IRegion> regions = RegionUtils.getHandlingRegionsFor(player.getPosition(), player.world);
                 for (IRegion region : regions) {
                     if (region.containsFlag(RegionFlag.DAMAGE_PLAYERS.toString()) && region.forbids(player)) {
-                        sendMessage(player, "message.event.player.pvp");
+                        sendStatusMessage(player, "message.event.player.pvp");
                         event.setCanceled(true);
                         return;
                     }
@@ -147,10 +146,9 @@ public class EventPlayers {
             ItemStack leftIn = event.getItemInput();
             PlayerEntity player = event.getPlayer();
             if (leftIn.getItem() instanceof ItemRegionMarker && rightIn.getItem() instanceof AirItem) {
-                // TODO: spaces are not allowed
                 String regionName = event.getItemResult().getDisplayName().getString();
                 if (!player.hasPermissionLevel(4) || !player.isCreative()) {
-                    sendMessage(player, "message.event.players.anvil_region_defined");
+                    sendStatusMessage(player, "message.event.players.anvil_region_defined");
                 } else {
                     RegionUtils.createRegion(regionName, player, event.getItemResult());
                 }
@@ -166,7 +164,7 @@ public class EventPlayers {
             for (IRegion region : regions) {
                 if (region.containsFlag(RegionFlag.SEND_MESSAGE.toString()) && region.forbids(player)) {
                     event.setCanceled(true);
-                    event.getPlayer().sendMessage(new TranslationTextComponent("message.event.player.speak"), event.getPlayer().getUniqueID());
+                    sendStatusMessage(player, new TranslationTextComponent("message.event.player.speak"));
                 }
             }
         }

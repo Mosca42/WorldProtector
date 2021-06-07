@@ -2,13 +2,15 @@ package fr.mosca421.worldprotector.event;
 
 import fr.mosca421.worldprotector.WorldProtector;
 import fr.mosca421.worldprotector.core.IRegion;
-import fr.mosca421.worldprotector.core.Region;
 import fr.mosca421.worldprotector.core.RegionFlag;
 import fr.mosca421.worldprotector.util.MessageUtils;
 import fr.mosca421.worldprotector.util.RegionUtils;
 import net.minecraft.entity.item.minecart.ContainerMinecartEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.tileentity.*;
+import net.minecraft.tileentity.EnderChestTileEntity;
+import net.minecraft.tileentity.LecternTileEntity;
+import net.minecraft.tileentity.LockableTileEntity;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -36,7 +38,7 @@ public class EventInteract {
 				if (region.containsFlag(RegionFlag.USE) && !isLockableTileEntity && isPlayerProhibited) {
 					if (!player.isSneaking()) {
 						event.setCanceled(true);
-						MessageUtils.sendMessage(player, "message.event.interact.use");
+						MessageUtils.sendStatusMessage(player, "message.event.interact.use");
 						return;
 					}
 				}
@@ -44,7 +46,7 @@ public class EventInteract {
 				if (region.containsFlag(RegionFlag.ENDER_CHEST_ACCESS) && isEnderChest && isPlayerProhibited) {
 					if (!player.isSneaking()) {
 						event.setCanceled(true);
-						MessageUtils.sendMessage(player, "message.event.interact.access_ender_chest");
+						MessageUtils.sendStatusMessage(player, "message.event.interact.access_ender_chest");
 						return;
 					}
 				}
@@ -52,7 +54,7 @@ public class EventInteract {
 				if (region.containsFlag(RegionFlag.CONTAINER_ACCESS) && isContainer && isPlayerProhibited) {
 					if (!player.isSneaking()) {
 						event.setCanceled(true);
-						MessageUtils.sendMessage(player, "message.event.interact.access_container");
+						MessageUtils.sendStatusMessage(player, "message.event.interact.access_container");
 						return;
 					}
 				}
@@ -72,7 +74,7 @@ public class EventInteract {
 
 				if (containsChestAccess && !playerHasPermission && isMinecartContainer) {
 					event.setCanceled(true);
-					MessageUtils.sendMessage(player, "message.event.interact.access_container");
+					MessageUtils.sendStatusMessage(player, "message.event.interact.access_container");
 					return;
 				}
 			}

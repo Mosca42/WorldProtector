@@ -1,19 +1,13 @@
 package fr.mosca421.worldprotector.event;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import fr.mosca421.worldprotector.WorldProtector;
 import fr.mosca421.worldprotector.core.IRegion;
-import fr.mosca421.worldprotector.core.Region;
 import fr.mosca421.worldprotector.core.RegionFlag;
 import fr.mosca421.worldprotector.util.RegionUtils;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.item.TNTEntity;
 import net.minecraft.entity.monster.CreeperEntity;
 import net.minecraft.entity.monster.EndermanEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.tileentity.DispenserTileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
@@ -26,7 +20,10 @@ import net.minecraftforge.event.world.ExplosionEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
-import static fr.mosca421.worldprotector.util.MessageUtils.*;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static fr.mosca421.worldprotector.util.MessageUtils.sendStatusMessage;
 
 @Mod.EventBusSubscriber(modid = WorldProtector.MODID)
 public class EventProtection {
@@ -42,7 +39,7 @@ public class EventProtection {
 					region -> !region.permits(player),
 					() -> {
 						event.setCanceled(true);
-						sendMessage(player, new TranslationTextComponent("message.event.protection.break_block"));
+						sendStatusMessage(player, new TranslationTextComponent("message.event.protection.break_block"));
 					});
 		}
 	}
@@ -57,7 +54,7 @@ public class EventProtection {
 						.anyMatch(region -> region.containsFlag(RegionFlag.PLACE) && region.forbids(player));
 				if (isPlayerPlacementProhibited) {
 					event.setCanceled(true);
-					sendMessage(player, new TranslationTextComponent("message.event.protection.place_block"));
+					sendStatusMessage(player, new TranslationTextComponent("message.event.protection.place_block"));
 				}
 			}
 			// TODO: Test
@@ -83,7 +80,7 @@ public class EventProtection {
 					boolean cancelEvent = region.containsFlag(RegionFlag.IGNITE_EXPLOSIVES) && !region.permits(player);
 					event.setCanceled(cancelEvent);
 					if (cancelEvent) {
-						sendMessage(player, "message.event.protection.ignite_tnt");
+						sendStatusMessage(player, "message.event.protection.ignite_tnt");
 					}
 				}
 			} else {
@@ -124,22 +121,22 @@ public class EventProtection {
 				boolean playerNotPermitted = !region.permits(player);
 				if (region.containsFlag(RegionFlag.TOOL_SECONDARY_USE) && playerNotPermitted) {
 					event.setCanceled(true);
-					sendMessage(player,   "message.event.protection.tool_secondary_use");
+					sendStatusMessage(player, "message.event.protection.tool_secondary_use");
 					return;
 				}
 				if (event.getToolType() == ToolType.AXE && region.containsFlag(RegionFlag.AXE_STRIP) && playerNotPermitted) {
 					event.setCanceled(true);
-					sendMessage(player,   "message.event.protection.strip_wood");
+					sendStatusMessage(player, "message.event.protection.strip_wood");
 					return;
 				}
 				if (event.getToolType() == ToolType.HOE && region.containsFlag(RegionFlag.HOE_TILL) && playerNotPermitted) {
 					event.setCanceled(true);
-					sendMessage(player,   "message.event.protection.till_farmland");
+					sendStatusMessage(player, "message.event.protection.till_farmland");
 					return;
 				}
 				if (event.getToolType() == ToolType.SHOVEL && region.containsFlag(RegionFlag.SHOVEL_PATH) && playerNotPermitted) {
 					event.setCanceled(true);
-					sendMessage(player,   "message.event.protection.shovel_path");
+					sendStatusMessage(player, "message.event.protection.shovel_path");
 					return;
 				}
 			}
@@ -156,13 +153,13 @@ public class EventProtection {
 				int bucketItemMaxStackCount = event.getEmptyBucket().getMaxStackSize();
 				// MaxStackSize: 1 -> full bucket so only placeable; >1 -> empty bucket, only fillable
 				if (bucketItemMaxStackCount == 1 && region.containsFlag(RegionFlag.PLACE.toString()) && !region.permits(player)) {
-					sendMessage(player, new TranslationTextComponent("message.event.protection.place_fluid"));
+					sendStatusMessage(player, new TranslationTextComponent("message.event.protection.place_fluid"));
 					event.setCanceled(true);
 					return;
 				}
 				// FIXME: Message is send if target raycast hits a non fluid. Check if event.getTarget hits a fluid
 				if (bucketItemMaxStackCount > 1 && region.containsFlag(RegionFlag.BREAK.toString()) && !region.permits(player)) {
-					sendMessage(player, new TranslationTextComponent("message.event.protection.scoop_fluid"));
+					sendStatusMessage(player, new TranslationTextComponent("message.event.protection.scoop_fluid"));
 					event.setCanceled(true);
 					return;
 				}

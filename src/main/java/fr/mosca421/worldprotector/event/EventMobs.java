@@ -2,7 +2,6 @@ package fr.mosca421.worldprotector.event;
 
 import fr.mosca421.worldprotector.WorldProtector;
 import fr.mosca421.worldprotector.core.IRegion;
-import fr.mosca421.worldprotector.core.Region;
 import fr.mosca421.worldprotector.core.RegionFlag;
 import fr.mosca421.worldprotector.util.MessageUtils;
 import fr.mosca421.worldprotector.util.RegionUtils;
@@ -68,10 +67,10 @@ public class EventMobs {
 	@SubscribeEvent
 	public static void onBreedingAttempt(BabyEntitySpawnEvent event) {
 		PlayerEntity player = event.getCausedByPlayer();
-		if (!player.world.isRemote) {
+		if (player != null && !player.world.isRemote) {
 			boolean isBreedingProhibited = isPlayerActionProhibited(event.getParentB().getPosition(), player, RegionFlag.ANIMAL_BREEDING);
 			if (isBreedingProhibited) {
-				MessageUtils.sendMessage(player, "message.event.mobs.breed_animals");
+				MessageUtils.sendStatusMessage(player, "message.event.mobs.breed_animals");
 				event.setCanceled(true);
 			}
 		}
@@ -85,7 +84,7 @@ public class EventMobs {
 			boolean isTamingProhibited = isPlayerActionProhibited(animal.getPosition(), player, RegionFlag.ANIMAL_TAMING);
 			if (isTamingProhibited) {
 				event.setCanceled(true);
-				MessageUtils.sendMessage(player, "message.event.mobs.tame_animal");
+				MessageUtils.sendStatusMessage(player, "message.event.mobs.tame_animal");
 			}
 		}
 	}
@@ -116,7 +115,7 @@ public class EventMobs {
 				for (IRegion region : affectedRegions) {
 					boolean flagDamageAnimals = region.containsFlag(RegionFlag.DAMAGE_ANIMALS.toString());
 					if (flagDamageAnimals && regionContainsEntity(region, eventEntity) && region.forbids(player)) {
-						player.sendMessage(new TranslationTextComponent("message.event.mobs.hurt_animal"), player.getUniqueID());
+						MessageUtils.sendStatusMessage(player, new TranslationTextComponent("message.event.mobs.hurt_animal"));
 						event.setCanceled(true);
 					}
 				}
@@ -126,7 +125,7 @@ public class EventMobs {
 				for (IRegion region : affectedRegions) {
 					boolean flagDamageMonsters = region.containsFlag(RegionFlag.DAMAGE_MONSTERS.toString());
 					if (flagDamageMonsters && regionContainsEntity(region, eventEntity) && region.forbids(player)) {
-						player.sendMessage(new TranslationTextComponent("message.event.mobs.hurt_monster"), player.getUniqueID());
+						MessageUtils.sendStatusMessage(player, new TranslationTextComponent("message.event.mobs.hurt_monster"));
 						event.setCanceled(true);
 					}
 				}
@@ -137,7 +136,7 @@ public class EventMobs {
 				for (IRegion region : affectedRegions) {
 					boolean flagDamageMonsters = region.containsFlag(RegionFlag.DAMAGE_VILLAGERS.toString());
 					if (flagDamageMonsters && regionContainsEntity(region, villager) && region.forbids(player)) {
-						player.sendMessage(new TranslationTextComponent("message.event.mobs.hurt_villager"), player.getUniqueID());
+						MessageUtils.sendStatusMessage(player, new TranslationTextComponent("message.event.mobs.hurt_villager"));
 						event.setCanceled(true);
 					}
 				}

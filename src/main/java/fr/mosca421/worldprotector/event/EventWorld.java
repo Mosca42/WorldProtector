@@ -2,7 +2,6 @@ package fr.mosca421.worldprotector.event;
 
 import fr.mosca421.worldprotector.WorldProtector;
 import fr.mosca421.worldprotector.core.IRegion;
-import fr.mosca421.worldprotector.core.Region;
 import fr.mosca421.worldprotector.core.RegionFlag;
 import fr.mosca421.worldprotector.util.MessageUtils;
 import fr.mosca421.worldprotector.util.RegionUtils;
@@ -11,24 +10,20 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.boss.WitherEntity;
 import net.minecraft.entity.boss.dragon.EnderDragonEntity;
 import net.minecraft.entity.monster.ZombieEntity;
-import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.tileentity.DispenserTileEntity;
-import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
-import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.EntityStruckByLightningEvent;
-import net.minecraftforge.event.entity.living.*;
+import net.minecraftforge.event.entity.living.LivingDestroyBlockEvent;
+import net.minecraftforge.event.entity.living.LivingDropsEvent;
+import net.minecraftforge.event.entity.living.LivingExperienceDropEvent;
 import net.minecraftforge.event.entity.player.BonemealEvent;
 import net.minecraftforge.event.world.BlockEvent;
-import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 import java.util.List;
 
 import static fr.mosca421.worldprotector.event.EventMobs.isMonster;
-import static fr.mosca421.worldprotector.util.RegionUtils.isActionProhibited;
 import static fr.mosca421.worldprotector.util.RegionUtils.isPlayerActionProhibited;
 
 @Mod.EventBusSubscriber(modid = WorldProtector.MODID)
@@ -52,7 +47,7 @@ public class EventWorld {
                     PlayerEntity player = (PlayerEntity) event.getEntity();
                     if (r.containsFlag(RegionFlag.TRAMPLE_FARMLAND_PLAYER.toString())) {
                         event.setCanceled(true);
-                        MessageUtils.sendMessage(player, "message.event.world.trample_farmland");
+                        MessageUtils.sendStatusMessage(player, "message.event.world.trample_farmland");
                     }
                 } else {
                     // cancel trampling by other entities
@@ -83,7 +78,7 @@ public class EventWorld {
             boolean isBonemealUseProhibited = isPlayerActionProhibited(event.getPos(), player, RegionFlag.USE_BONEMEAL);
             if (isBonemealUseProhibited) {
                 event.setCanceled(true);
-                MessageUtils.sendMessage(player,"message.event.world.use_bone_meal");
+                MessageUtils.sendStatusMessage(player, "message.event.world.use_bone_meal");
             }
         }
     }

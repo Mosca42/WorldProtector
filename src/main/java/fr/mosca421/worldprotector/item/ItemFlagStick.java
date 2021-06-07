@@ -27,7 +27,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static fr.mosca421.worldprotector.util.MessageUtils.sendMessage;
+import static fr.mosca421.worldprotector.util.MessageUtils.sendStatusMessage;
 
 public class ItemFlagStick extends Item {
 
@@ -49,7 +49,6 @@ public class ItemFlagStick extends Item {
 
 	static {
 		// init flag list
-		WorldProtector.LOGGER.info("Flag Stick flags initialized");
 		flags = RegionFlag.getFlags();
 		Collections.sort(flags);
 	}
@@ -119,7 +118,7 @@ public class ItemFlagStick extends Item {
 			ItemStack flagStick = playerIn.getHeldItem(handIn);
 			// check player permission
 			if (!playerIn.hasPermissionLevel(4) || !playerIn.isCreative()) {
-				sendMessage(playerIn, new TranslationTextComponent("item.usage.permission")
+				sendStatusMessage(playerIn, new TranslationTextComponent("item.usage.permission")
 						.mergeStyle(TextFormatting.RED));
 				return ActionResult.resultFail(flagStick);
 			}
@@ -186,7 +185,7 @@ public class ItemFlagStick extends Item {
 				if (target instanceof LockableLootTileEntity) {
 					LockableLootTileEntity container = (LockableLootTileEntity) target;
 					if (container.isEmpty()) {
-						sendMessage(player,  "message.flags.container.noflags");
+						sendStatusMessage(player, "message.flags.container.noflags");
 						return ActionResultType.FAIL;
 					}
 					List<String> nameTags = new ArrayList<>();
@@ -197,14 +196,12 @@ public class ItemFlagStick extends Item {
 						}
 					}
 					if (nameTags.isEmpty()) {
-						WorldProtector.LOGGER.info("[Flag Stick]: message.flags.container.noflags");
-						sendMessage(player,  "message.flags.container.noflags");
+						sendStatusMessage(player, "message.flags.container.noflags");
 						return ActionResultType.FAIL;
 					}
 					List<String> validFlags = nameTags.stream().filter(RegionFlag::contains).collect(Collectors.toList());
 					if (validFlags.isEmpty()) {
-						WorldProtector.LOGGER.info("[Flag Stick]: message.flags.container.novalidflags");
-						sendMessage(player,  "message.flags.container.novalidflags");
+						sendStatusMessage(player, "message.flags.container.novalidflags");
 						return ActionResultType.FAIL;
 					}
 					switch (flagMode) {
@@ -238,7 +235,6 @@ public class ItemFlagStick extends Item {
 		if (!worldIn.isRemote) {
 			// ensure flag stick has a nbt tag and is initialized as needed
 			if (!stack.hasTag()){
-				WorldProtector.LOGGER.info("Flag Stick nbt initialized");
 				CompoundNBT nbt = new CompoundNBT();
 				nbt.putString(MODE, MODE_ADD);
 				nbt.putString(FLAG, RegionFlag.ALL.toString());

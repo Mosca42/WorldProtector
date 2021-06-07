@@ -240,7 +240,7 @@ public class ItemFlagStick extends Item {
 				nbt.putString(FLAG, RegionFlag.ALL.toString());
 				nbt.putInt(FLAG_IDX, 0);
 				nbt.putInt("finish_action", 0);
-				setDisplayName(stack, RegionFlag.ALL, MODE_ADD);
+				setDisplayName(stack, RegionFlag.ALL.toString(), MODE_ADD);
 				stack.setTag(nbt);
 			}
 		}

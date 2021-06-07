@@ -9,10 +9,6 @@ import fr.mosca421.worldprotector.util.RegionUtils;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.command.ISuggestionProvider;
-import net.minecraft.util.RegistryKey;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.world.World;
 
 public class CommandRegion {
 
@@ -154,8 +150,7 @@ public class CommandRegion {
 
     private static int giveRegionListForDim(CommandSource source, String dim) {
         try {
-            RegistryKey<World> dimension = RegistryKey.getOrCreateKey(Registry.WORLD_KEY, new ResourceLocation(dim));
-            RegionUtils.giveRegionListForDim(source.asPlayer(), dimension);
+            RegionUtils.giveRegionListForDim(source.asPlayer(), dim);
         } catch (CommandSyntaxException e) {
             e.printStackTrace();
         }
@@ -202,7 +197,7 @@ public class CommandRegion {
 
     private static int teleport(CommandSource source, String regionName) {
         try {
-            RegionUtils.teleportRegion(regionName, source.asPlayer());
+            RegionUtils.teleportToRegion(regionName, source.asPlayer());
         } catch (CommandSyntaxException e) {
             e.printStackTrace();
         }

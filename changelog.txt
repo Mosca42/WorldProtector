@@ -1,5 +1,6 @@
 1.16.5-2.1.0.1
 * Fix use flag not working correctly
+* Fix /wp region list [<dimension>] command not working properly and regions are now listed per dimension and in alphabetical order.
 1.16.5-2.1.0.0
 * Add events for creating, removing and updating a region (API)
 * Fix region teleport link not working across dimensions.

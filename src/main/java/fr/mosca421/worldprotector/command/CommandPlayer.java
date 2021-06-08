@@ -21,7 +21,6 @@ public class CommandPlayer {
     public static final LiteralArgumentBuilder<CommandSource> PLAYER_COMMAND = register();
 
     // TODO: test adding/removing multiple players
-    // TODO: update help message and readme with new command structure
     public static LiteralArgumentBuilder<CommandSource> register() {
         return Commands.literal(Command.PLAYER.toString())
                 .executes(ctx -> giveHelp(ctx.getSource()))

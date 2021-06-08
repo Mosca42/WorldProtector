@@ -10,9 +10,7 @@ import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.command.ISuggestionProvider;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.RegistryKey;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
 
 import static fr.mosca421.worldprotector.util.MessageUtils.sendMessage;
 import static fr.mosca421.worldprotector.util.MessageUtils.sendStatusMessage;
@@ -164,10 +162,8 @@ public class CommandFlag {
 
 	private static int info(CommandSource source, String regionName) {
 		try {
-			// TODO: only works in active dimension
 			PlayerEntity player = source.asPlayer();
-			RegistryKey<World> dimension = player.world.getDimensionKey();
-			if (RegionManager.get().containsRegion(regionName, dimension)) {
+			if (RegionManager.get().containsRegion(regionName)) {
 				RegionManager.get().getRegion(regionName).ifPresent(region -> {
 					String flagsInRegion = RegionFlagUtils.getFlagString(region);
 					sendMessage(player, new TranslationTextComponent("Flags defined in region '" + region.getName() + "': " + flagsInRegion));

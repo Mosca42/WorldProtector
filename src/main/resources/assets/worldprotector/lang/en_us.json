@@ -116,8 +116,8 @@
   "help.flags.2": "/wp flag remove <region> <flag>: Removes the flag from the region ('all' is applicable)",
   "help.flags.3": "/wp flag info <region>: Lists all flags defined in the region",
   "help.flags.4": "/wp flag list: List all available flags",
-  "help.players.1": "/wp player add <region> <player>: Add the player to the region",
-  "help.players.2": "/wp player remove <region> <player>: Remove the player from the region ('all' is applicable)",
+  "help.players.1": "/wp player add <region> <player> [<players>]: Adds one more player(s) to the region",
+  "help.players.2": "/wp player remove <region> <player> [<players>]: Removes one or more player(s) from the region ('all' is applicable)",
   "help.players.3": "/wp player list <region>: List all players added to the region",
   "help.expand.1": "/wp expand vert [<Y1>] [<Y2>]: Expands region from Y1 to Y2 (default: 0 to 255).",
   "help.expand.2": "/wp expand y-default <Y1> <Y2>: Sets the Y values for the default region expansion."

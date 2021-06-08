@@ -67,13 +67,18 @@ public enum RegionFlag {
     LEVEL_FREEZE("level-freeze"),
     EXP_CHANGE("exp-freeze"), // TODO: Currently not working correctly
     //
-    DAMAGE_PLAYERS("damage-players"),
-    DAMAGE_ANIMALS("damage-animals"),
-    DAMAGE_MONSTERS("damage-monsters"),
-    DAMAGE_VILLAGERS("damage-villagers"),
+    ATTACK_PLAYERS("attack-players"),
+    ATTACK_ANIMALS("attack-animals"),
+    ATTACK_MONSTERS("attack-monsters"),
+    ATTACK_VILLAGERS("attack-villagers"),
     //
     INVINCIBLE("invincible"),
+    //
     FALL_DAMAGE("fall-damage"),
+    FALL_DAMAGE_VILLAGERS("fall-damage-villagers"),
+    FALL_DAMAGE_MONSTERS("fall-damage-monsters"),
+    FALL_DAMAGE_ANIMALS("fall-damage-animals"),
+    FALL_DAMAGE_PLAYERS("fall-damage-players"),
     //
     SEND_MESSAGE("send-chat"),
     EXIT_MESSAGE_TITLE("exit-message"), // TODO: Currently not working correctly

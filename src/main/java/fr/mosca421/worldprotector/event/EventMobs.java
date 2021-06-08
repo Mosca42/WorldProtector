@@ -113,7 +113,7 @@ public class EventMobs {
 		if (!event.getTarget().world.isRemote) {
 			if (isAnimal(eventEntity)) {
 				for (IRegion region : affectedRegions) {
-					boolean flagDamageAnimals = region.containsFlag(RegionFlag.DAMAGE_ANIMALS.toString());
+					boolean flagDamageAnimals = region.containsFlag(RegionFlag.ATTACK_ANIMALS.toString());
 					if (flagDamageAnimals && regionContainsEntity(region, eventEntity) && region.forbids(player)) {
 						MessageUtils.sendStatusMessage(player, new TranslationTextComponent("message.event.mobs.hurt_animal"));
 						event.setCanceled(true);
@@ -123,7 +123,7 @@ public class EventMobs {
 
 			if (isMonster(eventEntity)) {
 				for (IRegion region : affectedRegions) {
-					boolean flagDamageMonsters = region.containsFlag(RegionFlag.DAMAGE_MONSTERS.toString());
+					boolean flagDamageMonsters = region.containsFlag(RegionFlag.ATTACK_MONSTERS.toString());
 					if (flagDamageMonsters && regionContainsEntity(region, eventEntity) && region.forbids(player)) {
 						MessageUtils.sendStatusMessage(player, new TranslationTextComponent("message.event.mobs.hurt_monster"));
 						event.setCanceled(true);
@@ -134,7 +134,7 @@ public class EventMobs {
 			if (event.getTarget() instanceof VillagerEntity) { // exclude pesky wandering trader >:-)
 				VillagerEntity villager = (VillagerEntity) event.getTarget();
 				for (IRegion region : affectedRegions) {
-					boolean flagDamageMonsters = region.containsFlag(RegionFlag.DAMAGE_VILLAGERS.toString());
+					boolean flagDamageMonsters = region.containsFlag(RegionFlag.ATTACK_VILLAGERS.toString());
 					if (flagDamageMonsters && regionContainsEntity(region, villager) && region.forbids(player)) {
 						MessageUtils.sendStatusMessage(player, new TranslationTextComponent("message.event.mobs.hurt_villager"));
 						event.setCanceled(true);

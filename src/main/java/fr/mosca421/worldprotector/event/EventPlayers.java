@@ -6,6 +6,8 @@ import fr.mosca421.worldprotector.core.RegionFlag;
 import fr.mosca421.worldprotector.item.ItemRegionMarker;
 import fr.mosca421.worldprotector.util.RegionUtils;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.merchant.villager.AbstractVillagerEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.AirItem;
@@ -41,7 +43,7 @@ public class EventPlayers {
                 PlayerEntity player = (PlayerEntity) event.getTarget();
                 List<IRegion> regions = RegionUtils.getHandlingRegionsFor(player.getPosition(), player.world);
                 for (IRegion region : regions) {
-                    if (region.containsFlag(RegionFlag.DAMAGE_PLAYERS.toString()) && region.forbids(player)) {
+                    if (region.containsFlag(RegionFlag.ATTACK_PLAYERS.toString()) && region.forbids(player)) {
                         sendStatusMessage(player, "message.event.player.pvp");
                         event.setCanceled(true);
                         return;
@@ -125,16 +127,30 @@ public class EventPlayers {
     }
 
     @SubscribeEvent
-    // TODO: Separate flags for Villagers, Animals, Monsters, Player
     public static void onFall(LivingFallEvent event) {
-        if (event.getEntityLiving() instanceof PlayerEntity) {
-            PlayerEntity player = (PlayerEntity) event.getEntityLiving();
-            List<IRegion> regions = RegionUtils.getHandlingRegionsFor(player.getPosition(), player.world);
-            for (IRegion region : regions) {
-                if (region.containsFlag(RegionFlag.FALL_DAMAGE.toString())) {
-                    event.setCanceled(true);
-                    return;
-                }
+        LivingEntity entity = event.getEntityLiving();
+        List<IRegion> regions = RegionUtils.getHandlingRegionsFor(entity.getPosition(), entity.world);
+        for (IRegion region : regions) {
+            // prevent fall damage for all entities
+            if (region.containsFlag(RegionFlag.FALL_DAMAGE.toString())) {
+                event.setCanceled(true); // same result as event.setDamageMultiplier(0.0f);
+                return;
+            }
+            if (entity instanceof PlayerEntity && region.containsFlag(RegionFlag.FALL_DAMAGE_PLAYERS)) {
+                event.setDamageMultiplier(0.0f);
+                return;
+            }
+            if (entity instanceof AbstractVillagerEntity && region.containsFlag(RegionFlag.FALL_DAMAGE_VILLAGERS)) {
+                event.setDamageMultiplier(0.0f);
+                return;
+            }
+            if (EventMobs.isAnimal(entity) && region.containsFlag(RegionFlag.FALL_DAMAGE_ANIMALS)) {
+                event.setDamageMultiplier(0.0f);
+                return;
+            }
+            if (EventMobs.isMonster(entity)) {
+                event.setDamageMultiplier(0.0f);
+                return;
             }
         }
     }

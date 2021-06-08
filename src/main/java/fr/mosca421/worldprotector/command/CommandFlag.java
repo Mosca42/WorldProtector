@@ -87,8 +87,10 @@ public class CommandFlag {
 							case DRAGON_BLOCK_PROT:
 							case WITHER_BLOCK_PROT:
 							case ZOMBIE_DOOR_PROT:
-							case ANIMAL_UNMOUNTING:
 								sendMessage(player, "Flag is currently disabled. We are working on a fix, sorry!");
+								break;
+							case ANIMAL_UNMOUNTING:
+								sendMessage(player, "Unmounting flag is currently not working due to a minecraft vanilla bug. This bug is fixed in 1.17. See: https://bugs.mojang.com/browse/MC-202202.");
 								break;
 							case ENTER_MESSAGE_TITLE:
 							case ENTER_MESSAGE_SUBTITLE:
@@ -131,8 +133,10 @@ public class CommandFlag {
 							case DRAGON_BLOCK_PROT:
 							case WITHER_BLOCK_PROT:
 							case ZOMBIE_DOOR_PROT:
-							case ANIMAL_UNMOUNTING:
 								sendMessage(player, "Flag is currently disabled. We are working on a fix, sorry!");
+								break;
+							case ANIMAL_UNMOUNTING:
+								sendMessage(player, "Unmounting flag is currently not working due to a minecraft vanilla bug. This bug is fixed in 1.17. See: https://bugs.mojang.com/browse/MC-202202.");
 								break;
 							case ENTER_MESSAGE_TITLE:
 							case ENTER_MESSAGE_SUBTITLE:

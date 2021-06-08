@@ -40,14 +40,14 @@ public class EventMobs {
 		Entity eventEntity = event.getEntity();
 		List<IRegion> affectedRegions = RegionUtils.getHandlingRegionsFor(event.getEntity().getPosition(), event.getWorld());
 		for (IRegion region : affectedRegions) {
-				if (region.containsFlag(RegionFlag.SPAWNING_ALL) && eventEntity instanceof MobEntity) {
-					event.setCanceled(true);
-					return;
-				}
-				if (region.containsFlag(RegionFlag.SPAWNING_ANIMAL) && isAnimal(eventEntity)) {
-					event.setCanceled(true);
-					return;
-				}
+			if (region.containsFlag(RegionFlag.SPAWNING_ALL) && eventEntity instanceof MobEntity) {
+				event.setCanceled(true);
+				return;
+			}
+			if (region.containsFlag(RegionFlag.SPAWNING_ANIMAL) && isAnimal(eventEntity)) {
+				event.setCanceled(true);
+				return;
+			}
 			if (region.containsFlag(RegionFlag.SPAWNING_GOLEM) && eventEntity instanceof IronGolemEntity) {
 				event.setCanceled(true);
 				return;

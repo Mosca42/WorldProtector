@@ -80,7 +80,7 @@ public class EventPlayers {
     }
 
 	@SubscribeEvent
-	public static void onPlayerXPChange(PlayerXpEvent.XpChange event) {
+    public static void onPlayerXPChange(PlayerXpEvent.XpChange event) {
         if (!event.getPlayer().world.isRemote) {
             PlayerEntity player = event.getPlayer();
             List<IRegion> regions = RegionUtils.getHandlingRegionsFor(player.getPosition(), player.world);
@@ -215,8 +215,9 @@ public class EventPlayers {
                 List<IRegion> regions = RegionUtils.getHandlingRegionsFor(entityBeingMounted, event.getWorldObj());
                 for (IRegion region : regions) {
 					/*
+					TODO: Wait for 1.17: https://bugs.mojang.com/browse/MC-202202
 					if (event.isDismounting() && region.containsFlag(RegionFlag.ANIMAL_UNMOUNTING) && region.forbids(player)) {
-						event.setCanceled(true); // Does not correctly unmount player - TODO: report bug to forge?
+						event.setCanceled(true); // Does not correctly unmount player
 						sendMessage(player, "message.event.player.unmount");
 					}
 					*/

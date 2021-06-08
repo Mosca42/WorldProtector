@@ -92,7 +92,7 @@ public class EventWorld {
             boolean entityDroppingXpIsPlayer = event.getEntityLiving() instanceof PlayerEntity;
             for (IRegion region : regions) {
                 // prevent all xp drops
-                if (region.containsFlag(RegionFlag.EXP_DROP_ALL)) {
+                if (region.containsFlag(RegionFlag.XP_DROP_ALL)) {
                     if (entityDroppingXpIsPlayer) {
                         event.setCanceled(true);
                         return;
@@ -104,13 +104,13 @@ public class EventWorld {
                     }
                 }
                 // prevent monster xp drop
-                if (region.containsFlag(RegionFlag.EXP_DROP_MONSTER) && isMonster(entity) && region.forbids(player)) {
+                if (region.containsFlag(RegionFlag.XP_DROP_MONSTER) && isMonster(entity) && region.forbids(player)) {
                     event.setCanceled(true);
                     MessageUtils.sendStatusMessage(player, "message.event.world.exp_drop.monsters");
                     return;
                 }
                 // prevent other entity xp drop (villagers, animals, ..)
-                if (region.containsFlag(RegionFlag.EXP_DROP_OTHER) && !isMonster(entity) && !entityDroppingXpIsPlayer) {
+                if (region.containsFlag(RegionFlag.XP_DROP_OTHER) && !isMonster(entity) && !entityDroppingXpIsPlayer) {
                     if (region.forbids(player)) {
                         event.setCanceled(true);
                         MessageUtils.sendStatusMessage(player, "message.event.world.exp_drop.non_hostile");

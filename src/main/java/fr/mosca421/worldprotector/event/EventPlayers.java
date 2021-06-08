@@ -4,6 +4,7 @@ import fr.mosca421.worldprotector.WorldProtector;
 import fr.mosca421.worldprotector.core.IRegion;
 import fr.mosca421.worldprotector.core.RegionFlag;
 import fr.mosca421.worldprotector.item.ItemRegionMarker;
+import fr.mosca421.worldprotector.util.MessageUtils;
 import fr.mosca421.worldprotector.util.RegionUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -78,36 +79,41 @@ public class EventPlayers {
         }
     }
 
-	/*
 	@SubscribeEvent
-	public static void onPlayerXPChange(PlayerXpEvent.XpChange event){
-		if (!event.getPlayer().world.isRemote) {
-			PlayerEntity player = event.getPlayer();
-			boolean isXpChangeProhibithed = RegionUtils.isPlayerActionProhibited(event.getPlayer().getPosition(), player, RegionFlag.EXP_CHANGE);
-			if (isXpChangeProhibithed) {
-				event.setCanceled(true);
-				// TODO: Seems to not work as it should
-				MessageUtils.sendMessage(player, "message.protection.player.level_change");
-			}
-		}
-	}
-	*/
+	public static void onPlayerXPChange(PlayerXpEvent.XpChange event) {
+        if (!event.getPlayer().world.isRemote) {
+            PlayerEntity player = event.getPlayer();
+            List<IRegion> regions = RegionUtils.getHandlingRegionsFor(player.getPosition(), player.world);
+            for (IRegion region : regions) {
+                if (region.containsFlag(RegionFlag.XP_FREEZE.toString()) && region.forbids(player)) {
+                    MessageUtils.sendStatusMessage(player, "message.protection.player.xp_freeze");
+                    event.setCanceled(true);
+                    event.setAmount(0);
+                    return;
+                }
 
-	/*
+            }
+        }
+    }
+
+
+
 	@SubscribeEvent
 	public static void onPlayerXpPickup(PlayerXpEvent.PickupXp event){
 		if (!event.getPlayer().world.isRemote) {
-			PlayerEntity player = event.getPlayer();
-			boolean isXpPickupProhibithed = RegionUtils.isPlayerActionProhibited(event.getPlayer().getPosition(), player, RegionFlag.EXP_PICKUP);
-			if (isXpPickupProhibithed) {
-				// TODO: Seems to not work as it should
-				event.setCanceled(true);
-				// MessageUtils.sendMessage(player, "message.protection.player.exp_change");
-			}
-		}
-	}
-	*/
+            PlayerEntity player = event.getPlayer();
+            List<IRegion> regions = RegionUtils.getHandlingRegionsFor(player.getPosition(), player.world);
+            for (IRegion region : regions) {
+                if (region.containsFlag(RegionFlag.XP_PICKUP.toString()) && region.forbids(player)) {
+                    MessageUtils.sendStatusMessage(player, "message.protection.player.xp_pickup");
+                    event.setCanceled(true);
+                    event.getOrb().remove();
+                    return;
+                }
 
+            }
+        }
+	}
 
     // TODO: replace with AttackEntityEvent for players and use LivingHurtEvent for enitites
     // TODO: Separate flags for Villagers, Animals, Monsters, Player

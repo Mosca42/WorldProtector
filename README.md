@@ -97,11 +97,11 @@ Currently, there are **48 flags** available:
 - spawning-monsters: prevents spawning of monsters
 - spawning-animal: prevents spawning of animals
 - spawning-irongolem: prevents spawning of iron golems
-- spawning-exp: prevents spawning of exp orbs completely
+- spawning-xp: prevents spawning of xp orbs completely
 - use: prevents players to interact with most blocks like buttons, fences, doors, etc.
 - use-bonemeal: prevents players from using bone meal
 - access-container: prevents players from accessing most containers
-- access-enderchest: prevents players from accessing their ender chest  
+- access-enderchest: prevents players from accessing their ender chest
 - enderpearl-from: prevents ender pearl teleportation out of a region
 - enderpearl-to: prevents ender pearl teleportation to a region
 - enderman-teleport-from: prevents enderman from teleporting out of a region
@@ -110,16 +110,21 @@ Currently, there are **48 flags** available:
 - shulker-teleport-to: prevents shulkers from teleporting to a region
 - item-drop: prevents players from dropping items
 - item-pickup: prevents players from picking up items
-- exp-drop-all: prevents all entities from dropping experience orbs
-- exp-drop-monster: prevents monsters from dropping experience orbs
-- exp-drop-other: prevents non-hostile entities from dropping experience orbs
-- level-freeze: prevents the player levels from increasing/decreasing (exp orbs will still be picked up)
-- damage-players: prevents players from damaging other players (PvP)
-- damage-animals: prevents players from damaging animals
-- damage-villagers: prevents players from damaging villagers
-- damage-monsters: prevents players from damaging monsters
+- xp-drop-all: prevents all entities from dropping xp orbs
+- xp-drop-monster: prevents monsters from dropping xp orbs
+- xp-drop-other: prevents non-hostile entities from dropping xp orbs
+- level-freeze: prevents the player levels from increasing/decreasing (xp orbs will still be picked up)
+- xp-freeze: prevents the player from gaining xp from xp orbs
+- attack-players: prevents players from damaging other players (PvP)
+- attack-animals: prevents players from damaging animals
+- attack-villagers: prevents players from damaging villagers
+- attack-monsters: prevents players from damaging monsters
 - invincible: prevents players from taking damage
-- fall-damage: prevents players from taking damage by fall-damage
+- fall-damage: prevents entities from taking fall damage
+- fall-damage-players: prevents players from taking fall damage
+- fall-damage-animals: prevents animals from taking fall damage
+- fall-damage-villagers: prevents villagers from taking fall damage
+- fall-damage-monsters: prevents monsters from taking fall damage
 - send-chat: prevents players from sending chat messages (doesn't block commands)
 
 You are also able to add or remove all flags by using the special flag 'all'.

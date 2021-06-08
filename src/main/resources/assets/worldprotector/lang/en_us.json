@@ -35,6 +35,8 @@
   "message.event.world.trample_farmland": "You are not allowed to destroy farmland here!",
   "message.event.world.use_bone_meal": "You are not allowed use bone meal here!",
   "message.event.world.exp_drop.all": "All exp drops are disabled here!",
+  "message.protection.player.xp_pickup": "You are not allowed to pickup xp here!",
+  "message.protection.player.xp_freeze": "You are unable to receive xp here!",
   "message.event.world.exp_drop.monsters": "Monster exp drops are disabled here!",
   "message.event.world.exp_drop.non_hostile": "Non-hostile exp drops are disabled here!",
   "message.itemhand.take": "Take the Region Marker into your hand first!",

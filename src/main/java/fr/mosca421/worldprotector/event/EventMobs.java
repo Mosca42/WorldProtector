@@ -48,18 +48,18 @@ public class EventMobs {
 					event.setCanceled(true);
 					return;
 				}
-				if (region.containsFlag(RegionFlag.SPAWNING_GOLEM) && eventEntity instanceof IronGolemEntity) {
-					event.setCanceled(true);
-					return;
-				}
-				if (region.containsFlag(RegionFlag.SPAWNING_MONSTERS) && isMonster(eventEntity)) {
-					event.setCanceled(true);
-					return;
-				}
-				if (region.containsFlag(RegionFlag.SPAWING_EXP) && eventEntity instanceof ExperienceOrbEntity) {
-					event.setCanceled(true);
-					return;
-				}
+			if (region.containsFlag(RegionFlag.SPAWNING_GOLEM) && eventEntity instanceof IronGolemEntity) {
+				event.setCanceled(true);
+				return;
+			}
+			if (region.containsFlag(RegionFlag.SPAWNING_MONSTERS) && isMonster(eventEntity)) {
+				event.setCanceled(true);
+				return;
+			}
+			if (region.containsFlag(RegionFlag.SPAWNING_XP) && eventEntity instanceof ExperienceOrbEntity) {
+				event.setCanceled(true);
+				return;
+			}
 		}
 	}
 

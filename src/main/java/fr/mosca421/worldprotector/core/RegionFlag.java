@@ -43,7 +43,7 @@ public enum RegionFlag {
     SPAWNING_GOLEM("spawning-irongolem"),
     SPAWNING_ANIMAL("spawning-animal"),
     SPAWNING_ALL("spawning-all"),
-    SPAWING_EXP("spawning-exp"),
+    SPAWNING_XP("spawning-xp"),
     //
     USE("use"), // Buttons, Doors, Lever, etc
     USE_BONEMEAL("use-bonemeal"),
@@ -60,12 +60,12 @@ public enum RegionFlag {
     ITEM_DROP("item-drop"),
     ITEM_PICKUP("item-pickup"),
     LOOT_DROP("loot-drop"),
-    EXP_DROP_ALL("exp-drop-all"), // also includes blocks (furnace for example)
-    EXP_DROP_MONSTER("exp-drop-monsters"), // only hostile mobs
-    EXP_DROP_OTHER("exp-drop-other"), // non-hostile: animals, villagers,...
-    EXP_PICKUP("exp-pickup"), // TODO: Currently not working correctly
+    XP_DROP_ALL("xp-drop-all"), // also includes blocks (furnace for example)
+    XP_DROP_MONSTER("xp-drop-monsters"), // only hostile mobs
+    XP_DROP_OTHER("xp-drop-other"), // non-hostile: animals, villagers,...
+    XP_PICKUP("xp-pickup"),
     LEVEL_FREEZE("level-freeze"),
-    EXP_CHANGE("exp-freeze"), // TODO: Currently not working correctly
+    XP_FREEZE("xp-freeze"),
     //
     ATTACK_PLAYERS("attack-players"),
     ATTACK_ANIMALS("attack-animals"),

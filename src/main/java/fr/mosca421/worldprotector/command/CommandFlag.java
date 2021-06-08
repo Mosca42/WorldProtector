@@ -90,8 +90,6 @@ public class CommandFlag {
 							case WITHER_BLOCK_PROT:
 							case ZOMBIE_DOOR_PROT:
 							case ANIMAL_UNMOUNTING:
-							case EXP_CHANGE:
-							case EXP_PICKUP:
 								sendMessage(player, "Flag is currently disabled. We are working on a fix, sorry!");
 								break;
 							case ENTER_MESSAGE_TITLE:
@@ -136,8 +134,6 @@ public class CommandFlag {
 							case WITHER_BLOCK_PROT:
 							case ZOMBIE_DOOR_PROT:
 							case ANIMAL_UNMOUNTING:
-							case EXP_CHANGE:
-							case EXP_PICKUP:
 								sendMessage(player, "Flag is currently disabled. We are working on a fix, sorry!");
 								break;
 							case ENTER_MESSAGE_TITLE:

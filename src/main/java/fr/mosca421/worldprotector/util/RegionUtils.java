@@ -22,6 +22,7 @@ import net.minecraft.world.World;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -227,11 +228,12 @@ public final class RegionUtils {
 	}
 
 	public static void giveRegionList(PlayerEntity player) {
-		if (RegionManager.get().getAllRegions().isEmpty()) {
+		Collection<IRegion> regions = RegionManager.get().getAllRegionsSorted();
+		if (regions.isEmpty()) {
 			sendStatusMessage(player, "message.region.info.no_regions");
 			return;
 		}
-		RegionManager.get().getAllRegions().forEach(region -> {
+		regions.forEach(region -> {
 			sendDimensionTeleportLink(player, region, new TranslationTextComponent("message.region.list.entry", region.getName()));
 		});
 	}
@@ -240,6 +242,7 @@ public final class RegionUtils {
 		List<IRegion> regionsForDim = RegionManager.get().getAllRegions()
 				.stream()
 				.filter(region -> region.getDimension().getLocation().toString().equals(dim))
+				.sorted(Comparator.comparing(IRegion::getName))
 				.collect(Collectors.toList());
 		if (regionsForDim.isEmpty()) {
 			sendMessage(player, new TranslationTextComponent("message.region.info.regions_for_dim", dim));
@@ -252,6 +255,17 @@ public final class RegionUtils {
 
 	public static Collection<String> getDimensionList() {
 		return RegionManager.get().getDimensionList();
+	}
+
+	/**
+	 * Only for usage in commands
+	 *
+	 * @return
+	 */
+	public static Collection<String> getQuotedDimensionList() {
+		return getDimensionList().stream()
+				.map(dim -> "'" + dim + "'")
+				.collect(Collectors.toList());
 	}
 
 	public static List<IRegion> getHandlingRegionsFor(Entity entity, IWorld world) {

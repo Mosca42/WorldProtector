@@ -178,6 +178,14 @@ public class RegionManager extends WorldSavedData {
                 .collect(Collectors.toList());
     }
 
+    public Collection<IRegion> getAllRegionsSorted() {
+        return regionMap.values().stream()
+                .flatMap(regionCache -> regionCache.getRegions()
+                        .stream()
+                        .sorted(Comparator.comparing(IRegion::getName)))
+                .collect(Collectors.toList());
+    }
+
     public Collection<String> getAllRegionNames() {
         return regionMap.values().stream()
                 .flatMap(regionCache -> regionCache.getRegionNames().stream())

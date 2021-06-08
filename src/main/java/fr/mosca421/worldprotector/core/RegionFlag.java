@@ -3,7 +3,6 @@ package fr.mosca421.worldprotector.core;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 public enum RegionFlag {
@@ -46,7 +45,7 @@ public enum RegionFlag {
     SPAWNING_ALL("spawning-all"),
     SPAWING_EXP("spawning-exp"),
     //
-    USE("use"), // Buttons, Doors, Lever, etc  // TODO: Currently not working correctly
+    USE("use"), // Buttons, Doors, Lever, etc
     USE_BONEMEAL("use-bonemeal"),
     CONTAINER_ACCESS("access-container"),
     ENDER_CHEST_ACCESS("access-enderchest"),

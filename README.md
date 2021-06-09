@@ -71,61 +71,61 @@ To define a region, follow these instructions:
 
 ## Flags
 
-Currently, there are **48 flags** available:
+Currently, there are **52 flags** available:
 
-- break: prevents players from breaking blocks
-- place: prevents players from placing blocks
-- ignite-explosives: prevents explosives from blowing up
-- explosions-blocks: prevents all explosions from destroying blocks (doesn't work under Sponge)
-- explosions-entities: prevents all explosions from damaging entities (doesn't work under Sponge)
-- creeper-explosions-blocks: prevents explosions caused by Creepers to destroy blocks (doesn't work under Sponge)
-- creeper-explosions-entities: prevents explosions caused by Creepers to damage entities (doesn't work under Sponge)
-- other-explosions-blocks: prevents all other explosions from destroying blocks (doesn't work under Sponge)
-- other-explosions-entities: prevents all other explosions from damaging entities (doesn't work under Sponge)
-- tools-secondary: prevents all type of secondary tool actions (strip wood, till farmland, create paths)
-- strip-wood: prevents wood from being stripped
-- till-farmland: prevents farmland from being tilled
-- shovel-path: prevents creation of path blocks
-- trample-farmland: prevents all farmland trampling
-- trample-farmland-player: prevents players from trampling farmland
-- trample-farmland-other: prevents non-player entities from trampling farmland
-- lightning: prevents entities being hit by lightning (or at least get hurt/transformed)
-- animal-taming: prevents players from taming animals
-- animal-breeding: prevents players from breeding animals
-- animal-mounting: prevents players from mounting animals
-- spawning-all: prevents spawning of all entities
-- spawning-monsters: prevents spawning of monsters
-- spawning-animal: prevents spawning of animals
-- spawning-irongolem: prevents spawning of iron golems
-- spawning-xp: prevents spawning of xp orbs completely
-- use: prevents players to interact with most blocks like buttons, fences, doors, etc.
-- use-bonemeal: prevents players from using bone meal
-- access-container: prevents players from accessing most containers
-- access-enderchest: prevents players from accessing their ender chest
-- enderpearl-from: prevents ender pearl teleportation out of a region
-- enderpearl-to: prevents ender pearl teleportation to a region
-- enderman-teleport-from: prevents enderman from teleporting out of a region
-- enderman-teleport-to: prevents enderman from teleporting to a region
-- shulker-teleport-from: prevents shulkers from teleporting out of a region
-- shulker-teleport-to: prevents shulkers from teleporting to a region
-- item-drop: prevents players from dropping items
-- item-pickup: prevents players from picking up items
-- xp-drop-all: prevents all entities from dropping xp orbs
-- xp-drop-monster: prevents monsters from dropping xp orbs
-- xp-drop-other: prevents non-hostile entities from dropping xp orbs
-- level-freeze: prevents the player levels from increasing/decreasing (xp orbs will still be picked up)
-- xp-freeze: prevents the player from gaining xp from xp orbs
-- attack-players: prevents players from damaging other players (PvP)
-- attack-animals: prevents players from damaging animals
-- attack-villagers: prevents players from damaging villagers
-- attack-monsters: prevents players from damaging monsters
-- invincible: prevents players from taking damage
-- fall-damage: prevents entities from taking fall damage
-- fall-damage-players: prevents players from taking fall damage
-- fall-damage-animals: prevents animals from taking fall damage
-- fall-damage-villagers: prevents villagers from taking fall damage
-- fall-damage-monsters: prevents monsters from taking fall damage
-- send-chat: prevents players from sending chat messages (doesn't block commands)
+- **break**: prevents players from breaking blocks
+- **place**: prevents players from placing blocks
+- **ignite-explosives**: prevents explosives from blowing up
+- **explosions-blocks**: prevents all explosions from destroying blocks (doesn't work under Sponge)
+- **explosions-entities**: prevents all explosions from damaging entities (doesn't work under Sponge)
+- **creeper-explosions-blocks**: prevents explosions caused by Creepers to destroy blocks (doesn't work under Sponge)
+- **creeper-explosions-entities**: prevents explosions caused by Creepers to damage entities (doesn't work under Sponge)
+- **other-explosions-blocks**: prevents all other explosions from destroying blocks (doesn't work under Sponge)
+- **other-explosions-entities**: prevents all other explosions from damaging entities (doesn't work under Sponge)
+- **tools-secondary**: prevents all type of secondary tool actions (strip wood, till farmland, create paths)
+- **strip-wood**: prevents wood from being stripped
+- **till-farmland**: prevents farmland from being tilled
+- **shovel-path**: prevents creation of path blocks
+- **trample-farmland**: prevents all farmland trampling
+- **trample-farmland-player**: prevents players from trampling farmland
+- **trample-farmland-other**: prevents non-player entities from trampling farmland
+- **lightning**: prevents entities being hit by lightning (or at least get hurt/transformed)
+- **animal-taming**: prevents players from taming animals
+- **animal-breeding**: prevents players from breeding animals
+- **animal-mounting**: prevents players from mounting animals
+- **spawning-all**: prevents spawning of all entities
+- **spawning-monsters**: prevents spawning of monsters
+- **spawning-animal**: prevents spawning of animals
+- **spawning-irongolem**: prevents spawning of iron golems
+- **spawning-xp**: prevents spawning of xp orbs completely
+- **use**: prevents players to interact with most blocks like buttons, fences, doors, etc.
+- **use-bonemeal**: prevents players from using bone meal
+- **access-container**: prevents players from accessing most containers
+- **access-enderchest**: prevents players from accessing their ender chest
+- **enderpearl-from**: prevents ender pearl teleportation out of a region
+- **enderpearl-to**: prevents ender pearl teleportation to a region
+- **enderman-teleport-from**: prevents enderman from teleporting out of a region
+- **enderman-teleport-to**: prevents enderman from teleporting to a region
+- **shulker-teleport-from**: prevents shulkers from teleporting out of a region
+- **shulker-teleport-to**: prevents shulkers from teleporting to a region
+- **item-drop**: prevents players from dropping items
+- **item-pickup**: prevents players from picking up items
+- **xp-drop-all**: prevents all entities from dropping xp orbs
+- **xp-drop-monster**: prevents monsters from dropping xp orbs
+- **xp-drop-other**: prevents non-hostile entities from dropping xp orbs
+- **level-freeze**: prevents the player levels from increasing/decreasing (xp orbs will still be picked up)
+- **xp-freeze**: prevents the player from gaining xp from xp orbs
+- **attack-players**: prevents players from damaging other players (PvP)
+- **attack-animals**: prevents players from damaging animals
+- **attack-villagers**: prevents players from damaging villagers
+- **attack-monsters**: prevents players from damaging monsters
+- **invincible**: prevents players from taking damage
+- **fall-damage**: prevents entities from taking fall damage
+- **fall-damage-players**: prevents players from taking fall damage
+- **fall-damage-animals**: prevents animals from taking fall damage
+- **fall-damage-villagers**: prevents villagers from taking fall damage
+- **fall-damage-monsters**: prevents monsters from taking fall damage
+- **send-chat**: prevents players from sending chat messages (doesn't block commands)
 
 You are also able to add or remove all flags by using the special flag 'all'.
 

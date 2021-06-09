@@ -29,9 +29,9 @@ public enum RegionFlag {
     TRAMPLE_FARMLAND_PLAYER("trample-farmland-player"),
     TRAMPLE_FARMLAND_OTHER("trample-farmland-other"),
     //
-    DRAGON_BLOCK_PROT("dragon-destruction"), // TODO: Currently not working correctly
-    WITHER_BLOCK_PROT("wither-destruction"), // TODO: Currently not working correctly
-    ZOMBIE_DOOR_PROT("zombie-destruction"), // TODO: Currently not working correctly
+    DRAGON_BLOCK_PROT("dragon-destruction"),
+    WITHER_BLOCK_PROT("wither-destruction"),
+    ZOMBIE_DOOR_PROT("zombie-destruction"),
     LIGHTNING_PROT("lightning"),
     //
     ANIMAL_TAMING("animal-taming"),

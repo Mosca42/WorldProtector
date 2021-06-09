@@ -83,12 +83,6 @@ public class CommandFlag {
 							case ALL:
 								RegionFlagUtils.addAllFlags(regionName, player);
 								break;
-							case ENTITY_PLACE:
-							case DRAGON_BLOCK_PROT:
-							case WITHER_BLOCK_PROT:
-							case ZOMBIE_DOOR_PROT:
-								sendMessage(player, "Flag is currently disabled. We are working on a fix, sorry!");
-								break;
 							case ANIMAL_UNMOUNTING:
 								sendMessage(player, "Unmounting flag is currently not working due to a minecraft vanilla bug. This bug is fixed in 1.17. See: https://bugs.mojang.com/browse/MC-202202.");
 								break;
@@ -128,12 +122,6 @@ public class CommandFlag {
 						switch (regionFlag) {
 							case ALL:
 								RegionFlagUtils.removeAllFlags(regionName, player);
-								break;
-							case ENTITY_PLACE:
-							case DRAGON_BLOCK_PROT:
-							case WITHER_BLOCK_PROT:
-							case ZOMBIE_DOOR_PROT:
-								sendMessage(player, "Flag is currently disabled. We are working on a fix, sorry!");
 								break;
 							case ANIMAL_UNMOUNTING:
 								sendMessage(player, "Unmounting flag is currently not working due to a minecraft vanilla bug. This bug is fixed in 1.17. See: https://bugs.mojang.com/browse/MC-202202.");

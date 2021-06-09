@@ -37,7 +37,7 @@ public enum RegionFlag {
     ANIMAL_TAMING("animal-taming"),
     ANIMAL_BREEDING("animal-breeding"),
     ANIMAL_MOUNTING("animal-mounting"),
-    ANIMAL_UNMOUNTING("animal-unmounting"), // TODO: Currently not working correctly
+    ANIMAL_UNMOUNTING("animal-unmounting"), // FIXME: Minecraft vanilla bug fixed in 21w03a
     //
     SPAWNING_MONSTERS("spawning-monsters"),
     SPAWNING_GOLEM("spawning-irongolem"),

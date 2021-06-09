@@ -51,7 +51,8 @@ public class EventInteract {
 							target instanceof DaylightDetectorBlock ||
 							target instanceof RedstoneDiodeBlock ||
 							target instanceof LecternBlock ||
-							target instanceof BeaconBlock;
+							target instanceof BeaconBlock ||
+							target instanceof BrewingStandBlock;
 
 					if (region.containsFlag(RegionFlag.USE) && isPlayerProhibited && isUsableBlock) {
 						if (!player.isSneaking()) {

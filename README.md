@@ -189,15 +189,20 @@ Under the following conditions:
 
 # Possible future features/improvements
 
-* Provide simple gui for choosing flag/region, since there could be many to cycle through
-* Define any shape as a region
+* Flags per dimension
+* Blacklist/Whitelist option for regions and dimensions
 * Region highlighting
+* Flag ideas: set-spawn, sleep-in-bed, use-firework, elytra-fly
 * Configuration support
-* CLI: flags per dimension
+    * Option to disable specific event checks completely for optimization
+    * Default blacklist/whitelist setting for regions
+    * Option to disable messages being sent to players
+* Permission system
+    * Owner for regions
+    * Permission levels for region manipulation (creating, deleting, activating, deactivating)
 * CLI: add command to list regions you are standing in
 * CLI: make region info commands available for all players
 * CLI: add and remove multiple flags at once
 * CLI: add option to define a region without the region marker
-* Add configuration option to disable specific event checks completely for optimization and default blacklist/whitelist
-  setting for regions
-* Blacklist/Whitelist option for regions
+* Provide simple gui for choosing flag/region, since there could be many to cycle through
+* Define any shape as a region

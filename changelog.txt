@@ -2,6 +2,7 @@
 * Add flags preventing fall damage for villagers, animals, monsters, players and all entities
 * Fix and re-enable xp-pickup flag. The xp-pickup flag prevents xp from being picked up. The xp orbs are destroyed in this process.
 * Fix and re-enable xp-freeze flag. The xp-freezes flag freezes the xp of players. The xp orbs are destroyed in this process.
+* Fix break flag not working with buckets and scooping up fluids.
 1.16.5-2.1.0.1
 * Fix use flag not working correctly
 * Fix /wp region list [<dimension>] command not working properly and regions are now listed per dimension and in alphabetical order.

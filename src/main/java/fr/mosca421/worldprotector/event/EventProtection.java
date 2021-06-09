@@ -4,11 +4,18 @@ import fr.mosca421.worldprotector.WorldProtector;
 import fr.mosca421.worldprotector.core.IRegion;
 import fr.mosca421.worldprotector.core.RegionFlag;
 import fr.mosca421.worldprotector.util.RegionUtils;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.IWaterLoggable;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.CreeperEntity;
 import net.minecraft.entity.monster.EndermanEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.state.properties.BlockStateProperties;
+import net.minecraft.tags.FluidTags;
+import net.minecraft.tags.ITag;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ToolType;
@@ -146,23 +153,52 @@ public class EventProtection {
 	@SubscribeEvent
 	// Note: Does not prevent from fluids generate additional blocks (cobble generator). Use BlockEvent.FluidPlaceBlockEvent for this
 	public static void onBucketFill(FillBucketEvent event) {
+		// Note: FilledBucket seems to always be null. use maxStackSize to determine bucket state (empty or filled)
 		PlayerEntity player = event.getPlayer();
 		if (!event.getWorld().isRemote && event.getTarget() != null) {
 			List<IRegion> regions = RegionUtils.getHandlingRegionsFor(new BlockPos(event.getTarget().getHitVec()), event.getWorld());
 			for (IRegion region : regions) {
-				int bucketItemMaxStackCount = event.getEmptyBucket().getMaxStackSize();
 				// MaxStackSize: 1 -> full bucket so only placeable; >1 -> empty bucket, only fillable
-				if (bucketItemMaxStackCount == 1 && region.containsFlag(RegionFlag.PLACE.toString()) && !region.permits(player)) {
-					sendStatusMessage(player, new TranslationTextComponent("message.event.protection.place_fluid"));
-					event.setCanceled(true);
-					return;
+				int bucketItemMaxStackCount = event.getEmptyBucket().getMaxStackSize();
+
+				// placing fluid
+				if (bucketItemMaxStackCount == 1) {
+					if (region.containsFlag(RegionFlag.PLACE.toString()) && !region.permits(player)) {
+						sendStatusMessage(player, new TranslationTextComponent("message.event.protection.place_fluid"));
+						event.setCanceled(true);
+						return;
+					}
 				}
-				// FIXME: Message is send if target raycast hits a non fluid. Check if event.getTarget hits a fluid
-				if (bucketItemMaxStackCount > 1 && region.containsFlag(RegionFlag.BREAK.toString()) && !region.permits(player)) {
-					sendStatusMessage(player, new TranslationTextComponent("message.event.protection.scoop_fluid"));
-					event.setCanceled(true);
-					return;
+
+				// scooping fluid (breaking fluid)
+				if (bucketItemMaxStackCount > 1) {
+					boolean isWaterlogged = false;
+					boolean isFluid = false;
+					RayTraceResult pos = event.getTarget();
+					if (pos != null && pos.getType() == RayTraceResult.Type.BLOCK) {
+						Vector3d absPos = pos.getHitVec();
+						BlockState blockState = event.getWorld().getBlockState(new BlockPos(absPos));
+						// check for waterlogged block
+						if (blockState.getBlock() instanceof IWaterLoggable) {
+							isWaterlogged = blockState.get(BlockStateProperties.WATERLOGGED);
+						}
+						// check if target has a fluid tag
+						for (ITag.INamedTag tag : FluidTags.getAllTags()) {
+							if (blockState.getFluidState().getFluid().isIn(tag)) {
+								isFluid = true;
+								break;
+							}
+						}
+						if (isWaterlogged || isFluid) {
+							if (region.containsFlag(RegionFlag.BREAK.toString()) && !region.permits(player)) {
+								sendStatusMessage(player, new TranslationTextComponent("message.event.protection.scoop_fluid"));
+								event.setCanceled(true);
+								return;
+							}
+						}
+					}
 				}
+
 			}
 		}
 	}

@@ -152,7 +152,6 @@ public class EventWorld {
                 }
                 if (region.containsFlag(RegionFlag.ZOMBIE_DOOR_PROT) && destroyer instanceof ZombieEntity) {
                     event.setCanceled(true);
-                    WorldProtector.LOGGER.debug("STOP YOU ZOMBIE!");
                     return;
                 }
             }

@@ -134,7 +134,6 @@ public class EventWorld {
     }
 
     @SubscribeEvent
-    // TODO: Test
     public static void onEntityDestroyBlock(LivingDestroyBlockEvent event){
         if (!event.getEntityLiving().world.isRemote) {
             LivingEntity destroyer = event.getEntityLiving();
@@ -142,12 +141,11 @@ public class EventWorld {
             for (IRegion region : regions) {
                 if (region.containsFlag(RegionFlag.DRAGON_BLOCK_PROT) && destroyer instanceof EnderDragonEntity) {
                     event.setCanceled(true);
-                    WorldProtector.LOGGER.debug("STOP YOU DRAGON!");
                     return;
                 }
+
                 if (region.containsFlag(RegionFlag.WITHER_BLOCK_PROT) && destroyer instanceof WitherEntity) {
                     event.setCanceled(true);
-                    WorldProtector.LOGGER.debug("STOP YOU WITHER!");
                     return;
                 }
                 if (region.containsFlag(RegionFlag.ZOMBIE_DOOR_PROT) && destroyer instanceof ZombieEntity) {

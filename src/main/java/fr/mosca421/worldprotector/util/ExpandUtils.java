@@ -17,10 +17,10 @@ public final class ExpandUtils {
 
 	public static void giveHelpMessage(PlayerEntity player) {
 		sendMessage(player, "");
-		sendMessage(player, new TranslationTextComponent(TextFormatting.BLUE + "== WorldProtector Help =="));
+		sendMessage(player, new TranslationTextComponent(TextFormatting.AQUA + "== WorldProtector Help =="));
 		sendMessage(player, "help.expand.1");
 		sendMessage(player, "help.expand.2");
-		sendMessage(player, new TranslationTextComponent(TextFormatting.BLUE + "== WorldProtector Help =="));
+		sendMessage(player, new TranslationTextComponent(TextFormatting.AQUA + "== WorldProtector Help =="));
 	}
 
 	public static void expandVert(PlayerEntity player, ItemStack item, int y1, int y2) {

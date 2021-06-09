@@ -53,6 +53,8 @@ public class CommandRegion {
                         .then(Commands.argument(Command.REGION.toString(), StringArgumentType.string())
                                 .suggests((ctx, builder) -> ISuggestionProvider.suggest(RegionManager.get().getAllRegionNames(), builder))
                                 .executes(ctx -> teleport(ctx.getSource(), StringArgumentType.getString(ctx, Command.REGION.toString())))))
+                .then(Commands.literal("around")
+                        .executes(ctx -> listRegionsAround(ctx.getSource())))
                 .then(Commands.literal(Command.ACTIVATE.toString())
                         .then(Commands.argument(Command.REGION.toString(), StringArgumentType.string())
                                 .suggests((ctx, builder) -> ISuggestionProvider.suggest(RegionManager.get().getAllRegionNames(), builder))
@@ -188,6 +190,15 @@ public class CommandRegion {
     private static int removeAll(CommandSource source) {
         try {
             RegionUtils.removeAllRegions(source.asPlayer());
+        } catch (CommandSyntaxException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    private static int listRegionsAround(CommandSource source) {
+        try {
+            RegionUtils.listRegionsAroundPlayer(source.asPlayer());
         } catch (CommandSyntaxException e) {
             e.printStackTrace();
         }

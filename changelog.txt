@@ -1,3 +1,5 @@
+1.16.5-2.1.2.0
+* Add command to list regions the player is standing in: /wp region around
 1.16.5-2.1.1.0
 * Add flags preventing fall damage for villagers, animals, monsters, players and all entities
 * Fix and re-enable xp-pickup flag. The xp-pickup flag prevents xp from being picked up. The xp orbs are destroyed in this process.

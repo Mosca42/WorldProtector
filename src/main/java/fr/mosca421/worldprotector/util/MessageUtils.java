@@ -32,6 +32,14 @@ public final class MessageUtils {
         return String.format("%.2f", value);
     }
 
+    public static void sendRegionInfoCommand(String regionName, PlayerEntity player) {
+        sendMessage(player, new StringTextComponent("  - ").append(TextComponentUtils.wrapWithSquareBrackets(new StringTextComponent("'" + regionName + "'"))
+                .setStyle(Style.EMPTY.setColor(Color.fromTextFormatting(TextFormatting.GREEN))
+                        .setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/wp region info " + regionName))
+                        .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new StringTextComponent("Show region info"))))));
+
+    }
+
     public static void sendDimensionTeleportLink(PlayerEntity player, IRegion region, IFormattableTextComponent msg) {
         BlockPos target = region.getTpTarget();
         String dim = region.getDimension().getLocation().toString();

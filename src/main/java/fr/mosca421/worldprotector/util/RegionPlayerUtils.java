@@ -108,11 +108,11 @@ public final class RegionPlayerUtils {
     }
 
     public static void giveHelpMessage(PlayerEntity player) {
-        sendMessage(player, new TranslationTextComponent(TextFormatting.BLUE + "== WorldProtector Help =="));
+        sendMessage(player, new TranslationTextComponent(TextFormatting.AQUA + "== WorldProtector Help =="));
         sendMessage(player, "help.players.1");
         sendMessage(player, "help.players.2");
         sendMessage(player, "help.players.3");
-        sendMessage(player, new TranslationTextComponent(TextFormatting.BLUE + "== WorldProtector Help =="));
+        sendMessage(player, new TranslationTextComponent(TextFormatting.AQUA + "== WorldProtector Help =="));
     }
 
 }

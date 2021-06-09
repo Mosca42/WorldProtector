@@ -92,12 +92,12 @@ public final class RegionFlagUtils {
 	}
 
 	public static void giveHelpMessage(PlayerEntity player) {
-		sendMessage(player, new TranslationTextComponent(TextFormatting.BLUE + "== WorldProtector Help =="));
+		sendMessage(player, new TranslationTextComponent(TextFormatting.AQUA + "== WorldProtector Help =="));
 		sendMessage(player, "help.flags.1");
 		sendMessage(player, "help.flags.2");
 		sendMessage(player, "help.flags.3");
 		sendMessage(player, "help.flags.4");
-		sendMessage(player, new TranslationTextComponent(TextFormatting.BLUE + "== WorldProtector Help =="));
+		sendMessage(player, new TranslationTextComponent(TextFormatting.AQUA + "== WorldProtector Help =="));
 	}
 
 	public static String getFlagString(IRegion region) {

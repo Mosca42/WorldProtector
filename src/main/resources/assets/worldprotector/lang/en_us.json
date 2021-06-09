@@ -106,6 +106,7 @@
   "help.region.3": "/wp region delete <name>: Removes the region",
   "help.region.4": "/wp region list: List all regions",
   "help.region.4a": "/wp region list [<dim>]: List all regions in a dimension",
+  "help.region.4b": "/wp region around: List all regions the player is standing in",
   "help.region.5": "/wp region info <region>: Shows info about the region",
   "help.region.6": "/wp region setpriority <region> <priority>: Set priority of region (1-9)",
   "help.region.7": "/wp region getpriority <region>: Get priority of region",

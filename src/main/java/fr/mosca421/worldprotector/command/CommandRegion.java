@@ -74,7 +74,7 @@ public class CommandRegion {
                 .then(Commands.literal(Command.SET_PRIORITY.toString())
                         .then(Commands.argument(Command.REGION.toString(), StringArgumentType.string())
                                 .suggests((ctx, builder) -> ISuggestionProvider.suggest(RegionManager.get().getAllRegionNames(), builder))
-                                .then(Commands.argument(Command.PRIORITY.toString(), IntegerArgumentType.integer(1, 9))
+                                .then(Commands.argument(Command.PRIORITY.toString(), IntegerArgumentType.integer(1, Integer.MAX_VALUE))
                                         .executes(ctx -> setPriority(ctx.getSource(), StringArgumentType.getString(ctx, Command.REGION.toString()), IntegerArgumentType.getInteger(ctx, Command.PRIORITY.toString()))))));
     }
 

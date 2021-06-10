@@ -95,7 +95,7 @@ Use ```/wp help``` for more information. Or ```/wp help <command>``` for informa
 
 ### Flags
 
-Currently, there are **52 flags** available:
+Currently, there are **63 flags** available:
 
 - **break**: prevents players from breaking blocks
 - **place**: prevents players from placing blocks
@@ -150,6 +150,17 @@ Currently, there are **52 flags** available:
 - **fall-damage-villagers**: prevents villagers from taking fall damage
 - **fall-damage-monsters**: prevents monsters from taking fall damage
 - **send-chat**: prevents players from sending chat messages (doesn't block commands)
+- **exec-command**: prevents players from executing commands
+- **set-spawn**: prevents players from setting their spawn point
+- **reset-spawn**: prevents players from re-setting their spawn point
+- **sleep**: prevents players from sleeping
+- **spawn-portal**: prevents creating of portal blocks by lighting obsidian
+- **use-portal**: prevents all entities from using portals (changing dimensions)
+- **use-portal-items**: prevents all entities from using portals (changing dimensions)
+- **use-portal-players**: prevents players from using portals (changing dimensions)
+- **use-portal-monsters**: prevents monsters from using portals (changing dimensions)
+- **use-portal-villagers**: prevents villagers from using portals (changing dimensions)
+- **use-portal-animals**: prevents animals from using portals (changing dimensions)
 
 You are also able to add or remove all flags by using the special flag 'all': ```/wp flag remove <region> all```
 

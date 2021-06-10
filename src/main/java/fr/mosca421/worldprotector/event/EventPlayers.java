@@ -1,5 +1,6 @@
 package fr.mosca421.worldprotector.event;
 
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import fr.mosca421.worldprotector.WorldProtector;
 import fr.mosca421.worldprotector.core.IRegion;
 import fr.mosca421.worldprotector.core.RegionFlag;
@@ -13,22 +14,22 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.AirItem;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraftforge.client.event.ClientChatEvent;
+import net.minecraftforge.event.CommandEvent;
 import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.entity.EntityMountEvent;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
-import net.minecraftforge.event.entity.player.AnvilRepairEvent;
-import net.minecraftforge.event.entity.player.AttackEntityEvent;
-import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
-import net.minecraftforge.event.entity.player.PlayerXpEvent;
+import net.minecraftforge.event.entity.player.*;
+import net.minecraftforge.event.world.SleepFinishedTimeEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 import java.util.List;
 
-import static fr.mosca421.worldprotector.util.MessageUtils.sendMessage;
 import static fr.mosca421.worldprotector.util.MessageUtils.sendStatusMessage;
 
 @Mod.EventBusSubscriber(modid = WorldProtector.MODID)
@@ -179,6 +180,7 @@ public class EventPlayers {
     }
 
     @SubscribeEvent
+    // message send to server but not distributed to all clients
     public static void onSendChat(ServerChatEvent event) {
         if (event.getPlayer() != null) {
             ServerPlayerEntity player = event.getPlayer();
@@ -193,13 +195,91 @@ public class EventPlayers {
     }
 
     @SubscribeEvent
-    public static void onPlayerDropItem(ItemTossEvent event) {
-        List<IRegion> regions = RegionUtils.getHandlingRegionsFor(event.getPlayer().getPosition(), event.getPlayer().world);
+    public static void onChatSend(ClientChatEvent event) {
+        // can only prevent sending commands/chat for all/global
+        // Possible place for a profanity filter
+    }
+
+    @SubscribeEvent
+    public static void onCommandSend(CommandEvent event) {
+        try {
+            PlayerEntity player = event.getParseResults().getContext().getSource().asPlayer();
+            BlockPos playerPos = player.getPosition();
+            List<IRegion> regions = RegionUtils.getHandlingRegionsFor(playerPos, player.world);
+            for (IRegion region : regions) {
+                if (region.containsFlag(RegionFlag.EXECUTE_COMMAND.toString()) && region.forbids(player)) {
+                    event.setCanceled(true);
+                    MessageUtils.sendStatusMessage(player, "message.event.player.execute-commands");
+                    return;
+                }
+            }
+            // TODO: add command list to block only specific commands, regardless of mod and permission of command
+            // event.getParseResults().getContext().getNodes().forEach(node -> WorldProtector.LOGGER.debug(node.getNode().getName()));
+        } catch (CommandSyntaxException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @SubscribeEvent
+    public static void onPlayerSleep(SleepingTimeCheckEvent event) {
+
+    }
+
+    @SubscribeEvent
+    public static void onPlayerSleep(SleepFinishedTimeEvent event) {
+
+    }
+
+    @SubscribeEvent
+    public static void onPlayerSleep(PlayerSleepInBedEvent event) {
+        PlayerEntity player = event.getPlayer();
+        List<IRegion> regions = RegionUtils.getHandlingRegionsFor(player.getPosition(), player.world);
         for (IRegion region : regions) {
-            if (region.containsFlag(RegionFlag.ITEM_DROP.toString()) && region.forbids(event.getPlayer())) {
+            if (region.containsFlag(RegionFlag.SLEEP.toString()) && region.forbids(player)) {
                 event.setCanceled(true);
-                event.getPlayer().inventory.addItemStackToInventory(event.getEntityItem().getItem());
-                event.getPlayer().sendMessage(new TranslationTextComponent("message.event.player.drop_item"), event.getPlayer().getUniqueID());
+                MessageUtils.sendStatusMessage(player, "message.event.player.sleep");
+                return;
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public static void onSetSpawn(PlayerSetSpawnEvent event) {
+        BlockPos newSpawn = event.getNewSpawn();
+        PlayerEntity player = event.getPlayer();
+        List<IRegion> regions = RegionUtils.getHandlingRegionsFor(player.getPosition(), player.world);
+        if (newSpawn == null) {
+            // attempt to reset spawn
+            for (IRegion region : regions) {
+                if (region.containsFlag(RegionFlag.RESET_SPAWN.toString()) && region.forbids(player)) {
+                    event.setCanceled(true);
+                    MessageUtils.sendStatusMessage(player, "message.event.player.reset_spawn");
+                    return;
+                }
+            }
+
+        } else {
+            // attempt to set spawn
+            for (IRegion region : regions) {
+                if (region.containsFlag(RegionFlag.SET_SPAWN.toString()) && region.forbids(player)) {
+                    event.setCanceled(true);
+                    MessageUtils.sendStatusMessage(player, "message.event.player.set_spawn");
+                    return;
+                }
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public static void onPlayerDropItem(ItemTossEvent event) {
+        PlayerEntity player = event.getPlayer();
+        List<IRegion> regions = RegionUtils.getHandlingRegionsFor(player.getPosition(), player.world);
+        for (IRegion region : regions) {
+            if (region.containsFlag(RegionFlag.ITEM_DROP.toString()) && region.forbids(player)) {
+                event.setCanceled(true);
+                player.inventory.addItemStackToInventory(event.getEntityItem().getItem());
+                MessageUtils.sendStatusMessage(player, "message.event.player.drop_item");
+                return;
             }
         }
     }
@@ -223,7 +303,7 @@ public class EventPlayers {
 					*/
                     if (event.isMounting() && region.containsFlag(RegionFlag.ANIMAL_MOUNTING) && region.forbids(player)) {
                         event.setCanceled(true);
-                        sendMessage(player, "message.event.player.mount");
+                        sendStatusMessage(player, "message.event.player.mount");
                     }
                 }
             }

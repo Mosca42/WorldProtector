@@ -21,10 +21,8 @@ public enum Command {
     ACTIVATE("activate"),
     DEACTIVATE("deactivate"),
     PRIORITY("priority"),
-    PRIORITY_SET("setpriority"),
+    SET_PRIORITY("set-priority"),
     PLAYER("player"),
-    PLAYER_REMOVE("removeplayer"),
-    PLAYER_ADD("addplayer"),
     Y1("Y1"),
     Y2("Y2");
 

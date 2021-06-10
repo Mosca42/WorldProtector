@@ -1,52 +1,23 @@
 # Introduction
 
-WorldProtector is a mod allows you to protect your constructions on your servers, 
-it's based on the same principle as the plugin WorldGuard but with several differences at command level.
+WorldProtector is a mod allows you to protect your constructions on your servers. It's based on the same principle as
+the plugin WorldGuard but with several differences at command level.
 
-# Features
+The port of the 1.16.5 version introduces a lot of new flags, new protection features, as well as some QoL improvements.
+This mentioned be aware that some of the described features below are not present in every version.
 
-## Sticks!
+**At this point there is only one active developer working on this mod. Until this changes the **main focus** will be
+about maintaining version **1.16.5** and porting the mod to newer Minecraft versions. This means no new features will be
+ported back to previous versions, sorry.**
 
-There are three different sticks, which can help you define regions, add and remove protection flags to them, as well as players.
-Except for the marking, which has to be done with the Region Marker, it is possible to use this mod only with the command line.
+To protect your world you can define regions which can be protected against various actions by adding flags to the
+regions. These flags prevent certain actions/events from happening to protect the region: e.g. placing blocks, using
+doors or explosions destroying blocks.
 
-The most common task can also be done without commands!
+This can be done with the Flag Stick in conjunction with the Region Stick or with commands. You can further add players
+to a regions which are then allowed to bypass these rules/flags.
 
-### Region Marker
-
-The Region Marker allows you to mark an area (cuboid) for which you can then specify a name. For a region it is possible
-to apply flags that prevent certain actions/events from happening to protect it. This can be done with the Flag Stick in
-conjunction with the Region Stick.
-
-### Region Stick
-
-The Region Stick is used to select the region you want to edit.
-When selected a region it is possible to add players to the region by first choosing the desired mode (add or remove player), and then hitting the player (don't worry it does not hurt).
-Added players are then not affected by the flags. 
-
-### Flag Stick
-
-The Flag Stick is used to select the flag you want to add/remove to/from a region. 
-Choose the corresponding mode (add or remove flag) and hold the Region Stick with the selected region in your offhand. Then hold-right click.
-
-Analogous you can also put a bunch of name tags, named with the corresponding flag names in an anvil, into a container and shift-right click on the container to add or remove all flags in the container at once!
-
-## Commands
-
-Currently, there are three types of commands :
-
-- ```/wp region```: allows to define, edit, remove a region.
-
-- ```/wp expand```: allows to modify the Y level (height) of the marked region.
-
-- ```/wp flag```: allows to define one or several flags (rules) for a region to protect it.
-
-- ```/wp player```: allows to add/remove players to/from regions
-
-Type /wp help for more information.
-
-
-## Create a region
+## How to create a region?
 
 To define a region, follow these instructions:
 
@@ -56,20 +27,73 @@ To define a region, follow these instructions:
    default is 0 to 255) or by using the secondary function of the Region Marker (see Region Marker tooltip).
 
 3. [Optional] Set the teleportation target of the region with SHIFT right-click on a block. You can teleport to this
-   region later by using ```/wp region tp <your region's name>```. When not set, a default teleportation position will
-   be calculated.
+   region later by using ```/wp region tp <region>```. When not set, a default teleportation position will be
+   calculated.
 
-4. Define your region: ```/wp region define <your region's name>``` or by renaming the Region Marker in an anvil.
+4. Define your region: ```/wp region define <region>``` or by renaming the Region Marker in an anvil. The regions are
+   saved with their name per dimension. This means you cannot have multiple regions with the same name in the same
+   dimension. Defining a region with an already used name will override the existing one.
 
-5. Add flags to your region by using the appropriate command ```/wp flag add <your region's name> <flag name>``` or by
-   using the Flag Stick in conjunction with the Region Stick (see Flag Stick and Region Stick tooltips).
+5. Add flags to your region by using the appropriate command ```/wp flag add <region> <flag name>``` or by using the
+   Flag Stick in conjunction with the Region Stick (see Flag Stick and Region Stick tooltips).
 
 6. [Optional] Add players to your region which are allowed to bypass the flags by using the
-   command ````/wp player add <your region's name> <playername>```` or by using the Region Stick (see Region Stick
-   tooltip for more details).
+   command ````/wp player add <region> <playername>```` or by using the Region Stick (see Region Stick tooltip for more
+   details).
 
+## Features
 
-## Flags
+### Sticks!
+
+There are three different sticks, which can help you define regions, add and remove protection flags to them, as well as
+players. These sticks are extension to the already existing commands the mod offers.
+
+Except for the marking, which has to be done with the Region Marker, it is possible to use this mod only with the
+command line. But the most common task can also be done without commands!
+
+Be sure to check out the tooltips of the sticks to get more information!
+
+#### Region Marker (the red one)
+
+The Region Marker allows you to mark an area (cuboid) for which you can then specify a name later(no whitespace
+allowed!). To mark a region you simply mark to blocks in the world by clicking on them. Additional you can SHIFT +
+right-click to set a teleport target for the region you are marking.
+
+#### Region Stick (the blue one)
+
+The Region Stick is used to select the region you want to edit. This can be done by holding it in your main hand and
+left-clicking. With this you are able to cycle through the regions defined in your current dimension.
+
+When selected a region it is possible to add players to the region by first choosing the desired mode (add or remove
+player) with SHIFT + right-click, and then hitting a player (don't worry it does not hurt). Added players are not
+affected by the flags.
+
+#### Flag Stick (the green one)
+
+The Flag Stick is used to select the flag you want to add/remove to/from a region. This works analog to the region
+stick. First choose the corresponding mode (add or remove flag) with SHIFT + right-click, then hold the Region Stick
+with the selected region in your offhand, finally hold-right click to apply the flag to the region.
+
+You can also put a bunch of name tags, named with the corresponding flag names in an anvil, into a container and
+shift-right click on the container to add or remove all flags in the container at once!
+This way you are able to group flags for the same purpose in a container and reuse it when needed. A real time saver!
+
+### Commands
+
+Currently, there are four types of commands to manager regions:
+
+- ```/wp region```: Define, update, remove, activate/deactivate, set region priority; List regions, query information,
+  teleport to regions regions;
+
+- ```/wp expand```: allows to modify the Y level (height) of the marked region.
+
+- ```/wp flag```: allows to define one or several flags (rules) for a region to protect it.
+
+- ```/wp player```: allows to add/remove players to/from regions
+
+Use ```/wp help``` for more information. Or ```/wp help <command>``` for information about a specific command.
+
+### Flags
 
 Currently, there are **52 flags** available:
 
@@ -127,38 +151,38 @@ Currently, there are **52 flags** available:
 - **fall-damage-monsters**: prevents monsters from taking fall damage
 - **send-chat**: prevents players from sending chat messages (doesn't block commands)
 
-You are also able to add or remove all flags by using the special flag 'all'.
+You are also able to add or remove all flags by using the special flag 'all': ```/wp flag remove <region> all```
 
-## Region priority
+### Region priority / Overlapping regions
 
-If a region is inside another region you have to use the command 
-```/wp region setpriority <your region's name> <priority (1,2,3,4,5,6...)>``` to give a specific region more priority over another.
+If a region is inside another region you have to use the command
+```/wp region set-priority <region> <priority>``` to give a specific region more priority over another. The higher the
+number, the higher the regions' priority.
 
-Let's suppose that there is a pvp arena in your spawn. Your spawn forbids pvp, but your in your arena you want to have pvp allowed.
-Then it's necessary that the arena gains the upper hand over the spawn to activate, if not pvp will not be possible.
+Let's suppose that there is a pvp arena in your spawn. Your spawn forbids pvp, but your in your arena you want to have
+pvp allowed. Then it's necessary that the arena gains the upper hand over the spawn to activate, if not pvp will not be
+possible.
 
-Therefore, the arena region needs to have a higher priority than the spawn region. The following example show how to achieve this:
+Therefore, the arena region needs to have a higher priority than the spawn region. The following example show how to
+achieve this:
 
-```/wp region setpriority spawn 1```
+```/wp region set-priority spawn 1```
 
-```/wp region setpriority arena 2```
+```/wp region set-priority arena 2```
 
-2 is superior to 1, so that the arena gains the upper hand over the spawn region and PvP is possible.
-
-
-# Additional information
+## Additional information
 
 - The mod has to be installed on the client and on the server.
 - You can use this mod in a custom modpack.
 
-# Contribution
+### Contribution
 
 Found a bug? Or do you have an idea for a new flag or just a general suggestions for the mod?
 
 Don't hesitate to propose them to me. Or even better: Open a
 new [issue](https://github.com/Mosca42/WorldProtector/issues)!
 
-# Special thanks
+### Special thanks
 
 Thanks to BrokenSwing for his help about regions and safeguard in the world.
 
@@ -166,9 +190,12 @@ Thanks to TheBossMax2 for the mod logo.
 
 Thanks to z0rdak for porting the mod to version 1.16.5 and adding new features in the process.
 
-DISCORD: [WorldProtector Discord](https://discord.gg/MsA8XPc)
+### Links
 
-# License
+* [WorldProtector Discord](https://discord.gg/MsA8XPc)
+* [WorldProtector on Curseforge](https://www.curseforge.com/minecraft/mc-mods/worldprotector)
+
+### License
 
 This mod is open sourced under the Creative Commons 3.0 Attribution Non-Commercial License
 https://creativecommons.org/licenses/by-nc/3.0/legalcode
@@ -177,6 +204,7 @@ Summary
 https://creativecommons.org/licenses/by-nc/3.0/
 
 You are free to:
+
 * Share — copy and redistribute the material in any medium or format
 * Adapt — remix, transform, and build upon the material
 * The licensor cannot revoke these freedoms as long as you follow the license terms.
@@ -186,8 +214,7 @@ Under the following conditions:
 * NonCommercial — You may not use the material for commercial purposes.
 * No additional restrictions — You may not apply legal terms or technological measures that legally restrict others from doing anything the license permits.
 
-
-# Possible future features/improvements
+### Possible future features/improvements
 
 * Flags per dimension
 * Blacklist/Whitelist option for regions and dimensions

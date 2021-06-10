@@ -1,5 +1,5 @@
 1.16.5-2.1.2.0
-* Add command to list regions the player is standing in: /wp region around.
+* When using the command /wp region info [<region>] without supplying a region name a list of regions the player is standing in is shown.
 * Remove /wp region getpriority <region>. Use /wp region info <region> instead.
 1.16.5-2.1.1.0
 * Add flags preventing fall damage for villagers, animals, monsters, players and all entities

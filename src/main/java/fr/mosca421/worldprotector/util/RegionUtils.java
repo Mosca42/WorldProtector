@@ -214,6 +214,7 @@ public final class RegionUtils {
 		sendMessage(player, new TranslationTextComponent(TextFormatting.AQUA + "== WorldProtector Help =="));
 	}
 
+	// TODO: Hover events for flags and players for readability
 	public static void giveRegionInfo(PlayerEntity player, String regionName) {
 		if (RegionManager.get().containsRegion(regionName)) {
 			RegionManager.get().getRegion(regionName).ifPresent(region -> {
@@ -232,8 +233,7 @@ public final class RegionUtils {
 						: new TranslationTextComponent("message.region.info.active.false")));
 				sendMessage(player, new StringTextComponent(TextFormatting.AQUA + "== Region '" + regionName + "' information =="));
 			});
-		}
-		else {
+		} else {
 			sendStatusMessage(player, new TranslationTextComponent("message.region.unknown", regionName));
 		}
 

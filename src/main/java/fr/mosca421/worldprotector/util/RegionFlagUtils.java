@@ -27,7 +27,12 @@ public final class RegionFlagUtils {
 	}
 
 	public static void addAllFlags(String regionName, PlayerEntity player) {
-		addFlags(regionName, player, RegionFlag.getFlags());
+		if (RegionManager.get().containsRegion(regionName)) {
+			RegionManager.get().addFlags(regionName, RegionFlag.getFlags());
+			sendMessage(player, new TranslationTextComponent("message.flags.add.all", regionName));
+		} else {
+			sendMessage(player, new TranslationTextComponent("message.region.unknown", regionName));
+		}
 	}
 
 	public static void addFlags(String regionName, PlayerEntity player, List<String> flags) {
@@ -45,7 +50,12 @@ public final class RegionFlagUtils {
 	}
 
 	public static void removeAllFlags(String regionName, PlayerEntity player) {
-		removeFlags(regionName, player, RegionFlag.getFlags());
+		if (RegionManager.get().containsRegion(regionName)) {
+			RegionManager.get().removeFlags(regionName, RegionFlag.getFlags());
+			sendMessage(player, new TranslationTextComponent("message.flags.remove.all", regionName));
+		} else {
+			sendMessage(player, new TranslationTextComponent("message.region.unknown", regionName));
+		}
 	}
 
 	public static void removeFlags(String regionName, PlayerEntity player, List<String> flags) {

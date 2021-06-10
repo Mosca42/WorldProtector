@@ -1,20 +1,42 @@
 package fr.mosca421.worldprotector.data;
 
 import fr.mosca421.worldprotector.core.IRegion;
+import fr.mosca421.worldprotector.core.Region;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
+import net.minecraft.nbt.StringNBT;
+import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.common.util.INBTSerializable;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class DimensionRegionCache extends HashMap<String, IRegion> {
+public class DimensionRegionCache extends HashMap<String, IRegion> implements INBTSerializable<CompoundNBT> {
+
+    public static final String WHITELIST = "whitelist"; // boolean
+    public static final String FLAGS = "flags"; // list
+    public static final String REGIONS = "regions";  //compound
+    public static final String PROTECTORS = "protectors"; // list of uuid?
+    public Collection<String> dimensionFlags;
+    public Collection<String> protectors;
+    public boolean hasWhitelist;
 
     public DimensionRegionCache(IRegion region) {
-        super();
+        this();
         addRegion(region);
     }
 
     public DimensionRegionCache() {
         super();
+        this.dimensionFlags = new ArrayList<>(0);
+        this.protectors = new ArrayList<>(0);
+        this.hasWhitelist = true;
+    }
+
+    public DimensionRegionCache(CompoundNBT nbt) {
+        this();
+        deserializeNBT(nbt);
     }
 
     public boolean isActive(String regionName) {
@@ -160,5 +182,69 @@ public class DimensionRegionCache extends HashMap<String, IRegion> {
             return new HashSet<>(getRegion(regionName).getPlayers().values());
         }
         return new HashSet<>();
+    }
+
+    public static CompoundNBT serializeCache(DimensionRegionCache dimensionRegionCache) {
+        CompoundNBT dimCache = new CompoundNBT();
+        for (Map.Entry<String, IRegion> regionEntry : dimensionRegionCache.entrySet()) {
+            dimCache.put(regionEntry.getKey(), regionEntry.getValue().serializeNBT());
+        }
+        return dimCache;
+    }
+
+    public static DimensionRegionCache deserialize(CompoundNBT nbt) {
+        DimensionRegionCache dimCache = new DimensionRegionCache();
+        for (String regionKey : nbt.keySet()) {
+            CompoundNBT regionNbt = nbt.getCompound(regionKey);
+            Region region = new Region(regionNbt);
+            dimCache.addRegion(region);
+        }
+        return dimCache;
+    }
+
+    @Override
+    public CompoundNBT serializeNBT() {
+        CompoundNBT nbt = new CompoundNBT();
+        CompoundNBT regions = new CompoundNBT();
+        for (Map.Entry<String, IRegion> regionEntry : this.entrySet()) {
+            regions.put(regionEntry.getKey(), regionEntry.getValue().serializeNBT());
+        }
+        nbt.put(REGIONS, regions);
+        nbt.put(FLAGS, toNBTList(this.dimensionFlags));
+        nbt.put(PROTECTORS, toNBTList(this.dimensionFlags));
+        nbt.putBoolean(WHITELIST, this.hasWhitelist);
+        return nbt;
+    }
+
+    private ListNBT toNBTList(Collection<String> list) {
+        ListNBT nbtList = new ListNBT();
+        nbtList.addAll(list.stream()
+                .map(StringNBT::valueOf)
+                .collect(Collectors.toList()));
+        return nbtList;
+    }
+
+    @Override
+    public void deserializeNBT(CompoundNBT nbt) {
+        CompoundNBT regions = nbt.getCompound(REGIONS);
+        for (String regionKey : regions.keySet()) {
+            CompoundNBT regionNbt = regions.getCompound(regionKey);
+            Region region = new Region(regionNbt);
+            this.addRegion(region);
+        }
+
+        this.dimensionFlags.clear();
+        ListNBT flagsNBT = nbt.getList(FLAGS, Constants.NBT.TAG_STRING);
+        for (int i = 0; i < flagsNBT.size(); i++) {
+            this.dimensionFlags.add(flagsNBT.getString(i));
+        }
+
+        this.protectors.clear();
+        ListNBT protectorsNBT = nbt.getList(PROTECTORS, Constants.NBT.TAG_STRING);
+        for (int i = 0; i < protectorsNBT.size(); i++) {
+            this.dimensionFlags.add(protectorsNBT.getString(i));
+        }
+
+        this.hasWhitelist = nbt.getBoolean(WHITELIST);
     }
 }

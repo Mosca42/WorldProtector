@@ -3,7 +3,6 @@ package fr.mosca421.worldprotector.data;
 import fr.mosca421.worldprotector.WorldProtector;
 import fr.mosca421.worldprotector.api.event.RegionEvent;
 import fr.mosca421.worldprotector.core.IRegion;
-import fr.mosca421.worldprotector.core.Region;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.server.MinecraftServer;
@@ -78,12 +77,7 @@ public class RegionManager extends WorldSavedData {
         CompoundNBT dimensionRegions = nbt.getCompound(TAG_REGIONS);
         for (String dimKey : dimensionRegions.keySet()) {
             CompoundNBT dimRegionMap = dimensionRegions.getCompound(dimKey);
-            DimensionRegionCache dimCache = new DimensionRegionCache();
-            for (String regionKey : dimRegionMap.keySet()) {
-                CompoundNBT regionNbt = dimRegionMap.getCompound(regionKey);
-                Region region = new Region(regionNbt);
-                dimCache.addRegion(region);
-            }
+            DimensionRegionCache dimCache = new DimensionRegionCache(dimRegionMap);
             RegistryKey<World> dimension = RegistryKey.getOrCreateKey(Registry.WORLD_KEY, new ResourceLocation(dimKey));
             regionMap.put(dimension, dimCache);
         }
@@ -100,10 +94,7 @@ public class RegionManager extends WorldSavedData {
         CompoundNBT dimRegionNbtData = new CompoundNBT();
         for (Map.Entry<RegistryKey<World>, DimensionRegionCache> entry : regionMap.entrySet()) {
             String dim = entry.getKey().getLocation().toString();
-            CompoundNBT dimCompound = new CompoundNBT();
-            for (Map.Entry<String, IRegion> regionEntry : entry.getValue().entrySet()) {
-                dimCompound.put(regionEntry.getKey(), regionEntry.getValue().serializeNBT());
-            }
+            CompoundNBT dimCompound = entry.getValue().serializeNBT();
             dimRegionNbtData.put(dim, dimCompound);
         }
         compound.put(TAG_REGIONS, dimRegionNbtData);

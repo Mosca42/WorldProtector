@@ -88,8 +88,6 @@
   "message.region.teleport": "Teleporting to region '%s'",
   "message.region.setpriority": "Set priority '%s' for region '%s'",
   "message.region.unknown": "Unknown region: '%s'!",
-  "message.region.infopriority": "Priority for region '%s': %s",
-  "message.region.priority": "Priority must be in the range 1-9",
   "message.region.errorplayer": "Player '%s' is already defined in region '%s'!",
   "message.region.unknownplayer": "Player '%s' was not defined in region '%s!",
   "message.region.addplayer": "Player '%s' has been added to region '%s'!",

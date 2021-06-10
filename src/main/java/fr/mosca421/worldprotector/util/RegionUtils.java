@@ -108,16 +108,6 @@ public final class RegionUtils {
 		}
 	}
 
-	public static void getPriority(String regionName, PlayerEntity player) {
-		if (RegionManager.get().containsRegion(regionName)) {
-			RegionManager.get().getRegion(regionName).ifPresent(region -> {
-				sendMessage(player, new TranslationTextComponent("message.region.infopriority", regionName,  region.getPriority()));
-			});
-		} else {
-			sendStatusMessage(player, new TranslationTextComponent("message.region.unknown", regionName));
-		}
-	}
-
 	public static void activate(String regionName, PlayerEntity player) {
 		if (RegionManager.get().setActiveState(regionName, true)) {
 			sendMessage(player, new TranslationTextComponent( "message.region.activate", regionName));

@@ -21,7 +21,6 @@ public enum Command {
     ACTIVATE("activate"),
     DEACTIVATE("deactivate"),
     PRIORITY("priority"),
-    PRIORITY_GET("getpriority"),
     PRIORITY_SET("setpriority"),
     PLAYER("player"),
     PLAYER_REMOVE("removeplayer"),

@@ -192,7 +192,7 @@ Under the following conditions:
 * Flags per dimension
 * Blacklist/Whitelist option for regions and dimensions
 * Region highlighting
-* Flag ideas: set-spawn, sleep-in-bed, use-firework, elytra-fly
+* Flag ideas: set-spawn, sleep-in-bed, use-firework, elytra-fly, ClientChatEvent/CommandEvent
 * Configuration support
     * Option to disable specific event checks completely for optimization
     * Default blacklist/whitelist setting for regions
@@ -200,7 +200,6 @@ Under the following conditions:
 * Permission system
     * Owner for regions
     * Permission levels for region manipulation (creating, deleting, activating, deactivating)
-* CLI: add command to list regions you are standing in
 * CLI: make region info commands available for all players
 * CLI: add and remove multiple flags at once
 * CLI: add option to define a region without the region marker

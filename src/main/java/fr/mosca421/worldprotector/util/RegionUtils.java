@@ -214,8 +214,8 @@ public final class RegionUtils {
 		sendMessage(player, "help.region.3");
 		sendMessage(player, "help.region.4");
 		sendMessage(player, "help.region.4a");
-		sendMessage(player, "help.region.4b");
 		sendMessage(player, "help.region.5");
+		sendMessage(player, "help.region.5a");
 		sendMessage(player, "help.region.6");
 		sendMessage(player, "help.region.7");
 		sendMessage(player, "help.region.8");

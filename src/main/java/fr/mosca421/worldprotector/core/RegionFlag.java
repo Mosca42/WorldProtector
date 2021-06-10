@@ -3,7 +3,6 @@ package fr.mosca421.worldprotector.core;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 public enum RegionFlag {
@@ -30,23 +29,23 @@ public enum RegionFlag {
     TRAMPLE_FARMLAND_PLAYER("trample-farmland-player"),
     TRAMPLE_FARMLAND_OTHER("trample-farmland-other"),
     //
-    DRAGON_BLOCK_PROT("dragon-destruction"), // TODO: Currently not working correctly
-    WITHER_BLOCK_PROT("wither-destruction"), // TODO: Currently not working correctly
-    ZOMBIE_DOOR_PROT("zombie-destruction"), // TODO: Currently not working correctly
+    DRAGON_BLOCK_PROT("dragon-destruction"),
+    WITHER_BLOCK_PROT("wither-destruction"),
+    ZOMBIE_DOOR_PROT("zombie-destruction"),
     LIGHTNING_PROT("lightning"),
     //
     ANIMAL_TAMING("animal-taming"),
     ANIMAL_BREEDING("animal-breeding"),
     ANIMAL_MOUNTING("animal-mounting"),
-    ANIMAL_UNMOUNTING("animal-unmounting"), // TODO: Currently not working correctly
+    ANIMAL_UNMOUNTING("animal-unmounting"), // FIXME: Minecraft vanilla bug fixed in 21w03a
     //
     SPAWNING_MONSTERS("spawning-monsters"),
     SPAWNING_GOLEM("spawning-irongolem"),
     SPAWNING_ANIMAL("spawning-animal"),
     SPAWNING_ALL("spawning-all"),
-    SPAWING_EXP("spawning-exp"),
+    SPAWNING_XP("spawning-xp"),
     //
-    USE("use"), // Buttons, Doors, Lever, etc  // TODO: Currently not working correctly
+    USE("use"), // Buttons, Doors, Lever, etc
     USE_BONEMEAL("use-bonemeal"),
     CONTAINER_ACCESS("access-container"),
     ENDER_CHEST_ACCESS("access-enderchest"),
@@ -61,20 +60,25 @@ public enum RegionFlag {
     ITEM_DROP("item-drop"),
     ITEM_PICKUP("item-pickup"),
     LOOT_DROP("loot-drop"),
-    EXP_DROP_ALL("exp-drop-all"), // also includes blocks (furnace for example)
-    EXP_DROP_MONSTER("exp-drop-monsters"), // only hostile mobs
-    EXP_DROP_OTHER("exp-drop-other"), // non-hostile: animals, villagers,...
-    EXP_PICKUP("exp-pickup"), // TODO: Currently not working correctly
+    XP_DROP_ALL("xp-drop-all"), // also includes blocks (furnace for example)
+    XP_DROP_MONSTER("xp-drop-monsters"), // only hostile mobs
+    XP_DROP_OTHER("xp-drop-other"), // non-hostile: animals, villagers,...
+    XP_PICKUP("xp-pickup"),
     LEVEL_FREEZE("level-freeze"),
-    EXP_CHANGE("exp-freeze"), // TODO: Currently not working correctly
+    XP_FREEZE("xp-freeze"),
     //
-    DAMAGE_PLAYERS("damage-players"),
-    DAMAGE_ANIMALS("damage-animals"),
-    DAMAGE_MONSTERS("damage-monsters"),
-    DAMAGE_VILLAGERS("damage-villagers"),
+    ATTACK_PLAYERS("attack-players"),
+    ATTACK_ANIMALS("attack-animals"),
+    ATTACK_MONSTERS("attack-monsters"),
+    ATTACK_VILLAGERS("attack-villagers"),
     //
     INVINCIBLE("invincible"),
+    //
     FALL_DAMAGE("fall-damage"),
+    FALL_DAMAGE_VILLAGERS("fall-damage-villagers"),
+    FALL_DAMAGE_MONSTERS("fall-damage-monsters"),
+    FALL_DAMAGE_ANIMALS("fall-damage-animals"),
+    FALL_DAMAGE_PLAYERS("fall-damage-players"),
     //
     SEND_MESSAGE("send-chat"),
     EXIT_MESSAGE_TITLE("exit-message"), // TODO: Currently not working correctly

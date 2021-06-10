@@ -1,9 +1,8 @@
 package fr.mosca421.worldprotector.item;
 
 import fr.mosca421.worldprotector.WorldProtector;
-import fr.mosca421.worldprotector.core.Region;
-import fr.mosca421.worldprotector.data.RegionSaver;
-import fr.mosca421.worldprotector.util.RegionUtils;
+import fr.mosca421.worldprotector.data.RegionManager;
+import fr.mosca421.worldprotector.util.RegionPlayerUtils;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
@@ -22,13 +21,12 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.List;
 
-import static fr.mosca421.worldprotector.util.MessageUtils.sendMessage;
+import static fr.mosca421.worldprotector.util.MessageUtils.sendStatusMessage;
 
 public class ItemRegionStick extends Item {
-
 
 	public ItemRegionStick() {
 		super(new Properties()
@@ -38,6 +36,7 @@ public class ItemRegionStick extends Item {
 
 	// nbt keys
 	public static final String REGION_IDX = "region_idx";
+	private static final String LAST_DIM = "last_dim";
 	public static final String MODE = "mode";
 	public static final String REGION = "region";
 
@@ -45,29 +44,21 @@ public class ItemRegionStick extends Item {
 	public static final String MODE_REMOVE = "remove";
 
 	private static List<String> cachedRegions;
-	private static int regionCount;
-
-	static {
-		// init region cache
-		WorldProtector.LOGGER.debug("Region Stick cache initialized");
-		cachedRegions = RegionSaver.getRegions().stream()
-				.map(Region::getName)
-				.collect(Collectors.toList());
-		Collections.sort(cachedRegions);
-		regionCount = cachedRegions.size();
-	}
+	private static int regionCount = -1;
 
 	@Override
 	public void addInformation(ItemStack stack, World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
-		if(Screen.hasShiftDown()) {
-			tooltip.add(new TranslationTextComponent( "Select an existing region by right clicking."));
-			tooltip.add(new TranslationTextComponent(TextFormatting.AQUA +  "Switch" + TextFormatting.RESET + " modes by " +
-					TextFormatting.AQUA + TextFormatting.ITALIC + "SHIFT" + TextFormatting.RESET + " right clicking."));
-			tooltip.add(new TranslationTextComponent("Hit the player you want to add/remove (don't worry it wont hurt)."));
-			tooltip.add(new TranslationTextComponent("For the secondary functionality keep the Region Stick in your offhand and read the Flag Stick tooltip."));
+		if (Screen.hasShiftDown()) {
+			tooltip.add(new TranslationTextComponent("help.tooltip.region-stick.detail.1"));
+			tooltip.add(new TranslationTextComponent("help.tooltip.region-stick.detail.2"));
+			tooltip.add(new TranslationTextComponent("help.tooltip.region-stick.detail.3"));
+			tooltip.add(new TranslationTextComponent("help.tooltip.region-stick.detail.4")
+					.mergeStyle(TextFormatting.GRAY));
 		} else {
-			tooltip.add(new TranslationTextComponent("Use the Region Stick to simply add/remove player to/from a region."));
-			tooltip.add(new StringTextComponent( "Hold " + TextFormatting.DARK_BLUE + TextFormatting.ITALIC + "SHIFT" + TextFormatting.RESET + " for more details."));
+			tooltip.add(new TranslationTextComponent("help.tooltip.region-stick.simple.1"));
+			tooltip.add(new TranslationTextComponent("help.tooltip.details.shift")
+					.mergeStyle(TextFormatting.DARK_BLUE)
+					.mergeStyle(TextFormatting.ITALIC));
 		}
 	}
 
@@ -80,10 +71,10 @@ public class ItemRegionStick extends Item {
 				String regionName = stack.getTag().getString(REGION);
 				switch (mode) {
 					case MODE_ADD:
-						RegionUtils.addPlayer(regionName, player, hitPlayer);
+						RegionPlayerUtils.addPlayer(regionName, player, hitPlayer);
 						break;
 					case MODE_REMOVE:
-						RegionUtils.removePlayer(regionName, player, hitPlayer);
+						RegionPlayerUtils.removePlayer(regionName, player, hitPlayer);
 						break;
 					default:
 						/* should not happen */
@@ -117,7 +108,7 @@ public class ItemRegionStick extends Item {
 		if (!worldIn.isRemote) {
 			ItemStack regionStick = playerIn.getHeldItem(handIn);
 			if (!playerIn.hasPermissionLevel(4) || !playerIn.isCreative()) {
-				sendMessage(playerIn, new TranslationTextComponent("item.usage.permission")
+				sendStatusMessage(playerIn, new TranslationTextComponent("item.usage.permission")
 						.mergeStyle(TextFormatting.RED));
 				return ActionResult.resultFail(regionStick);
 			}
@@ -129,7 +120,8 @@ public class ItemRegionStick extends Item {
 					if (cycleRegion(regionStick)) {
 						return new ActionResult<>(ActionResultType.SUCCESS, regionStick);
 					}
-					sendMessage(playerIn, new StringTextComponent(TextFormatting.RED + "No regions defined yet!"));
+					sendStatusMessage(playerIn, new TranslationTextComponent("message.region.info.no_regions")
+							.mergeStyle(TextFormatting.RED));
 					new ActionResult<>(ActionResultType.FAIL, playerIn.getHeldItem(handIn));
 				}
 			}
@@ -141,29 +133,37 @@ public class ItemRegionStick extends Item {
 	public void inventoryTick(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
 		super.inventoryTick(stack, worldIn, entityIn, itemSlot, isSelected);
 		if (!worldIn.isRemote) {
-			// init nbt tag
-			if (!stack.hasTag()) {
-				WorldProtector.LOGGER.info("Region Stick nbt initialized");
+			if (stack.hasTag()) {
+				// update region name list
+				String dim = worldIn.getDimensionKey().getLocation().toString();
+				String nbtDim = stack.getTag().getString(LAST_DIM);
+				stack.getTag().putString(LAST_DIM, dim);
+				List<String> regionNames = new ArrayList<>(RegionManager.get().getRegionNames(worldIn.getDimensionKey()));
+				if (regionCount != regionNames.size() || !dim.equals(nbtDim)) {
+					cachedRegions = regionNames;
+					regionCount = cachedRegions.size();
+					if (stack.getTag().contains(REGION_IDX)) {
+						int regionIndex = stack.getTag().getInt(REGION_IDX);
+						regionIndex = Math.max(0, Math.min(regionIndex, regionCount - 1));
+						stack.getTag().putInt(REGION_IDX, regionIndex);
+					} else {
+						stack.getTag().putInt(REGION_IDX, 0);
+					}
+
+				}
+				setDisplayName(stack, stack.getTag().getString(REGION), stack.getTag().getString(MODE));
+			} else {
+				// init nbt tag of RegionStick
 				CompoundNBT nbt = new CompoundNBT();
 				nbt.putString(MODE, MODE_ADD);
 				nbt.putInt(REGION_IDX, 0);
+				nbt.putString(LAST_DIM, worldIn.getDimensionKey().getLocation().toString());
 				if (regionCount > 0) {
-					String region = cachedRegions.get(0);
-					nbt.putString(REGION, region);
+					nbt.putString(REGION, cachedRegions.get(0));
+				} else {
+					nbt.putString(REGION, "N/A");
 				}
 				stack.setTag(nbt);
-			}
-		} else {
-			// check if region data was changed and update cache
-			if (regionCount != RegionSaver.getRegions().size()) {
-				WorldProtector.LOGGER.info("Region Stick cache updated");
-				cachedRegions = RegionSaver.getRegions().stream()
-						.map(Region::getName)
-						.collect(Collectors.toList());
-				regionCount = cachedRegions.size();
-				int regionIndex = stack.getTag().getInt(REGION_IDX);
-				regionIndex = Math.max(0, Math.min(regionIndex, regionCount - 1));
-				stack.getTag().putInt(REGION_IDX, regionIndex);
 			}
 		}
 	}

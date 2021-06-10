@@ -3,11 +3,13 @@ package fr.mosca421.worldprotector.command;
 public enum Command {
     WP("wp"),
     REGION("region"),
+    DIMENSION("dimension"),
     FLAG("flag"),
     HELP("help"),
     ADD("add"),
     REMOVE("remove"),
     REMOVE_ALL("remove-all"),
+    ALL("all"),
     INFO("info"),
     NAME("name"),
     EXPAND("expand"),
@@ -17,18 +19,18 @@ public enum Command {
     DEFINE("define"),
     REDEFINE("redefine"),
     TELEPORT("teleport"),
+    TELEPORT_SHORT("tp"),
     ACTIVATE("activate"),
     DEACTIVATE("deactivate"),
     PRIORITY("priority"),
-    PRIORITY_GET("getpriority"),
-    PRIORITY_SET("setpriority"),
+    SET_PRIORITY("set-priority"),
     PLAYER("player"),
-    PLAYER_REMOVE("removeplayer"),
-    PLAYER_ADD("addplayer");
+    Y1("Y1"),
+    Y2("Y2");
 
     private final String cmdString;
 
-    Command(final String cmdString){
+    Command(final String cmdString) {
         this.cmdString = cmdString;
     }
 

@@ -27,7 +27,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static fr.mosca421.worldprotector.util.MessageUtils.sendMessage;
+import static fr.mosca421.worldprotector.util.MessageUtils.sendStatusMessage;
 
 public class ItemFlagStick extends Item {
 
@@ -49,7 +49,6 @@ public class ItemFlagStick extends Item {
 
 	static {
 		// init flag list
-		WorldProtector.LOGGER.info("Flag Stick flags initialized");
 		flags = RegionFlag.getFlags();
 		Collections.sort(flags);
 	}
@@ -57,16 +56,19 @@ public class ItemFlagStick extends Item {
 	@Override
 	public void addInformation(ItemStack stack, World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
 		if(Screen.hasShiftDown()) {
-			tooltip.add(new TranslationTextComponent("Select the flag by right clicking."));
-			tooltip.add(new TranslationTextComponent(TextFormatting.AQUA +  "Switch" + TextFormatting.RESET + " modes by " +
-					TextFormatting.AQUA + TextFormatting.ITALIC + "SHIFT" + TextFormatting.RESET + " right clicking."));
-			tooltip.add(new TranslationTextComponent("Hold down the right mouse button to add/remove the selected flag to/from the region."));
-			tooltip.add(new TranslationTextComponent("Alternatively: Shift-right click on a container with name tags, named after flags, to add/remove all the corresponding flags to/from the region!"));
-			tooltip.add(new TranslationTextComponent(TextFormatting.RED + "Keep the Region Stick with the selected region in your off hand!"));
+			tooltip.add(new TranslationTextComponent("help.tooltip.flag-stick.detail.1"));
+			tooltip.add(new TranslationTextComponent("help.tooltip.flag-stick.detail.2"));
+			tooltip.add(new TranslationTextComponent("help.tooltip.flag-stick.detail.3"));
+			tooltip.add(new TranslationTextComponent("help.tooltip.flag-stick.detail.4")
+					.mergeStyle(TextFormatting.GRAY));
+			tooltip.add(new TranslationTextComponent("help.tooltip.flag-stick.detail.5")
+					.mergeStyle(TextFormatting.RED));
 		} else {
-			tooltip.add(new TranslationTextComponent("Use the Flag Stick to simply add/remove flags to/from a region."));
-			tooltip.add(new TranslationTextComponent("Hold the " + TextFormatting.RED + "Region Stick" + TextFormatting.RESET + " in your " + TextFormatting.RED + "offhand" + TextFormatting.RESET + "!"));
-			tooltip.add(new StringTextComponent( "Hold " + TextFormatting.DARK_BLUE + TextFormatting.ITALIC + "SHIFT" + TextFormatting.RESET + " for more details."));
+			tooltip.add(new TranslationTextComponent("help.tooltip.flag-stick.simple.1"));
+			tooltip.add(new TranslationTextComponent("help.tooltip.flag-stick.simple.2"));
+			tooltip.add(new TranslationTextComponent("help.tooltip.details.shift")
+					.mergeStyle(TextFormatting.DARK_BLUE)
+					.mergeStyle(TextFormatting.ITALIC));
 		}
 	}
 
@@ -119,7 +121,7 @@ public class ItemFlagStick extends Item {
 			ItemStack flagStick = playerIn.getHeldItem(handIn);
 			// check player permission
 			if (!playerIn.hasPermissionLevel(4) || !playerIn.isCreative()) {
-				sendMessage(playerIn, new TranslationTextComponent("item.usage.permission")
+				sendStatusMessage(playerIn, new TranslationTextComponent("item.usage.permission")
 						.mergeStyle(TextFormatting.RED));
 				return ActionResult.resultFail(flagStick);
 			}
@@ -186,7 +188,7 @@ public class ItemFlagStick extends Item {
 				if (target instanceof LockableLootTileEntity) {
 					LockableLootTileEntity container = (LockableLootTileEntity) target;
 					if (container.isEmpty()) {
-						sendMessage(player,  "message.flags.container.noflags");
+						sendStatusMessage(player, "message.flags.container.noflags");
 						return ActionResultType.FAIL;
 					}
 					List<String> nameTags = new ArrayList<>();
@@ -197,14 +199,12 @@ public class ItemFlagStick extends Item {
 						}
 					}
 					if (nameTags.isEmpty()) {
-						WorldProtector.LOGGER.info("[Flag Stick]: message.flags.container.noflags");
-						sendMessage(player,  "message.flags.container.noflags");
+						sendStatusMessage(player, "message.flags.container.noflags");
 						return ActionResultType.FAIL;
 					}
 					List<String> validFlags = nameTags.stream().filter(RegionFlag::contains).collect(Collectors.toList());
 					if (validFlags.isEmpty()) {
-						WorldProtector.LOGGER.info("[Flag Stick]: message.flags.container.novalidflags");
-						sendMessage(player,  "message.flags.container.novalidflags");
+						sendStatusMessage(player, "message.flags.container.novalidflags");
 						return ActionResultType.FAIL;
 					}
 					switch (flagMode) {
@@ -237,16 +237,21 @@ public class ItemFlagStick extends Item {
 		super.inventoryTick(stack, worldIn, entityIn, itemSlot, isSelected);
 		if (!worldIn.isRemote) {
 			// ensure flag stick has a nbt tag and is initialized as needed
-			if (!stack.hasTag()){
-				WorldProtector.LOGGER.info("Flag Stick nbt initialized");
+			if (!stack.hasTag()) {
 				CompoundNBT nbt = new CompoundNBT();
 				nbt.putString(MODE, MODE_ADD);
 				nbt.putString(FLAG, RegionFlag.ALL.toString());
 				nbt.putInt(FLAG_IDX, 0);
 				nbt.putInt("finish_action", 0);
-				setDisplayName(stack, RegionFlag.ALL, MODE_ADD);
 				stack.setTag(nbt);
+				setDisplayName(stack, RegionFlag.ALL, MODE_ADD);
+			} else {
+				int flagIdx = stack.getTag().getInt(FLAG_IDX);
+				String flag = flags.get(flagIdx);
+				String mode = stack.getTag().getString(MODE);
+				setDisplayName(stack, flag, mode);
 			}
+
 		}
 
 	}

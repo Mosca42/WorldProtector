@@ -1,13 +1,20 @@
 package fr.mosca421.worldprotector.event;
 
 import fr.mosca421.worldprotector.WorldProtector;
-import fr.mosca421.worldprotector.core.Region;
+import fr.mosca421.worldprotector.core.IRegion;
 import fr.mosca421.worldprotector.core.RegionFlag;
 import fr.mosca421.worldprotector.util.MessageUtils;
 import fr.mosca421.worldprotector.util.RegionUtils;
+import net.minecraft.block.*;
 import net.minecraft.entity.item.minecart.ContainerMinecartEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.tileentity.*;
+import net.minecraft.tileentity.EnderChestTileEntity;
+import net.minecraft.tileentity.LecternTileEntity;
+import net.minecraft.tileentity.LockableTileEntity;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -21,9 +28,9 @@ public class EventInteract {
 
 	@SubscribeEvent
 	public static void onPlayerRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
-		List<Region> regions = RegionUtils.getHandlingRegionsFor(event.getPos(), RegionUtils.getDimension(event.getWorld()));
+		List<IRegion> regions = RegionUtils.getHandlingRegionsFor(event.getPos(), event.getWorld());
 		if (!event.getWorld().isRemote) {
-			for (Region region : regions) {
+			for (IRegion region : regions) {
 				PlayerEntity player = event.getPlayer();
 				TileEntity targetEntity = event.getWorld().getTileEntity(event.getPos());
 				boolean isLockableTileEntity = targetEntity instanceof LockableTileEntity;
@@ -31,19 +38,37 @@ public class EventInteract {
 				boolean isContainer = targetEntity instanceof LecternTileEntity || isLockableTileEntity;
 				boolean isPlayerProhibited = region.forbids(player);
 
-				// check for trapped chest
-				if (region.containsFlag(RegionFlag.USE) && !isLockableTileEntity && isPlayerProhibited) {
-					if (!player.isSneaking()) {
-						event.setCanceled(true);
-						MessageUtils.sendMessage(player, "message.event.interact.use");
-						return;
+				BlockRayTraceResult pos = event.getHitVec();
+				if (pos != null && pos.getType() == RayTraceResult.Type.BLOCK) {
+					BlockPos bPos = pos.getPos();
+					Block target = event.getWorld().getBlockState(bPos).getBlock();
+					boolean isUsableBlock = target instanceof AbstractButtonBlock ||
+							target instanceof DoorBlock ||
+							target instanceof TrapDoorBlock ||
+							target instanceof LeverBlock ||
+							target instanceof NoteBlock ||
+							target instanceof FenceGateBlock ||
+							target instanceof DaylightDetectorBlock ||
+							target instanceof RedstoneDiodeBlock ||
+							target instanceof LecternBlock ||
+							target instanceof BeaconBlock ||
+							target instanceof BrewingStandBlock;
+
+					if (region.containsFlag(RegionFlag.USE) && isPlayerProhibited && isUsableBlock) {
+						if (!player.isSneaking()) {
+							event.setCanceled(true);
+							MessageUtils.sendStatusMessage(player, "message.event.interact.use");
+							return;
+						}
 					}
 				}
+				// TODO: player can still activate pressure plates, trip wires and observers (by placing blocks: prohibit this with place flag)
+
 				// check for ender chest access
 				if (region.containsFlag(RegionFlag.ENDER_CHEST_ACCESS) && isEnderChest && isPlayerProhibited) {
 					if (!player.isSneaking()) {
 						event.setCanceled(true);
-						MessageUtils.sendMessage(player, "message.event.interact.access_ender_chest");
+						MessageUtils.sendStatusMessage(player, "message.event.interact.access_ender_chest");
 						return;
 					}
 				}
@@ -51,7 +76,7 @@ public class EventInteract {
 				if (region.containsFlag(RegionFlag.CONTAINER_ACCESS) && isContainer && isPlayerProhibited) {
 					if (!player.isSneaking()) {
 						event.setCanceled(true);
-						MessageUtils.sendMessage(player, "message.event.interact.access_container");
+						MessageUtils.sendStatusMessage(player, "message.event.interact.access_container");
 						return;
 					}
 				}
@@ -61,9 +86,9 @@ public class EventInteract {
 
 	@SubscribeEvent
 	public static void onPlayerEntityInteract(PlayerInteractEvent.EntityInteract event) {
-		List<Region> regions = RegionUtils.getHandlingRegionsFor(event.getPos(), RegionUtils.getDimension(event.getWorld()));
+		List<IRegion> regions = RegionUtils.getHandlingRegionsFor(event.getPos(), event.getWorld());
 		if (!event.getWorld().isRemote) {
-			for (Region region : regions) {
+			for (IRegion region : regions) {
 				PlayerEntity player = event.getPlayer();
 				boolean containsChestAccess = region.containsFlag(RegionFlag.CONTAINER_ACCESS);
 				boolean playerHasPermission = region.permits(player);
@@ -71,7 +96,7 @@ public class EventInteract {
 
 				if (containsChestAccess && !playerHasPermission && isMinecartContainer) {
 					event.setCanceled(true);
-					MessageUtils.sendMessage(player, "message.event.interact.access_container");
+					MessageUtils.sendStatusMessage(player, "message.event.interact.access_container");
 					return;
 				}
 			}

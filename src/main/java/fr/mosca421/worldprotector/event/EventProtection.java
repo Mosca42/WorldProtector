@@ -1,19 +1,21 @@
 package fr.mosca421.worldprotector.event;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import fr.mosca421.worldprotector.WorldProtector;
-import fr.mosca421.worldprotector.core.Region;
+import fr.mosca421.worldprotector.core.IRegion;
 import fr.mosca421.worldprotector.core.RegionFlag;
 import fr.mosca421.worldprotector.util.RegionUtils;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.IWaterLoggable;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.item.TNTEntity;
 import net.minecraft.entity.monster.CreeperEntity;
 import net.minecraft.entity.monster.EndermanEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.tileentity.DispenserTileEntity;
+import net.minecraft.state.properties.BlockStateProperties;
+import net.minecraft.tags.FluidTags;
+import net.minecraft.tags.ITag;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ToolType;
@@ -25,7 +27,10 @@ import net.minecraftforge.event.world.ExplosionEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
-import static fr.mosca421.worldprotector.util.MessageUtils.*;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static fr.mosca421.worldprotector.util.MessageUtils.sendStatusMessage;
 
 @Mod.EventBusSubscriber(modid = WorldProtector.MODID)
 public class EventProtection {
@@ -41,7 +46,7 @@ public class EventProtection {
 					region -> !region.permits(player),
 					() -> {
 						event.setCanceled(true);
-						sendMessage(player, new TranslationTextComponent("message.event.protection.break_block"));
+						sendStatusMessage(player, new TranslationTextComponent("message.event.protection.break_block"));
 					});
 		}
 	}
@@ -49,14 +54,14 @@ public class EventProtection {
 	@SubscribeEvent
 	public static void onPlayerPlaceBlock(EntityPlaceEvent event) {
 		if (!event.getWorld().isRemote()) {
-			List<Region> regions = RegionUtils.getHandlingRegionsFor(event.getPos(), RegionUtils.getDimension((World) event.getWorld()));
+			List<IRegion> regions = RegionUtils.getHandlingRegionsFor(event.getPos(), (World) event.getWorld());
 			if (event.getEntity() instanceof PlayerEntity) {
 				PlayerEntity player = (PlayerEntity) event.getEntity();
 				boolean isPlayerPlacementProhibited = regions.stream()
 						.anyMatch(region -> region.containsFlag(RegionFlag.PLACE) && region.forbids(player));
 				if (isPlayerPlacementProhibited) {
 					event.setCanceled(true);
-					sendMessage(player, new TranslationTextComponent("message.event.protection.place_block"));
+					sendStatusMessage(player, new TranslationTextComponent("message.event.protection.place_block"));
 				}
 			}
 			// TODO: Test
@@ -75,14 +80,14 @@ public class EventProtection {
 	@SubscribeEvent
 	public static void onExplosionStarted(ExplosionEvent.Start event) {
 		if (!event.getWorld().isRemote) {
-			List<Region> regions = RegionUtils.getHandlingRegionsFor(new BlockPos(event.getExplosion().getPosition()), RegionUtils.getDimension(event.getWorld()));
+			List<IRegion> regions = RegionUtils.getHandlingRegionsFor(new BlockPos(event.getExplosion().getPosition()), event.getWorld());
 			if (event.getExplosion().getExplosivePlacedBy() instanceof PlayerEntity) {
 				PlayerEntity player = (PlayerEntity) event.getExplosion().getExplosivePlacedBy();
-				for (Region region : regions) {
+				for (IRegion region : regions) {
 					boolean cancelEvent = region.containsFlag(RegionFlag.IGNITE_EXPLOSIVES) && !region.permits(player);
 					event.setCanceled(cancelEvent);
 					if (cancelEvent) {
-						sendMessage(player, "message.event.protection.ignite_tnt");
+						sendStatusMessage(player, "message.event.protection.ignite_tnt");
 					}
 				}
 			} else {
@@ -118,27 +123,27 @@ public class EventProtection {
 	public static void onPlayerUseToolSecondary(BlockEvent.BlockToolInteractEvent event) {
 		if (!event.getWorld().isRemote()) {
 			PlayerEntity player = event.getPlayer();
-			List<Region> regions = RegionUtils.getHandlingRegionsFor(event.getPos(), RegionUtils.getDimension(player.getEntityWorld()));
-			for (Region region : regions){ // iterate through regions, if a region contains a specified flag, cancel event
+			List<IRegion> regions = RegionUtils.getHandlingRegionsFor(event.getPos(), player.getEntityWorld());
+			for (IRegion region : regions){ // iterate through regions, if a region contains a specified flag, cancel event
 				boolean playerNotPermitted = !region.permits(player);
 				if (region.containsFlag(RegionFlag.TOOL_SECONDARY_USE) && playerNotPermitted) {
 					event.setCanceled(true);
-					sendMessage(player,   "message.event.protection.tool_secondary_use");
+					sendStatusMessage(player, "message.event.protection.tool_secondary_use");
 					return;
 				}
 				if (event.getToolType() == ToolType.AXE && region.containsFlag(RegionFlag.AXE_STRIP) && playerNotPermitted) {
 					event.setCanceled(true);
-					sendMessage(player,   "message.event.protection.strip_wood");
+					sendStatusMessage(player, "message.event.protection.strip_wood");
 					return;
 				}
 				if (event.getToolType() == ToolType.HOE && region.containsFlag(RegionFlag.HOE_TILL) && playerNotPermitted) {
 					event.setCanceled(true);
-					sendMessage(player,   "message.event.protection.till_farmland");
+					sendStatusMessage(player, "message.event.protection.till_farmland");
 					return;
 				}
 				if (event.getToolType() == ToolType.SHOVEL && region.containsFlag(RegionFlag.SHOVEL_PATH) && playerNotPermitted) {
 					event.setCanceled(true);
-					sendMessage(player,   "message.event.protection.shovel_path");
+					sendStatusMessage(player, "message.event.protection.shovel_path");
 					return;
 				}
 			}
@@ -148,23 +153,52 @@ public class EventProtection {
 	@SubscribeEvent
 	// Note: Does not prevent from fluids generate additional blocks (cobble generator). Use BlockEvent.FluidPlaceBlockEvent for this
 	public static void onBucketFill(FillBucketEvent event) {
+		// Note: FilledBucket seems to always be null. use maxStackSize to determine bucket state (empty or filled)
 		PlayerEntity player = event.getPlayer();
 		if (!event.getWorld().isRemote && event.getTarget() != null) {
-			List<Region> regions = RegionUtils.getHandlingRegionsFor(new BlockPos(event.getTarget().getHitVec()), RegionUtils.getDimension(event.getWorld()));
-			for (Region region : regions) {
-				int bucketItemMaxStackCount = event.getEmptyBucket().getMaxStackSize();
+			List<IRegion> regions = RegionUtils.getHandlingRegionsFor(new BlockPos(event.getTarget().getHitVec()), event.getWorld());
+			for (IRegion region : regions) {
 				// MaxStackSize: 1 -> full bucket so only placeable; >1 -> empty bucket, only fillable
-				if (bucketItemMaxStackCount == 1 && region.containsFlag(RegionFlag.PLACE.toString()) && !region.permits(player)) {
-					sendMessage(player, new TranslationTextComponent("message.event.protection.place_fluid"));
-					event.setCanceled(true);
-					return;
+				int bucketItemMaxStackCount = event.getEmptyBucket().getMaxStackSize();
+
+				// placing fluid
+				if (bucketItemMaxStackCount == 1) {
+					if (region.containsFlag(RegionFlag.PLACE.toString()) && !region.permits(player)) {
+						sendStatusMessage(player, new TranslationTextComponent("message.event.protection.place_fluid"));
+						event.setCanceled(true);
+						return;
+					}
 				}
-				// FIXME: Message is send if target raycast hits a non fluid. Check if event.getTarget hits a fluid
-				if (bucketItemMaxStackCount > 1 && region.containsFlag(RegionFlag.BREAK.toString()) && !region.permits(player)) {
-					sendMessage(player, new TranslationTextComponent("message.event.protection.scoop_fluid"));
-					event.setCanceled(true);
-					return;
+
+				// scooping fluid (breaking fluid)
+				if (bucketItemMaxStackCount > 1) {
+					boolean isWaterlogged = false;
+					boolean isFluid = false;
+					RayTraceResult pos = event.getTarget();
+					if (pos != null && pos.getType() == RayTraceResult.Type.BLOCK) {
+						Vector3d absPos = pos.getHitVec();
+						BlockState blockState = event.getWorld().getBlockState(new BlockPos(absPos));
+						// check for waterlogged block
+						if (blockState.getBlock() instanceof IWaterLoggable) {
+							isWaterlogged = blockState.get(BlockStateProperties.WATERLOGGED);
+						}
+						// check if target has a fluid tag
+						for (ITag.INamedTag tag : FluidTags.getAllTags()) {
+							if (blockState.getFluidState().getFluid().isIn(tag)) {
+								isFluid = true;
+								break;
+							}
+						}
+						if (isWaterlogged || isFluid) {
+							if (region.containsFlag(RegionFlag.BREAK.toString()) && !region.permits(player)) {
+								sendStatusMessage(player, new TranslationTextComponent("message.event.protection.scoop_fluid"));
+								event.setCanceled(true);
+								return;
+							}
+						}
+					}
 				}
+
 			}
 		}
 	}
@@ -175,7 +209,7 @@ public class EventProtection {
 	 * @param flag flag to be checked for
 	 * @return true if any region contains the specified flag, false otherwise
 	 */
-	private static boolean anyRegionContainsFlag(List<Region> regions, String flag){
+	private static boolean anyRegionContainsFlag(List<IRegion> regions, String flag){
 		return regions.stream()
 				.anyMatch(region -> region.containsFlag(flag));
 	}
@@ -189,7 +223,7 @@ public class EventProtection {
 	private static List<BlockPos> filterExplosionAffectedBlocks(ExplosionEvent.Detonate event, String flag){
 		return event.getAffectedBlocks().stream()
 				.filter(blockPos -> anyRegionContainsFlag(
-						RegionUtils.getHandlingRegionsFor(blockPos, RegionUtils.getDimension(event.getWorld())),
+						RegionUtils.getHandlingRegionsFor(blockPos, event.getWorld()),
 						flag))
 				.collect(Collectors.toList());
 	}
@@ -197,7 +231,7 @@ public class EventProtection {
 	private static List<Entity> filterAffectedEntities(List<Entity> entities, String flag){
 		return entities.stream()
 				.filter(entity -> anyRegionContainsFlag(
-						RegionUtils.getHandlingRegionsFor(entity.getPosition(), RegionUtils.getDimension(entity.world)), flag))
+						RegionUtils.getHandlingRegionsFor(entity.getPosition(), entity.world), flag))
 				.collect(Collectors.toList());
 	}
 }

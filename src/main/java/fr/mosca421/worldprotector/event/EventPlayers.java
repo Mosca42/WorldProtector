@@ -24,7 +24,7 @@ import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.*;
-import net.minecraftforge.event.world.SleepFinishedTimeEvent;
+import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
@@ -222,22 +222,12 @@ public class EventPlayers {
 
     @SubscribeEvent
     public static void onPlayerSleep(SleepingTimeCheckEvent event) {
-
-    }
-
-    @SubscribeEvent
-    public static void onPlayerSleep(SleepFinishedTimeEvent event) {
-
-    }
-
-    @SubscribeEvent
-    public static void onPlayerSleep(PlayerSleepInBedEvent event) {
         PlayerEntity player = event.getPlayer();
         List<IRegion> regions = RegionUtils.getHandlingRegionsFor(player.getPosition(), player.world);
         for (IRegion region : regions) {
             if (region.containsFlag(RegionFlag.SLEEP.toString()) && region.forbids(player)) {
-                event.setCanceled(true);
                 MessageUtils.sendStatusMessage(player, "message.event.player.sleep");
+                event.setResult(Event.Result.DENY);
                 return;
             }
         }
@@ -251,13 +241,13 @@ public class EventPlayers {
         if (newSpawn == null) {
             // attempt to reset spawn
             for (IRegion region : regions) {
+                // TODO: not working?
                 if (region.containsFlag(RegionFlag.RESET_SPAWN.toString()) && region.forbids(player)) {
                     event.setCanceled(true);
                     MessageUtils.sendStatusMessage(player, "message.event.player.reset_spawn");
                     return;
                 }
             }
-
         } else {
             // attempt to set spawn
             for (IRegion region : regions) {

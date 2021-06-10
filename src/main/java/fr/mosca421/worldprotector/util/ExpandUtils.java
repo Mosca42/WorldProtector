@@ -29,12 +29,12 @@ public final class ExpandUtils {
 			if (itemTag.getBoolean(VALID)) {
 				itemTag.putDouble(Y1, y1);
 				itemTag.putDouble(Y2, y2);
-				sendMessage(player, new TranslationTextComponent("message.itemhand.expand", y1, y2));
+				sendMessage(player, new TranslationTextComponent("message.item-hand.expand", y1, y2));
 			} else {
-				sendMessage(player, "message.itemhand.choose");
+				sendMessage(player, "message.item-hand.choose");
 			}
 		} else {
-			sendMessage(player, "message.itemhand.take");
+			sendMessage(player, "message.item-hand.take");
 		}
 	}
 
@@ -47,9 +47,9 @@ public final class ExpandUtils {
 		if (isValidRegionMarker(itemInMainHand)) {
 			ItemRegionMarker regionMarker = (ItemRegionMarker) itemInMainHand.getItem();
 			regionMarker.setDefaultYValues(itemInMainHand, yLow, yHigh);
-			sendMessage(player, new TranslationTextComponent("message.regionmarker.setY", yLow, yHigh));
+			sendMessage(player, new TranslationTextComponent("message.region-marker.set-y", yLow, yHigh));
 		} else {
-			sendMessage(player, "message.itemhand.take");
+			sendMessage(player, "message.item-hand.take");
 		}
 	}
 }

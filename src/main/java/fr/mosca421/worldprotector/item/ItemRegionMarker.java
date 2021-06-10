@@ -56,19 +56,21 @@ public class ItemRegionMarker extends Item {
 	@Override
 	public void addInformation(ItemStack stack, World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
 		if (Screen.hasShiftDown()) {
-			tooltip.add(new TranslationTextComponent("help.regionmarker.detail.1"));
-			tooltip.add(new TranslationTextComponent("help.regionmarker.detail.2"));
-			tooltip.add(new TranslationTextComponent("help.regionmarker.optional.1")
+			tooltip.add(new TranslationTextComponent("help.tooltip.region-marker.detail.1"));
+			tooltip.add(new TranslationTextComponent("help.tooltip.region-marker.detail.2"));
+			tooltip.add(new TranslationTextComponent("help.tooltip.region-marker.optional.1")
 					.mergeStyle(TextFormatting.GRAY));
-			tooltip.add(new TranslationTextComponent("help.regionmarker.optional.2")
+			tooltip.add(new TranslationTextComponent("help.tooltip.region-marker.optional.2")
 					.mergeStyle(TextFormatting.GRAY));
-			tooltip.add(new TranslationTextComponent("help.regionmarker.detail.3"));
-			tooltip.add(new TranslationTextComponent("help.regionmarker.detail.4")
+			tooltip.add(new TranslationTextComponent("help.tooltip.region-marker.detail.3"));
+			tooltip.add(new TranslationTextComponent("help.tooltip.region-marker.detail.4")
 					.mergeStyle(TextFormatting.RED));
 		} else {
-			tooltip.add(new TranslationTextComponent("help.regionmarker.simple.1"));
-			tooltip.add(new TranslationTextComponent("help.regionmarker.simple.2"));
-			tooltip.add(new StringTextComponent( "Hold " + TextFormatting.DARK_BLUE + TextFormatting.ITALIC + "SHIFT" + TextFormatting.RESET + " for more details."));
+			tooltip.add(new TranslationTextComponent("help.tooltip.region-marker.simple.1"));
+			tooltip.add(new TranslationTextComponent("help.tooltip.region-marker.simple.2"));
+			tooltip.add(new TranslationTextComponent("help.tooltip.details.shift")
+					.mergeStyle(TextFormatting.DARK_BLUE)
+					.mergeStyle(TextFormatting.ITALIC));
 		}
 	}
 

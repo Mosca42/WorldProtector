@@ -62,11 +62,11 @@ public final class RegionUtils {
 					item.getTag().putBoolean(ItemRegionMarker.VALID, false); // reset flag for consistent command behaviour
 					sendMessage(player, new TranslationTextComponent("message.region.define", regionName));
 				} else {
-					sendStatusMessage(player, "message.itemhand.choose");
+					sendStatusMessage(player, "message.item-hand.choose");
 				}
 			}
 		} else {
-			sendMessage(player,"message.itemhand.take");
+			sendMessage(player, "message.item-hand.take");
 		}
 	}
 
@@ -88,11 +88,11 @@ public final class RegionUtils {
 						sendStatusMessage(player, new TranslationTextComponent("message.region.unknown", regionName));
 					}
 				} else {
-					sendStatusMessage(player, "message.itemhand.choose");
+					sendStatusMessage(player, "message.item-hand.choose");
 				}
 			}
 		} else {
-			sendStatusMessage(player, "message.itemhand.take");
+			sendStatusMessage(player, "message.item-hand.take");
 		}
 	}
 

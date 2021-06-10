@@ -56,16 +56,19 @@ public class ItemFlagStick extends Item {
 	@Override
 	public void addInformation(ItemStack stack, World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
 		if(Screen.hasShiftDown()) {
-			tooltip.add(new TranslationTextComponent("Select the flag by right clicking."));
-			tooltip.add(new TranslationTextComponent(TextFormatting.AQUA +  "Switch" + TextFormatting.RESET + " modes by " +
-					TextFormatting.AQUA + TextFormatting.ITALIC + "SHIFT" + TextFormatting.RESET + " right clicking."));
-			tooltip.add(new TranslationTextComponent("Hold down the right mouse button to add/remove the selected flag to/from the region."));
-			tooltip.add(new TranslationTextComponent("Alternatively: Shift-right click on a container with name tags, named after flags, to add/remove all the corresponding flags to/from the region!"));
-			tooltip.add(new TranslationTextComponent(TextFormatting.RED + "Keep the Region Stick with the selected region in your off hand!"));
+			tooltip.add(new TranslationTextComponent("help.tooltip.flag-stick.detail.1"));
+			tooltip.add(new TranslationTextComponent("help.tooltip.flag-stick.detail.2"));
+			tooltip.add(new TranslationTextComponent("help.tooltip.flag-stick.detail.3"));
+			tooltip.add(new TranslationTextComponent("help.tooltip.flag-stick.detail.4")
+					.mergeStyle(TextFormatting.GRAY));
+			tooltip.add(new TranslationTextComponent("help.tooltip.flag-stick.detail.5")
+					.mergeStyle(TextFormatting.RED));
 		} else {
-			tooltip.add(new TranslationTextComponent("Use the Flag Stick to simply add/remove flags to/from a region."));
-			tooltip.add(new TranslationTextComponent("Hold the " + TextFormatting.RED + "Region Stick" + TextFormatting.RESET + " in your " + TextFormatting.RED + "offhand" + TextFormatting.RESET + "!"));
-			tooltip.add(new StringTextComponent( "Hold " + TextFormatting.DARK_BLUE + TextFormatting.ITALIC + "SHIFT" + TextFormatting.RESET + " for more details."));
+			tooltip.add(new TranslationTextComponent("help.tooltip.flag-stick.simple.1"));
+			tooltip.add(new TranslationTextComponent("help.tooltip.flag-stick.simple.2"));
+			tooltip.add(new TranslationTextComponent("help.tooltip.details.shift")
+					.mergeStyle(TextFormatting.DARK_BLUE)
+					.mergeStyle(TextFormatting.ITALIC));
 		}
 	}
 

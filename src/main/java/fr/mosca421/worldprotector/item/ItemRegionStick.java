@@ -49,14 +49,16 @@ public class ItemRegionStick extends Item {
 	@Override
 	public void addInformation(ItemStack stack, World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
 		if (Screen.hasShiftDown()) {
-			tooltip.add(new TranslationTextComponent("Select an existing region by right clicking."));
-			tooltip.add(new TranslationTextComponent(TextFormatting.AQUA + "Switch" + TextFormatting.RESET + " modes by " +
-					TextFormatting.AQUA + TextFormatting.ITALIC + "SHIFT" + TextFormatting.RESET + " right clicking."));
-			tooltip.add(new TranslationTextComponent("Hit the player you want to add/remove (don't worry it wont hurt)."));
-			tooltip.add(new TranslationTextComponent("For the secondary functionality keep the Region Stick in your offhand and read the Flag Stick tooltip."));
+			tooltip.add(new TranslationTextComponent("help.tooltip.region-stick.detail.1"));
+			tooltip.add(new TranslationTextComponent("help.tooltip.region-stick.detail.2"));
+			tooltip.add(new TranslationTextComponent("help.tooltip.region-stick.detail.3"));
+			tooltip.add(new TranslationTextComponent("help.tooltip.region-stick.detail.4")
+					.mergeStyle(TextFormatting.GRAY));
 		} else {
-			tooltip.add(new TranslationTextComponent("Use the Region Stick to simply add/remove player to/from a region."));
-			tooltip.add(new StringTextComponent( "Hold " + TextFormatting.DARK_BLUE + TextFormatting.ITALIC + "SHIFT" + TextFormatting.RESET + " for more details."));
+			tooltip.add(new TranslationTextComponent("help.tooltip.region-stick.simple.1"));
+			tooltip.add(new TranslationTextComponent("help.tooltip.details.shift")
+					.mergeStyle(TextFormatting.DARK_BLUE)
+					.mergeStyle(TextFormatting.ITALIC));
 		}
 	}
 

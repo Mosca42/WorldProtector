@@ -9,10 +9,13 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.boss.WitherEntity;
 import net.minecraft.entity.boss.dragon.EnderDragonEntity;
+import net.minecraft.entity.item.ItemEntity;
+import net.minecraft.entity.merchant.villager.AbstractVillagerEntity;
 import net.minecraft.entity.monster.ZombieEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.EntityStruckByLightningEvent;
+import net.minecraftforge.event.entity.EntityTravelToDimensionEvent;
 import net.minecraftforge.event.entity.living.LivingDestroyBlockEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.living.LivingExperienceDropEvent;
@@ -24,6 +27,7 @@ import net.minecraftforge.fml.common.Mod;
 import java.util.List;
 
 import static fr.mosca421.worldprotector.event.EventMobs.isMonster;
+import static fr.mosca421.worldprotector.util.RegionUtils.getHandlingRegionsFor;
 import static fr.mosca421.worldprotector.util.RegionUtils.isPlayerActionProhibited;
 
 @Mod.EventBusSubscriber(modid = WorldProtector.MODID)
@@ -155,4 +159,54 @@ public class EventWorld {
             }
         }
     }
+
+    @SubscribeEvent
+    public static void onNetherPortalSpawn(BlockEvent.PortalSpawnEvent event) {
+        List<IRegion> regions = getHandlingRegionsFor(event.getPos(), (World) event.getWorld());
+        for (IRegion region : regions) {
+            if (region.containsFlag(RegionFlag.SPAWN_PORTAL)) {
+                event.setCanceled(true);
+                return;
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public static void onChangeDimension(EntityTravelToDimensionEvent event) {
+        Entity entity = event.getEntity();
+        List<IRegion> regions = RegionUtils.getHandlingRegionsFor(entity.getPosition(), entity.world);
+        for (IRegion region : regions) {
+            // prevent all entities from changing dimensions
+            if (region.containsFlag(RegionFlag.USE_PORTAL.toString())) {
+                event.setCanceled(true);
+                if (entity instanceof PlayerEntity) {
+                    MessageUtils.sendStatusMessage((PlayerEntity) entity, "message.event.player.change_dim");
+                }
+                return;
+            }
+            // prevent items from changing dimensions
+            if (entity instanceof ItemEntity && region.containsFlag(RegionFlag.USE_PORTAL_ITEMS)) {
+                event.setCanceled(true);
+                return;
+            }
+            if (entity instanceof PlayerEntity && region.containsFlag(RegionFlag.USE_PORTAL_PLAYERS)) {
+                event.setCanceled(true);
+                MessageUtils.sendStatusMessage((PlayerEntity) entity, "message.event.player.change_dim");
+                return;
+            }
+            if (entity instanceof AbstractVillagerEntity && region.containsFlag(RegionFlag.USE_PORTAL_VILLAGERS)) {
+                event.setCanceled(true);
+                return;
+            }
+            if (EventMobs.isAnimal(entity) && region.containsFlag(RegionFlag.USE_PORTAL_ANIMALS)) {
+                event.setCanceled(true);
+                return;
+            }
+            if (EventMobs.isMonster(entity) && region.containsFlag(RegionFlag.USE_PORTAL_MONSTERS)) {
+                event.setCanceled(true);
+                return;
+            }
+        }
+    }
+
 }

@@ -10,6 +10,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.CreeperEntity;
 import net.minecraft.entity.monster.EndermanEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.fluid.Fluid;
 import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.ITag;
@@ -186,7 +187,7 @@ public class EventProtection {
 							isWaterlogged = blockState.get(BlockStateProperties.WATERLOGGED);
 						}
 						// check if target has a fluid tag
-						for (ITag.INamedTag tag : FluidTags.getAllTags()) {
+						for (ITag.INamedTag<Fluid> tag : FluidTags.getAllTags()) {
 							if (blockState.getFluidState().getFluid().isIn(tag)) {
 								isFluid = true;
 								break;

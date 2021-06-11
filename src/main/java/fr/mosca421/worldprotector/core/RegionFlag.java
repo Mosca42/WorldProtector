@@ -85,7 +85,7 @@ public enum RegionFlag {
     SEND_MESSAGE("send-chat"),
     EXECUTE_COMMAND("exec-command"),
     SET_SPAWN("set-spawn"),
-    RESET_SPAWN("reset-spawn"),
+    // RESET_SPAWN("reset-spawn"), // not working
     SLEEP("sleep"),
     //
     ELYTRA_FLY("elytra-fly"),

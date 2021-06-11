@@ -238,7 +238,17 @@ public class EventPlayers {
         BlockPos newSpawn = event.getNewSpawn();
         PlayerEntity player = event.getPlayer();
         List<IRegion> regions = RegionUtils.getHandlingRegionsFor(player.getPosition(), player.world);
-        if (newSpawn == null) {
+        if (newSpawn != null) {
+            // attempt to set spawn
+            for (IRegion region : regions) {
+                if (region.containsFlag(RegionFlag.SET_SPAWN.toString()) && region.forbids(player)) {
+                    event.setCanceled(true);
+                    MessageUtils.sendStatusMessage(player, "message.event.player.set_spawn");
+                    return;
+                }
+            }
+        } /*
+        else {
             // attempt to reset spawn
             for (IRegion region : regions) {
                 // TODO: not working?
@@ -248,16 +258,9 @@ public class EventPlayers {
                     return;
                 }
             }
-        } else {
-            // attempt to set spawn
-            for (IRegion region : regions) {
-                if (region.containsFlag(RegionFlag.SET_SPAWN.toString()) && region.forbids(player)) {
-                    event.setCanceled(true);
-                    MessageUtils.sendStatusMessage(player, "message.event.player.set_spawn");
-                    return;
-                }
-            }
+
         }
+        */
     }
 
     @SubscribeEvent

@@ -91,7 +91,7 @@ Use ```/wp help``` for more information. Or ```/wp help <command>``` for informa
 
 ### Flags
 
-Currently, there are **62 flags** available:
+Currently, there are **57 flags** available:
 
 - **break**: prevents players from breaking blocks
 - **place**: prevents players from placing blocks
@@ -151,11 +151,6 @@ Currently, there are **62 flags** available:
 - **sleep**: prevents players from sleeping
 - **spawn-portal**: prevents creating of portal blocks by lighting obsidian
 - **use-portal**: prevents all entities from using portals (changing dimensions)
-- **use-portal-items**: prevents all entities from using portals (changing dimensions)
-- **use-portal-players**: prevents players from using portals (changing dimensions)
-- **use-portal-monsters**: prevents monsters from using portals (changing dimensions)
-- **use-portal-villagers**: prevents villagers from using portals (changing dimensions)
-- **use-portal-animals**: prevents animals from using portals (changing dimensions)
 
 You are also able to add or remove all flags by using the special flag 'all': ```/wp flag remove <region> all```
 
@@ -223,7 +218,7 @@ Under the following conditions:
 * Flags per dimension
 * Blacklist/Whitelist option for regions and dimensions
 * Region highlighting
-* Flag ideas: use-firework, elytra-fly
+* Flag ideas: use-firework, elytra-fly, enter-chunk, leave-chunk, de-/activate-spawner, InputUpdateEvent for im-mobility
 * Configuration support
     * Option to disable specific event checks completely for optimization
     * Default blacklist/whitelist setting for regions

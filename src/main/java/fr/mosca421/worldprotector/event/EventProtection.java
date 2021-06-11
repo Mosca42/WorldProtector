@@ -151,6 +151,9 @@ public class EventProtection {
 	}
 
 	@SubscribeEvent
+
+	// TODO: USe FillBucketEvent for buckets
+
 	// Note: Does not prevent from fluids generate additional blocks (cobble generator). Use BlockEvent.FluidPlaceBlockEvent for this
 	public static void onBucketFill(FillBucketEvent event) {
 		// Note: FilledBucket seems to always be null. use maxStackSize to determine bucket state (empty or filled)

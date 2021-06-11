@@ -9,8 +9,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.boss.WitherEntity;
 import net.minecraft.entity.boss.dragon.EnderDragonEntity;
-import net.minecraft.entity.item.ItemEntity;
-import net.minecraft.entity.merchant.villager.AbstractVillagerEntity;
 import net.minecraft.entity.monster.ZombieEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.world.World;
@@ -171,42 +169,20 @@ public class EventWorld {
         }
     }
 
+    // This event is only fired for PlayerEntities
     @SubscribeEvent
     public static void onChangeDimension(EntityTravelToDimensionEvent event) {
         Entity entity = event.getEntity();
         List<IRegion> regions = RegionUtils.getHandlingRegionsFor(entity.getPosition(), entity.world);
         for (IRegion region : regions) {
-            // prevent all entities from changing dimensions
             if (region.containsFlag(RegionFlag.USE_PORTAL.toString())) {
-                event.setCanceled(true);
+
                 if (entity instanceof PlayerEntity) {
+                    event.setCanceled(true);
                     MessageUtils.sendStatusMessage((PlayerEntity) entity, "message.event.player.change_dim");
+                    return;
                 }
-                return;
-            }
-            // prevent items from changing dimensions
-            if (entity instanceof ItemEntity && region.containsFlag(RegionFlag.USE_PORTAL_ITEMS)) {
-                event.setCanceled(true);
-                return;
-            }
-            if (entity instanceof PlayerEntity && region.containsFlag(RegionFlag.USE_PORTAL_PLAYERS)) {
-                event.setCanceled(true);
-                MessageUtils.sendStatusMessage((PlayerEntity) entity, "message.event.player.change_dim");
-                return;
-            }
-            if (entity instanceof AbstractVillagerEntity && region.containsFlag(RegionFlag.USE_PORTAL_VILLAGERS)) {
-                event.setCanceled(true);
-                return;
-            }
-            if (EventMobs.isAnimal(entity) && region.containsFlag(RegionFlag.USE_PORTAL_ANIMALS)) {
-                event.setCanceled(true);
-                return;
-            }
-            if (EventMobs.isMonster(entity) && region.containsFlag(RegionFlag.USE_PORTAL_MONSTERS)) {
-                event.setCanceled(true);
-                return;
             }
         }
     }
-
 }

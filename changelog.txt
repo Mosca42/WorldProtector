@@ -1,3 +1,9 @@
+1.16.5-2.1.3.0
+* Add flag 'set-spawn' which prevents players from setting their spawn point.
+* Add flag 'exec-command', which prevents players from executing commands.
+* Add flag 'spawn-portal', which prevents creating spawning a nether portal by lighting obsidian.
+* Add flag 'use-portal', which prevents entities from changing dimensions. There are subdivided flags for monsters, villagers, players, animals and items.
+* Add flag 'sleep', which prevents players from sleeping.
 1.16.5-2.1.2.0
 * When using the command /wp region info [<region>] without supplying a region name a list of regions the player is standing in is shown.
 * Remove /wp region getpriority <region>. Use /wp region info <region> instead.

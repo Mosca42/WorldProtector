@@ -228,10 +228,16 @@ public class EventProtection {
 				.collect(Collectors.toList());
 	}
 
-	private static List<Entity> filterAffectedEntities(List<Entity> entities, String flag){
+	private static List<Entity> filterAffectedEntities(List<Entity> entities, String flag) {
 		return entities.stream()
 				.filter(entity -> anyRegionContainsFlag(
 						RegionUtils.getHandlingRegionsFor(entity.getPosition(), entity.world), flag))
 				.collect(Collectors.toList());
+	}
+
+
+	@SubscribeEvent
+	public static void onBlockToolInteraction(BlockEvent.BlockToolInteractEvent event) {
+		// prevent NBT change?
 	}
 }

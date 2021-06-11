@@ -4,11 +4,7 @@ WorldProtector is a mod allows you to protect your constructions on your servers
 the plugin WorldGuard but with several differences at command level.
 
 The port of the 1.16.5 version introduces a lot of new flags, new protection features, as well as some QoL improvements.
-This mentioned be aware that some of the described features below are not present in every version.
-
-**At this point there is only one active developer working on this mod. Until this changes the **main focus** will be
-about maintaining version **1.16.5** and porting the mod to newer Minecraft versions. This means no new features will be
-ported back to previous versions, sorry.**
+This mentioned be aware that some described features below are not present in every version.
 
 To protect your world you can define regions which can be protected against various actions by adding flags to the
 regions. These flags prevent certain actions/events from happening to protect the region: e.g. placing blocks, using
@@ -188,8 +184,6 @@ Thanks to BrokenSwing for his help about regions and safeguard in the world.
 
 Thanks to TheBossMax2 for the mod logo.
 
-Thanks to z0rdak for porting the mod to version 1.16.5 and adding new features in the process.
-
 ### Links
 
 * [WorldProtector Discord](https://discord.gg/MsA8XPc)
@@ -219,7 +213,7 @@ Under the following conditions:
 * Flags per dimension
 * Blacklist/Whitelist option for regions and dimensions
 * Region highlighting
-* Flag ideas: set-spawn, sleep-in-bed, use-firework, elytra-fly, ClientChatEvent/CommandEvent
+* Flag ideas: use-firework, elytra-fly
 * Configuration support
     * Option to disable specific event checks completely for optimization
     * Default blacklist/whitelist setting for regions
@@ -232,3 +226,18 @@ Under the following conditions:
 * CLI: add option to define a region without the region marker
 * Provide simple gui for choosing flag/region, since there could be many to cycle through
 * Define any shape as a region
+* Security feature: Check for corrupted client jar
+
+## FAQ
+
+- **Q**: Is WorldProtector available for the Fabric Modloader?
+- **A**: No. At this time WorldProtector has no Fabric port, but if the demand is big enough, I will consider it.
+
+
+- **Q**: Will the new features of the 1.16.5 version be backported to older versions?
+- **A**: For now I will be focusing on improving the 1.16.5 version as well as porting the mod to newer versions, sorry.
+
+
+- **Q**: Can you implement a flag for \<your feature here\>?
+- **A**: Maybe. Consider creating an issue on
+  the [WorldProtector Github](https://github.com/Mosca42/WorldProtector/issues) page.

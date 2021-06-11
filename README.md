@@ -95,7 +95,7 @@ Use ```/wp help``` for more information. Or ```/wp help <command>``` for informa
 
 ### Flags
 
-Currently, there are **63 flags** available:
+Currently, there are **62 flags** available:
 
 - **break**: prevents players from breaking blocks
 - **place**: prevents players from placing blocks
@@ -152,7 +152,6 @@ Currently, there are **63 flags** available:
 - **send-chat**: prevents players from sending chat messages (doesn't block commands)
 - **exec-command**: prevents players from executing commands
 - **set-spawn**: prevents players from setting their spawn point
-- **reset-spawn**: prevents players from re-setting their spawn point
 - **sleep**: prevents players from sleeping
 - **spawn-portal**: prevents creating of portal blocks by lighting obsidian
 - **use-portal**: prevents all entities from using portals (changing dimensions)

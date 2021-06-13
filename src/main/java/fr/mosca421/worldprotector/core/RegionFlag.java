@@ -8,8 +8,8 @@ import java.util.stream.Collectors;
 public enum RegionFlag {
     ALL("all"),
     //
-    BUCKET_SCOOP("bucket_scoop"),
-    BUCKET_EMPTY("bucket_empty"),
+    // BUCKET_SCOOP("bucket_scoop"),
+    // BUCKET_EMPTY("bucket_empty"),
     BREAK("break"),
     PLACE("place"),
     ENTITY_PLACE("entity-place"), // TODO: needs testing
@@ -95,19 +95,19 @@ public enum RegionFlag {
     // RESET_SPAWN("reset-spawn"), // not working
     SLEEP("sleep"),
     //
-    ELYTRA_FLY("elytra-fly"),
-    USE_FIREWORK("use-firework"),
+    // ELYTRA_FLY("elytra-fly"),
+    // USE_FIREWORK("use-firework"),
     //
     USE_PORTAL("use-portal"),
-    SPAWN_PORTAL("spawn-portal"),
+    SPAWN_PORTAL("spawn-portal");
     //
-    EXIT_MESSAGE_TITLE("exit-message"), // TODO: Currently not working correctly
-    ENTER_MESSAGE_TITLE("enter-message"), // TODO: Currently not working correctly
-    EXIT_MESSAGE_SUBTITLE("exit-message-small"), // TODO: Currently not working correctly
-    ENTER_MESSAGE_SUBTITLE("enter-message-small"), // TODO: Currently not working correctly
+    // EXIT_MESSAGE_TITLE("exit-message"), // TODO: Currently not working correctly
+    // ENTER_MESSAGE_TITLE("enter-message"), // TODO: Currently not working correctly
+    // EXIT_MESSAGE_SUBTITLE("exit-message-small"), // TODO: Currently not working correctly
+    // ENTER_MESSAGE_SUBTITLE("enter-message-small"), // TODO: Currently not working correctly
     //
-    BLOCK_ENTER("block-enter"), // TODO: not yet implemented
-    BLOCK_EXIT("block-exit"); // TODO: not yet implemented
+    // BLOCK_ENTER("block-enter"), // TODO: not yet implemented
+    // BLOCK_EXIT("block-exit"); // TODO: not yet implemented
 
     private final String flagIdentifier;
 

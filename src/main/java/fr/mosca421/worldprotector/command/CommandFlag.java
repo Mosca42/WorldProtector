@@ -86,6 +86,7 @@ public class CommandFlag {
 							case ANIMAL_UNMOUNTING:
 								sendMessage(player, "Unmounting flag is currently not working due to a minecraft vanilla bug. This bug is fixed in 1.17. See: https://bugs.mojang.com/browse/MC-202202.");
 								break;
+								/*
 							case ENTER_MESSAGE_TITLE:
 							case ENTER_MESSAGE_SUBTITLE:
 							case EXIT_MESSAGE_TITLE:
@@ -94,6 +95,7 @@ public class CommandFlag {
 							case BLOCK_EXIT:
 								sendMessage(player, "This flag is not yet implemented, sorry!");
 								break;
+								*/
 							default:
 								RegionFlagUtils.addFlag(region, player, flag);
 								break;
@@ -126,6 +128,7 @@ public class CommandFlag {
 							case ANIMAL_UNMOUNTING:
 								sendMessage(player, "Unmounting flag is currently not working due to a minecraft vanilla bug. This bug is fixed in 1.17. See: https://bugs.mojang.com/browse/MC-202202.");
 								break;
+								/*
 							case ENTER_MESSAGE_TITLE:
 							case ENTER_MESSAGE_SUBTITLE:
 							case EXIT_MESSAGE_TITLE:
@@ -134,6 +137,7 @@ public class CommandFlag {
 							case BLOCK_EXIT:
 								sendMessage(player, "This flag is not yet implemented, sorry!");
 								break;
+								 */
 							default:
 								RegionFlagUtils.removeFlag(region, player, flag);
 								break;

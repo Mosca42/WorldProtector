@@ -10,6 +10,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemUseContext;
 import net.minecraft.item.UseAction;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ActionResult;
@@ -112,7 +113,10 @@ public class ItemRegionStick extends Item {
 						.mergeStyle(TextFormatting.RED));
 				return ActionResult.resultFail(regionStick);
 			}
-			if (playerIn.getActiveHand() == Hand.MAIN_HAND){
+			if (playerIn.getHeldItemOffhand().getItem() instanceof ItemRegionStick) {
+				return ActionResult.resultFail(regionStick);
+			}
+			if (playerIn.getActiveHand() == Hand.MAIN_HAND) {
 				if (playerIn.isSneaking()) {
 					switchMode(regionStick);
 					return new ActionResult<>(ActionResultType.SUCCESS, playerIn.getHeldItem(handIn));
@@ -127,6 +131,11 @@ public class ItemRegionStick extends Item {
 			}
 		}
 		return new ActionResult<>(ActionResultType.FAIL, playerIn.getHeldItem(handIn));
+	}
+
+	@Override
+	public ActionResultType onItemUse(ItemUseContext context) {
+		return ActionResultType.FAIL;
 	}
 
 	@Override

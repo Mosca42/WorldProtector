@@ -96,7 +96,6 @@ public class ItemFlagStick extends Item {
 					WorldProtector.LOGGER.error("Oh oh");
 					break;
 			}
-			player.getCooldownTracker().setCooldown(this, 20);
 		}
         return stack;
     }
@@ -125,16 +124,19 @@ public class ItemFlagStick extends Item {
 						.mergeStyle(TextFormatting.RED));
 				return ActionResult.resultFail(flagStick);
 			}
+			if (playerIn.getHeldItemOffhand().getItem() instanceof ItemFlagStick) {
+				return ActionResult.resultFail(flagStick);
+			}
 			ItemStack offHand = playerIn.getHeldItemOffhand();
 			ItemStack mainHand = playerIn.getHeldItemMainhand();
 			if (offHand.getItem() instanceof ItemRegionStick && mainHand.getItem() instanceof ItemFlagStick) {
 				String selectedRegion = offHand.getTag().getString(ItemRegionStick.REGION);
-				String selectedFag = getSelectedFlag(playerIn.getHeldItem(handIn));
+				String selectedFlag = getSelectedFlag(playerIn.getHeldItem(handIn));
 				String flagMode = getMode(flagStick);
-				if (selectedFag.isEmpty() || selectedRegion.isEmpty()) {
+				if (selectedFlag.isEmpty() || selectedRegion.isEmpty()) {
 					return ActionResult.resultFail(flagStick);
 				}
-				boolean allFlagsSelected = selectedFag.equals(RegionFlag.ALL.toString());
+				boolean allFlagsSelected = selectedFlag.equals(RegionFlag.ALL.toString());
 				switch (flagMode) {
 					case MODE_ADD:
 						if (allFlagsSelected) {
@@ -156,14 +158,13 @@ public class ItemFlagStick extends Item {
 				playerIn.setActiveHand(handIn);
 				return super.onItemRightClick(worldIn, playerIn, handIn);
 			} else {
-				if (handIn == Hand.MAIN_HAND) {
+				if (playerIn.getActiveHand() == Hand.MAIN_HAND) {
 					if (playerIn.isSneaking()) {
 						switchMode(flagStick);
-						return ActionResult.resultSuccess(flagStick);
 					} else {
 						cycleFlags(flagStick);
-						return ActionResult.resultSuccess(flagStick);
 					}
+					return ActionResult.resultSuccess(flagStick);
 				}
 			}
 			// check for region stick and add/remove flags
@@ -246,8 +247,7 @@ public class ItemFlagStick extends Item {
 				stack.setTag(nbt);
 				setDisplayName(stack, RegionFlag.ALL, MODE_ADD);
 			} else {
-				int flagIdx = stack.getTag().getInt(FLAG_IDX);
-				String flag = flags.get(flagIdx);
+				String flag = stack.getTag().getString(FLAG);
 				String mode = stack.getTag().getString(MODE);
 				setDisplayName(stack, flag, mode);
 			}

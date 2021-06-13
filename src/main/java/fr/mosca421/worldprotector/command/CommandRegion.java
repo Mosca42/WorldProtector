@@ -17,6 +17,7 @@ public class CommandRegion {
     private CommandRegion() {
     }
 
+    // TODO: muted command
     public static LiteralArgumentBuilder<CommandSource> register() {
         return Commands.literal(Command.REGION.toString())
                 .executes(ctx -> giveHelp(ctx.getSource()))

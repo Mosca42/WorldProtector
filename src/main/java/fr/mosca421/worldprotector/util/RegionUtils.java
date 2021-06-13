@@ -214,6 +214,7 @@ public final class RegionUtils {
 		sendMessage(player, new TranslationTextComponent(TextFormatting.AQUA + "== WorldProtector Help =="));
 	}
 
+	// TODO: add muted info
 	// TODO: Hover events for flags and players for readability
 	public static void giveRegionInfo(PlayerEntity player, String regionName) {
 		if (RegionManager.get().containsRegion(regionName)) {

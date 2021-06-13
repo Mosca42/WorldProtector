@@ -46,7 +46,9 @@ public class EventPlayers {
                 List<IRegion> regions = RegionUtils.getHandlingRegionsFor(player.getPosition(), player.world);
                 for (IRegion region : regions) {
                     if (region.containsFlag(RegionFlag.ATTACK_PLAYERS.toString()) && region.forbids(player)) {
-                        sendStatusMessage(player, "message.event.player.pvp");
+                        if (!region.isMuted()) {
+                            sendStatusMessage(player, "message.event.player.pvp");
+                        }
                         event.setCanceled(true);
                         return;
                     }
@@ -61,7 +63,9 @@ public class EventPlayers {
             List<IRegion> regions = RegionUtils.getHandlingRegionsFor(event.getPlayer().getPosition(), event.getPlayer().world);
             for (IRegion region : regions) {
                 if (region.containsFlag(RegionFlag.ITEM_PICKUP.toString()) && region.forbids(event.getPlayer())) {
-                    sendStatusMessage(event.getPlayer(), "message.event.player.pickup_item");
+                    if (!region.isMuted()) {
+                        sendStatusMessage(event.getPlayer(), "message.event.player.pickup_item");
+                    }
                     event.setCanceled(true);
                 }
             }
@@ -74,7 +78,9 @@ public class EventPlayers {
             PlayerEntity player = event.getPlayer();
             boolean isLevelChangeProhibited = RegionUtils.isPlayerActionProhibited(event.getPlayer().getPosition(), player, RegionFlag.LEVEL_FREEZE);
             if (isLevelChangeProhibited) {
-                sendStatusMessage(player, "message.event.player.level_freeze");
+                if (!region.isMuted()) {
+                    sendStatusMessage(player, "message.event.player.level_freeze");
+                }
                 event.setCanceled(true);
             }
         }
@@ -87,7 +93,9 @@ public class EventPlayers {
             List<IRegion> regions = RegionUtils.getHandlingRegionsFor(player.getPosition(), player.world);
             for (IRegion region : regions) {
                 if (region.containsFlag(RegionFlag.XP_FREEZE.toString()) && region.forbids(player)) {
-                    MessageUtils.sendStatusMessage(player, "message.protection.player.xp_freeze");
+                    if (!region.isMuted()) {
+                        MessageUtils.sendStatusMessage(player, "message.protection.player.xp_freeze");
+                    }
                     event.setCanceled(true);
                     event.setAmount(0);
                     return;
@@ -106,7 +114,9 @@ public class EventPlayers {
             List<IRegion> regions = RegionUtils.getHandlingRegionsFor(player.getPosition(), player.world);
             for (IRegion region : regions) {
                 if (region.containsFlag(RegionFlag.XP_PICKUP.toString()) && region.forbids(player)) {
-                    MessageUtils.sendStatusMessage(player, "message.protection.player.xp_pickup");
+                    if (!region.isMuted()) {
+                        MessageUtils.sendStatusMessage(player, "message.protection.player.xp_pickup");
+                    }
                     event.setCanceled(true);
                     event.getOrb().remove();
                     return;
@@ -171,7 +181,9 @@ public class EventPlayers {
             if (leftIn.getItem() instanceof ItemRegionMarker && rightIn.getItem() instanceof AirItem) {
                 String regionName = event.getItemResult().getDisplayName().getString();
                 if (!player.hasPermissionLevel(4) || !player.isCreative()) {
-                    sendStatusMessage(player, "message.event.players.anvil_region_defined");
+                    if (!region.isMuted()) {
+                        sendStatusMessage(player, "message.event.players.anvil_region_defined");
+                    }
                 } else {
                     RegionUtils.createRegion(regionName, player, event.getItemResult());
                 }
@@ -188,7 +200,9 @@ public class EventPlayers {
             for (IRegion region : regions) {
                 if (region.containsFlag(RegionFlag.SEND_MESSAGE.toString()) && region.forbids(player)) {
                     event.setCanceled(true);
-                    sendStatusMessage(player, new TranslationTextComponent("message.event.player.speak"));
+                    if (!region.isMuted()) {
+                        sendStatusMessage(player, new TranslationTextComponent("message.event.player.speak"));
+                    }
                 }
             }
         }
@@ -209,7 +223,9 @@ public class EventPlayers {
             for (IRegion region : regions) {
                 if (region.containsFlag(RegionFlag.EXECUTE_COMMAND.toString()) && region.forbids(player)) {
                     event.setCanceled(true);
-                    MessageUtils.sendStatusMessage(player, "message.event.player.execute-commands");
+                    if (!region.isMuted()) {
+                        MessageUtils.sendStatusMessage(player, "message.event.player.execute-commands");
+                    }
                     return;
                 }
             }
@@ -226,7 +242,9 @@ public class EventPlayers {
         List<IRegion> regions = RegionUtils.getHandlingRegionsFor(player.getPosition(), player.world);
         for (IRegion region : regions) {
             if (region.containsFlag(RegionFlag.SLEEP.toString()) && region.forbids(player)) {
-                MessageUtils.sendStatusMessage(player, "message.event.player.sleep");
+                if (!region.isMuted()) {
+                    MessageUtils.sendStatusMessage(player, "message.event.player.sleep");
+                }
                 event.setResult(Event.Result.DENY);
                 return;
             }
@@ -243,7 +261,9 @@ public class EventPlayers {
             for (IRegion region : regions) {
                 if (region.containsFlag(RegionFlag.SET_SPAWN.toString()) && region.forbids(player)) {
                     event.setCanceled(true);
-                    MessageUtils.sendStatusMessage(player, "message.event.player.set_spawn");
+                    if (!region.isMuted()) {
+                        MessageUtils.sendStatusMessage(player, "message.event.player.set_spawn");
+                    }
                     return;
                 }
             }
@@ -271,7 +291,9 @@ public class EventPlayers {
             if (region.containsFlag(RegionFlag.ITEM_DROP.toString()) && region.forbids(player)) {
                 event.setCanceled(true);
                 player.inventory.addItemStackToInventory(event.getEntityItem().getItem());
-                MessageUtils.sendStatusMessage(player, "message.event.player.drop_item");
+                if (!region.isMuted()) {
+                    MessageUtils.sendStatusMessage(player, "message.event.player.drop_item");
+                }
                 return;
             }
         }
@@ -291,12 +313,16 @@ public class EventPlayers {
 					TODO: Wait for 1.17: https://bugs.mojang.com/browse/MC-202202
 					if (event.isDismounting() && region.containsFlag(RegionFlag.ANIMAL_UNMOUNTING) && region.forbids(player)) {
 						event.setCanceled(true); // Does not correctly unmount player
-						sendMessage(player, "message.event.player.unmount");
+						if (!region.isMuted()) {
+						    sendStatusMessage(player, "message.event.player.unmount");
+						}
 					}
 					*/
                     if (event.isMounting() && region.containsFlag(RegionFlag.ANIMAL_MOUNTING) && region.forbids(player)) {
                         event.setCanceled(true);
-                        sendStatusMessage(player, "message.event.player.mount");
+                        if (!region.isMuted()) {
+                            sendStatusMessage(player, "message.event.player.mount");
+                        }
                     }
                 }
             }

@@ -14,9 +14,11 @@ import net.minecraft.fluid.Fluid;
 import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.ITag;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.math.vector.Vector3i;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ToolType;
@@ -25,9 +27,12 @@ import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.BlockEvent.BreakEvent;
 import net.minecraftforge.event.world.BlockEvent.EntityPlaceEvent;
 import net.minecraftforge.event.world.ExplosionEvent;
+import net.minecraftforge.event.world.PistonEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -47,7 +52,9 @@ public class EventProtection {
 					region -> !region.permits(player),
 					() -> {
 						event.setCanceled(true);
-						sendStatusMessage(player, new TranslationTextComponent("message.event.protection.break_block"));
+						if (!region.isMuted()) {
+							sendStatusMessage(player, new TranslationTextComponent("message.event.protection.break_block"));
+						}
 					});
 		}
 	}
@@ -62,7 +69,9 @@ public class EventProtection {
 						.anyMatch(region -> region.containsFlag(RegionFlag.PLACE) && region.forbids(player));
 				if (isPlayerPlacementProhibited) {
 					event.setCanceled(true);
-					sendStatusMessage(player, new TranslationTextComponent("message.event.protection.place_block"));
+					if (!region.isMuted()) {
+						sendStatusMessage(player, new TranslationTextComponent("message.event.protection.place_block"));
+					}
 				}
 			}
 			// TODO: Test
@@ -88,7 +97,9 @@ public class EventProtection {
 					boolean cancelEvent = region.containsFlag(RegionFlag.IGNITE_EXPLOSIVES) && !region.permits(player);
 					event.setCanceled(cancelEvent);
 					if (cancelEvent) {
-						sendStatusMessage(player, "message.event.protection.ignite_tnt");
+						if (!region.isMuted()) {
+							sendStatusMessage(player, "message.event.protection.ignite_tnt");
+						}
 					}
 				}
 			} else {
@@ -129,22 +140,30 @@ public class EventProtection {
 				boolean playerNotPermitted = !region.permits(player);
 				if (region.containsFlag(RegionFlag.TOOL_SECONDARY_USE) && playerNotPermitted) {
 					event.setCanceled(true);
-					sendStatusMessage(player, "message.event.protection.tool_secondary_use");
+					if (!region.isMuted()) {
+						sendStatusMessage(player, "message.event.protection.tool_secondary_use");
+					}
 					return;
 				}
 				if (event.getToolType() == ToolType.AXE && region.containsFlag(RegionFlag.AXE_STRIP) && playerNotPermitted) {
 					event.setCanceled(true);
-					sendStatusMessage(player, "message.event.protection.strip_wood");
+					if (!region.isMuted()) {
+						sendStatusMessage(player, "message.event.protection.strip_wood");
+					}
 					return;
 				}
 				if (event.getToolType() == ToolType.HOE && region.containsFlag(RegionFlag.HOE_TILL) && playerNotPermitted) {
 					event.setCanceled(true);
-					sendStatusMessage(player, "message.event.protection.till_farmland");
+					if (!region.isMuted()) {
+						sendStatusMessage(player, "message.event.protection.till_farmland");
+					}
 					return;
 				}
 				if (event.getToolType() == ToolType.SHOVEL && region.containsFlag(RegionFlag.SHOVEL_PATH) && playerNotPermitted) {
 					event.setCanceled(true);
-					sendStatusMessage(player, "message.event.protection.shovel_path");
+					if (!region.isMuted()) {
+						sendStatusMessage(player, "message.event.protection.shovel_path");
+					}
 					return;
 				}
 			}
@@ -168,7 +187,9 @@ public class EventProtection {
 				// placing fluid
 				if (bucketItemMaxStackCount == 1) {
 					if (region.containsFlag(RegionFlag.PLACE.toString()) && !region.permits(player)) {
-						sendStatusMessage(player, new TranslationTextComponent("message.event.protection.place_fluid"));
+						if (!region.isMuted()) {
+							sendStatusMessage(player, new TranslationTextComponent("message.event.protection.place_fluid"));
+						}
 						event.setCanceled(true);
 						return;
 					}
@@ -195,7 +216,9 @@ public class EventProtection {
 						}
 						if (isWaterlogged || isFluid) {
 							if (region.containsFlag(RegionFlag.BREAK.toString()) && !region.permits(player)) {
-								sendStatusMessage(player, new TranslationTextComponent("message.event.protection.scoop_fluid"));
+								if (!region.isMuted()) {
+									sendStatusMessage(player, new TranslationTextComponent("message.event.protection.scoop_fluid"));
+								}
 								event.setCanceled(true);
 								return;
 							}
@@ -206,6 +229,46 @@ public class EventProtection {
 			}
 		}
 	}
+
+	/*
+	@SubscribeEvent
+	public static void onPistonPushBlock(PistonEvent.Pre event) {
+		Direction dir = event.getDirection();
+		BlockPos pistonPos = event.getPos();
+		if (event.getPistonMoveType() == PistonEvent.PistonMoveType.EXTEND && event.getStructureHelper().canMove()) {
+			WorldProtector.LOGGER.debug(event.getDirection());
+			WorldProtector.LOGGER.debug(pistonPos);
+			WorldProtector.LOGGER.debug(event.getFaceOffsetPos());
+			List<BlockPos> blockToMove = event.getStructureHelper().getBlocksToMove();
+			blockToMove.forEach( pos -> WorldProtector.LOGGER.debug(pos.toString()));
+
+			List<IRegion> regionsPushedIn = blockToMove.stream()
+					.map(pos -> RegionUtils.getHandlingRegionsFor(pos, (World) event.getWorld()))
+					.flatMap(Collection::stream)
+					.distinct()
+					.collect(Collectors.toList());
+
+			for (IRegion region : regionsPushedIn) {
+				if (region.containsFlag(PISTON_PUSH)) {
+					event.setCanceled(true);
+					return;
+				}
+			}
+		}
+	}
+
+	@SubscribeEvent
+	public static void onPistonPullBlock(PistonEvent.Pre event){
+		Direction dir = event.getDirection();
+		BlockPos pistonPos = event.getPos();
+		// TODO: check for sticky piston /blocks
+		if (event.getPistonMoveType() == PistonEvent.PistonMoveType.RETRACT){
+			
+		}
+
+
+	}
+    */
 
 	/**
 	 * Checks is any region contains the specified flag

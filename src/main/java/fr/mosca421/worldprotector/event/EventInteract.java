@@ -57,7 +57,9 @@ public class EventInteract {
 					if (region.containsFlag(RegionFlag.USE) && isPlayerProhibited && isUsableBlock) {
 						if (!player.isSneaking()) {
 							event.setCanceled(true);
-							MessageUtils.sendStatusMessage(player, "message.event.interact.use");
+							if (!region.isMuted()) {
+								MessageUtils.sendStatusMessage(player, "message.event.interact.use");
+							}
 							return;
 						}
 					}
@@ -68,7 +70,9 @@ public class EventInteract {
 				if (region.containsFlag(RegionFlag.ENDER_CHEST_ACCESS) && isEnderChest && isPlayerProhibited) {
 					if (!player.isSneaking()) {
 						event.setCanceled(true);
-						MessageUtils.sendStatusMessage(player, "message.event.interact.access_ender_chest");
+						if (!region.isMuted()) {
+							MessageUtils.sendStatusMessage(player, "message.event.interact.access_ender_chest");
+						}
 						return;
 					}
 				}
@@ -76,7 +80,9 @@ public class EventInteract {
 				if (region.containsFlag(RegionFlag.CONTAINER_ACCESS) && isContainer && isPlayerProhibited) {
 					if (!player.isSneaking()) {
 						event.setCanceled(true);
-						MessageUtils.sendStatusMessage(player, "message.event.interact.access_container");
+						if (!region.isMuted()) {
+							MessageUtils.sendStatusMessage(player, "message.event.interact.access_container");
+						}
 						return;
 					}
 				}
@@ -96,7 +102,9 @@ public class EventInteract {
 
 				if (containsChestAccess && !playerHasPermission && isMinecartContainer) {
 					event.setCanceled(true);
-					MessageUtils.sendStatusMessage(player, "message.event.interact.access_container");
+					if (!region.isMuted()) {
+						MessageUtils.sendStatusMessage(player, "message.event.interact.access_container");
+					}
 					return;
 				}
 			}

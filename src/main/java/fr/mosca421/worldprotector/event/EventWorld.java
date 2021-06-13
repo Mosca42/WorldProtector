@@ -49,7 +49,9 @@ public class EventWorld {
                     PlayerEntity player = (PlayerEntity) event.getEntity();
                     if (r.containsFlag(RegionFlag.TRAMPLE_FARMLAND_PLAYER.toString())) {
                         event.setCanceled(true);
-                        MessageUtils.sendStatusMessage(player, "message.event.world.trample_farmland");
+                        if (!r.isMuted()) {
+                            MessageUtils.sendStatusMessage(player, "message.event.world.trample_farmland");
+                        }
                     }
                 } else {
                     // cancel trampling by other entities
@@ -80,7 +82,9 @@ public class EventWorld {
             boolean isBonemealUseProhibited = isPlayerActionProhibited(event.getPos(), player, RegionFlag.USE_BONEMEAL);
             if (isBonemealUseProhibited) {
                 event.setCanceled(true);
-                MessageUtils.sendStatusMessage(player, "message.event.world.use_bone_meal");
+                if (!region.isMuted()) {
+                    MessageUtils.sendStatusMessage(player, "message.event.world.use_bone_meal");
+                }
             }
         }
     }
@@ -101,21 +105,27 @@ public class EventWorld {
                     }
                     if (region.forbids(player)) {
                         event.setCanceled(true);
-                        MessageUtils.sendStatusMessage(player, "message.event.world.exp_drop.all");
+                        if (!region.isMuted()) {
+                            MessageUtils.sendStatusMessage(player, "message.event.world.exp_drop.all");
+                        }
                         return;
                     }
                 }
                 // prevent monster xp drop
                 if (region.containsFlag(RegionFlag.XP_DROP_MONSTER) && isMonster(entity) && region.forbids(player)) {
                     event.setCanceled(true);
-                    MessageUtils.sendStatusMessage(player, "message.event.world.exp_drop.monsters");
+                    if (!region.isMuted()) {
+                        MessageUtils.sendStatusMessage(player, "message.event.world.exp_drop.monsters");
+                    }
                     return;
                 }
                 // prevent other entity xp drop (villagers, animals, ..)
                 if (region.containsFlag(RegionFlag.XP_DROP_OTHER) && !isMonster(entity) && !entityDroppingXpIsPlayer) {
                     if (region.forbids(player)) {
                         event.setCanceled(true);
-                        MessageUtils.sendStatusMessage(player, "message.event.world.exp_drop.non_hostile");
+                        if (!region.isMuted()) {
+                            MessageUtils.sendStatusMessage(player, "message.event.world.exp_drop.non_hostile");
+                        }
                         return;
                     }
                 }
@@ -179,7 +189,9 @@ public class EventWorld {
 
                 if (entity instanceof PlayerEntity) {
                     event.setCanceled(true);
-                    MessageUtils.sendStatusMessage((PlayerEntity) entity, "message.event.player.change_dim");
+                    if (!region.isMuted()) {
+                        MessageUtils.sendStatusMessage((PlayerEntity) entity, "message.event.player.change_dim");
+                    }
                     return;
                 }
             }

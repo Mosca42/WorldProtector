@@ -54,12 +54,16 @@ public class EventTeleport {
         boolean playerTpToProhibited = regionsTo.stream()
                 .anyMatch(region -> region.containsFlag(RegionFlag.USE_ENDERPEARL_TO_REGION) && region.forbids(player));
         if (playerTpToProhibited) {
-            MessageUtils.sendStatusMessage(player, "message.event.teleport.ender_pearl.to_region");
+            if (!region.isMuted()) {
+                MessageUtils.sendStatusMessage(player, "message.event.teleport.ender_pearl.to_region");
+            }
         }
         boolean playerTpFromProhibited = regionsFrom.stream()
                 .anyMatch(region -> region.containsFlag(RegionFlag.USE_ENDERPEARL_FROM_REGION) && region.forbids(player));
         if (playerTpFromProhibited) {
-            MessageUtils.sendStatusMessage(player, "message.event.teleport.ender_pearl.from_region");
+            if (!region.isMuted()) {
+                MessageUtils.sendStatusMessage(player, "message.event.teleport.ender_pearl.from_region");
+            }
         }
 
         if (playerTpFromProhibited || playerTpToProhibited) {

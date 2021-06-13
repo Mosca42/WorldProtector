@@ -218,7 +218,7 @@ Under the following conditions:
 * Flags per dimension
 * Blacklist/Whitelist option for regions and dimensions
 * Region highlighting
-* Flag ideas: use-firework, elytra-fly, enter-chunk, leave-chunk, de-/activate-spawner, InputUpdateEvent for im-mobility
+* Flag ideas: use-firework, elytra-fly, enter-chunk, leave-chunk, de-/activate-spawner, InputUpdateEvent for im-mobility, piston-push, piston-pull
 * Configuration support
     * Option to disable specific event checks completely for optimization
     * Default blacklist/whitelist setting for regions

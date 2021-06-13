@@ -17,6 +17,9 @@ to a regions which are then allowed to bypass these rules/flags.
 
 To define a region, follow these instructions:
 
+0. For now, you need to be OP Level 4 on your dedicated server or enable cheats in your singleplayer world. This will be
+   configurable in a future update.
+
 1. Use the Region Marker to mark the two blocks which define the area of the region.
 
 2. [Optional] Expand the Y level (height) of your marked region with the ```/wp expand vert [<Y1>] [<Y2>]``` command (
@@ -33,8 +36,7 @@ To define a region, follow these instructions:
 5. Add flags to your region by using the appropriate command ```/wp flag add <region> <flag name>``` or by using the
    Flag Stick in conjunction with the Region Stick (see Flag Stick and Region Stick tooltips).
 
-6. [Optional] Add players to your region which are allowed to bypass the flags by using the
-   command ````/wp player add <region> <playername>```` or by using the Region Stick (see Region Stick tooltip for more
+6. [Optional] Add players to your region which are allowed to bypass the flags by using the command ````/wp player add <region> <playername>```` or by using the Region Stick (see Region Stick tooltip for more
    details).
 
 ## Features
@@ -75,6 +77,9 @@ shift-right click on the container to add or remove all flags in the container a
 This way you are able to group flags for the same purpose in a container and reuse it when needed. A real time saver!
 
 ### Commands
+
+**Note: Journey Map also uses the ``/wp`` command. For this reason WorldProtector offers ``/w-p`` or ``/worldprotector``
+as alternatives.**
 
 Currently, there are four types of commands to manager regions:
 
@@ -246,3 +251,9 @@ Under the following conditions:
 - **Q**: Can you implement a flag for \<your feature here\>?
 - **A**: Maybe. Consider creating an issue on
   the [WorldProtector Github](https://github.com/Mosca42/WorldProtector/issues) page.
+
+- **Q**: Why can't I use the commands provided by WorldProtector?
+- **A**: Make sure you are OP Level 4 on your server or enable cheats in your singleplayer world.
+
+- **Q**: Why are not all commands with ``/wp <command>`` working and prompting errors?
+- **A**: JourneyMap also uses the ``/wp`` command. Try using ``/w-p`` or ``/worldprotector`` instead.

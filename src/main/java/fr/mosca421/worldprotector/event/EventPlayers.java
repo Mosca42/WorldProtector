@@ -76,12 +76,15 @@ public class EventPlayers {
     public static void onPlayerLevelChange(PlayerXpEvent.LevelChange event) {
         if (!event.getPlayer().world.isRemote) {
             PlayerEntity player = event.getPlayer();
-            boolean isLevelChangeProhibited = RegionUtils.isPlayerActionProhibited(event.getPlayer().getPosition(), player, RegionFlag.LEVEL_FREEZE);
-            if (isLevelChangeProhibited) {
-                if (!region.isMuted()) {
-                    sendStatusMessage(player, "message.event.player.level_freeze");
+            List<IRegion> regions = RegionUtils.getHandlingRegionsFor(player.getPosition(), player.world);
+            for (IRegion region : regions) {
+                if (region.containsFlag(RegionFlag.LEVEL_FREEZE) && region.forbids(player)) {
+                    if (!region.isMuted()) {
+                        sendStatusMessage(player, "message.event.player.level_freeze");
+                    }
+                    event.setCanceled(true);
+                    return;
                 }
-                event.setCanceled(true);
             }
         }
     }
@@ -181,9 +184,7 @@ public class EventPlayers {
             if (leftIn.getItem() instanceof ItemRegionMarker && rightIn.getItem() instanceof AirItem) {
                 String regionName = event.getItemResult().getDisplayName().getString();
                 if (!player.hasPermissionLevel(4) || !player.isCreative()) {
-                    if (!region.isMuted()) {
-                        sendStatusMessage(player, "message.event.players.anvil_region_defined");
-                    }
+                    sendStatusMessage(player, "message.event.players.anvil_region_defined");
                 } else {
                     RegionUtils.createRegion(regionName, player, event.getItemResult());
                 }

@@ -26,7 +26,6 @@ import java.util.List;
 
 import static fr.mosca421.worldprotector.event.EventMobs.isMonster;
 import static fr.mosca421.worldprotector.util.RegionUtils.getHandlingRegionsFor;
-import static fr.mosca421.worldprotector.util.RegionUtils.isPlayerActionProhibited;
 
 @Mod.EventBusSubscriber(modid = WorldProtector.MODID)
 public class EventWorld {
@@ -79,11 +78,14 @@ public class EventWorld {
     public static void onBonemealUse(BonemealEvent event){
         if (!event.getWorld().isRemote) {
             PlayerEntity player = (PlayerEntity) event.getEntity();
-            boolean isBonemealUseProhibited = isPlayerActionProhibited(event.getPos(), player, RegionFlag.USE_BONEMEAL);
-            if (isBonemealUseProhibited) {
-                event.setCanceled(true);
-                if (!region.isMuted()) {
-                    MessageUtils.sendStatusMessage(player, "message.event.world.use_bone_meal");
+            List<IRegion> regions = RegionUtils.getHandlingRegionsFor(event.getPos(), player.world);
+            for (IRegion region : regions) {
+                if (region.containsFlag(RegionFlag.USE_BONEMEAL) && region.forbids(player)) {
+                    event.setCanceled(true);
+                    if (!region.isMuted()) {
+                        MessageUtils.sendStatusMessage(player, "message.event.world.use_bone_meal");
+                    }
+                    return;
                 }
             }
         }

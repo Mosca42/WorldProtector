@@ -28,8 +28,6 @@ import net.minecraftforge.fml.common.Mod;
 
 import java.util.List;
 
-import static fr.mosca421.worldprotector.util.RegionUtils.isPlayerActionProhibited;
-
 @Mod.EventBusSubscriber(modid = WorldProtector.MODID)
 public class EventMobs {
 
@@ -68,27 +66,32 @@ public class EventMobs {
 	public static void onBreedingAttempt(BabyEntitySpawnEvent event) {
 		PlayerEntity player = event.getCausedByPlayer();
 		if (player != null && !player.world.isRemote) {
-			boolean isBreedingProhibited = isPlayerActionProhibited(event.getParentB().getPosition(), player, RegionFlag.ANIMAL_BREEDING);
-			if (isBreedingProhibited) {
-				if (!region.isMuted()) {
-					MessageUtils.sendStatusMessage(player, "message.event.mobs.breed_animals");
+			List<IRegion> regions = RegionUtils.getHandlingRegionsFor(event.getParentB().getPosition(), event.getParentB().world);
+			for (IRegion region : regions) {
+				if (region.containsFlag(RegionFlag.ANIMAL_BREEDING) && region.forbids(player)) {
+					if (!region.isMuted()) {
+						MessageUtils.sendStatusMessage(player, "message.event.mobs.breed_animals");
+					}
+					event.setCanceled(true);
+					return;
 				}
-				event.setCanceled(true);
 			}
 		}
+		// TODO: test if this is fired when animals are bred without player interaction
 	}
 
 	@SubscribeEvent
-	public static void onAnimalTameAttempt(AnimalTameEvent event){
+	public static void onAnimalTameAttempt(AnimalTameEvent event) {
 		AnimalEntity animal = event.getAnimal();
 		PlayerEntity player = event.getTamer();
-		if (!player.world.isRemote){
-			boolean isTamingProhibited = isPlayerActionProhibited(animal.getPosition(), player, RegionFlag.ANIMAL_TAMING);
-			if (isTamingProhibited) {
+		if (!player.world.isRemote) {
+			List<IRegion> regions = RegionUtils.getHandlingRegionsFor(animal.getPosition(), event.getAnimal().world);
+			for (IRegion region : regions) {
 				event.setCanceled(true);
 				if (!region.isMuted()) {
 					MessageUtils.sendStatusMessage(player, "message.event.mobs.tame_animal");
 				}
+				return;
 			}
 		}
 	}

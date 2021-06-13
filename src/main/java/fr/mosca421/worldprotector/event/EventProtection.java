@@ -14,11 +14,9 @@ import net.minecraft.fluid.Fluid;
 import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.ITag;
-import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.util.math.vector.Vector3i;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ToolType;
@@ -27,12 +25,9 @@ import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.BlockEvent.BreakEvent;
 import net.minecraftforge.event.world.BlockEvent.EntityPlaceEvent;
 import net.minecraftforge.event.world.ExplosionEvent;
-import net.minecraftforge.event.world.PistonEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -41,21 +36,23 @@ import static fr.mosca421.worldprotector.util.MessageUtils.sendStatusMessage;
 @Mod.EventBusSubscriber(modid = WorldProtector.MODID)
 public class EventProtection {
 
-	private EventProtection(){}
+	private EventProtection() {
+	}
 
 	@SubscribeEvent
 	public static void onPlayerBreakBlock(BreakEvent event) {
 		if (!event.getWorld().isRemote()) {
 			PlayerEntity player = event.getPlayer();
-			RegionUtils.cancelEventsInRegions(
-					event.getPos(), (World) event.getWorld(), RegionFlag.BREAK,
-					region -> !region.permits(player),
-					() -> {
-						event.setCanceled(true);
-						if (!region.isMuted()) {
-							sendStatusMessage(player, new TranslationTextComponent("message.event.protection.break_block"));
-						}
-					});
+			List<IRegion> regions = RegionUtils.getHandlingRegionsFor(event.getPos(), (World) event.getWorld());
+			for (IRegion region : regions) {
+				if (region.containsFlag(RegionFlag.BREAK) && region.forbids(player)) {
+					event.setCanceled(true);
+					if (!region.isMuted()) {
+						sendStatusMessage(player, new TranslationTextComponent("message.event.protection.break_block"));
+					}
+					return;
+				}
+			}
 		}
 	}
 
@@ -65,12 +62,12 @@ public class EventProtection {
 			List<IRegion> regions = RegionUtils.getHandlingRegionsFor(event.getPos(), (World) event.getWorld());
 			if (event.getEntity() instanceof PlayerEntity) {
 				PlayerEntity player = (PlayerEntity) event.getEntity();
-				boolean isPlayerPlacementProhibited = regions.stream()
-						.anyMatch(region -> region.containsFlag(RegionFlag.PLACE) && region.forbids(player));
-				if (isPlayerPlacementProhibited) {
-					event.setCanceled(true);
-					if (!region.isMuted()) {
-						sendStatusMessage(player, new TranslationTextComponent("message.event.protection.place_block"));
+				for (IRegion region : regions) {
+					if (region.containsFlag(RegionFlag.PLACE) && region.forbids(player)) {
+						event.setCanceled(true);
+						if (!region.isMuted()) {
+							sendStatusMessage(player, new TranslationTextComponent("message.event.protection.place_block"));
+						}
 					}
 				}
 			}

@@ -16,7 +16,19 @@ public class CommandWorldProtector {
     }
 
     public static LiteralArgumentBuilder<CommandSource> register() {
-        return Commands.literal(Command.WP.toString())
+        return withSubCommands(Commands.literal(Command.WP.toString()));
+    }
+
+    public static LiteralArgumentBuilder<CommandSource> registerAlternate1() {
+        return withSubCommands(Commands.literal(Command.W_P.toString()));
+    }
+
+    public static LiteralArgumentBuilder<CommandSource> registerAlternate2() {
+        return withSubCommands(Commands.literal(Command.WP_LONG.toString()));
+    }
+
+    private static LiteralArgumentBuilder<CommandSource> withSubCommands(LiteralArgumentBuilder<CommandSource> baseCommand) {
+        return baseCommand
                 .requires(cs -> cs.hasPermissionLevel(4))
                 .executes(ctx -> giveHelp(ctx.getSource()))
                 .then(Commands.literal(Command.HELP.toString())
@@ -30,12 +42,12 @@ public class CommandWorldProtector {
     private static int giveHelp(CommandSource source) {
         try {
             PlayerEntity player = source.asPlayer();
-            sendMessage(player, new TranslationTextComponent(TextFormatting.BLUE + "==WorldProtector Help=="));
+            sendMessage(player, new TranslationTextComponent(TextFormatting.AQUA + "== WorldProtector Help =="));
             sendMessage(player, "help.wp.1");
             sendMessage(player, "help.wp.2");
             sendMessage(player, "help.wp.3");
             sendMessage(player, "help.wp.4");
-            sendMessage(player, new TranslationTextComponent(TextFormatting.BLUE + "==WorldProtector Help=="));
+            sendMessage(player, new TranslationTextComponent(TextFormatting.AQUA + "== WorldProtector Help =="));
         } catch (CommandSyntaxException e) {
             e.printStackTrace();
         }

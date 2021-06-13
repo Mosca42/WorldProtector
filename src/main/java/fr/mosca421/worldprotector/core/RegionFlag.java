@@ -8,8 +8,8 @@ import java.util.stream.Collectors;
 public enum RegionFlag {
     ALL("all"),
     //
-    BUCKET_SCOOP("bucket_scoop"),
-    BUCKET_EMPTY("bucket_empty"),
+    // BUCKET_SCOOP("bucket_scoop"),
+    // BUCKET_EMPTY("bucket_empty"),
     BREAK("break"),
     PLACE("place"),
     ENTITY_PLACE("entity-place"), // TODO: needs testing

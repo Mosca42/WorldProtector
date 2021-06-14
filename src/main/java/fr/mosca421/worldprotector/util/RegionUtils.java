@@ -158,6 +158,22 @@ public final class RegionUtils {
 		}
 	}
 
+	public static void muteRegion(String regionName, PlayerEntity player) {
+		if (RegionManager.get().setMutedState(regionName, true)) {
+			sendMessage(player, new TranslationTextComponent("message.region.mute", regionName));
+		} else {
+			sendStatusMessage(player, new TranslationTextComponent("message.region.unknown", regionName));
+		}
+	}
+
+	public static void unmuteRegion(String regionName, PlayerEntity player) {
+		if (RegionManager.get().setMutedState(regionName, false)) {
+			sendMessage(player, new TranslationTextComponent("message.region.unmute", regionName));
+		} else {
+			sendStatusMessage(player, new TranslationTextComponent("message.region.unknown", regionName));
+		}
+	}
+
 	public static Collection<String> getRegionsAroundPlayer(PlayerEntity player) {
 		BlockPos playerPos = player.getPosition();
 		RegistryKey<World> dim = player.world.getDimensionKey();
@@ -231,7 +247,10 @@ public final class RegionUtils {
 				sendMessage(player, new TranslationTextComponent("message.region.info.players", regionPlayers));
 				sendMessage(player, new TranslationTextComponent("message.region.info.active", region.isActive()
 						? new TranslationTextComponent("message.region.info.active.true")
-						: new TranslationTextComponent("message.region.info.active.false")));
+						: new TranslationTextComponent("message.region.info.active.false"),
+						region.isMuted()
+								? new TranslationTextComponent("message.region.info.muted.true")
+								: new TranslationTextComponent("message.region.info.muted.true")));
 				sendMessage(player, new StringTextComponent(TextFormatting.AQUA + "== Region '" + regionName + "' information =="));
 			});
 		} else {

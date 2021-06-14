@@ -72,6 +72,14 @@ public class CommandRegion {
                                 .suggests((ctx, builder) -> ISuggestionProvider.suggest(RegionManager.get().getAllRegionNames(), builder))
                                 .executes(ctx -> deactivateRegion(ctx.getSource(), StringArgumentType.getString(ctx, Command.REGION.toString()))))
                         .then(Commands.literal(Command.ALL.toString()).executes(ctx -> deactivateAll(ctx.getSource()))))
+                .then(Commands.literal(Command.MUTE.toString())
+                        .then(Commands.argument(Command.REGION.toString(), StringArgumentType.string())
+                                .suggests((ctx, builder) -> ISuggestionProvider.suggest(RegionManager.get().getAllRegionNames(), builder))
+                                .executes(ctx -> muteRegion(ctx.getSource(), StringArgumentType.getString(ctx, Command.REGION.toString())))))
+                .then(Commands.literal(Command.UNMUTE.toString())
+                        .then(Commands.argument(Command.REGION.toString(), StringArgumentType.string())
+                                .suggests((ctx, builder) -> ISuggestionProvider.suggest(RegionManager.get().getAllRegionNames(), builder))
+                                .executes(ctx -> unmuteRegion(ctx.getSource(), StringArgumentType.getString(ctx, Command.REGION.toString())))))
                 .then(Commands.literal(Command.SET_PRIORITY.toString())
                         .then(Commands.argument(Command.REGION.toString(), StringArgumentType.string())
                                 .suggests((ctx, builder) -> ISuggestionProvider.suggest(RegionManager.get().getAllRegionNames(), builder))
@@ -120,6 +128,24 @@ public class CommandRegion {
     private static int deactivateAll(CommandSource source) {
         try {
             RegionUtils.deactivateAll(RegionManager.get().getAllRegions(), source.asPlayer());
+        } catch (CommandSyntaxException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    private static int muteRegion(CommandSource source, String regionName) {
+        try {
+            RegionUtils.muteRegion(regionName, source.asPlayer());
+        } catch (CommandSyntaxException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    private static int unmuteRegion(CommandSource source, String regionName) {
+        try {
+            RegionUtils.unmuteRegion(regionName, source.asPlayer());
         } catch (CommandSyntaxException e) {
             e.printStackTrace();
         }

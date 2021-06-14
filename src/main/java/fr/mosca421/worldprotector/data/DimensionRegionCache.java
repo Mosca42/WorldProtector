@@ -54,6 +54,14 @@ public class DimensionRegionCache extends HashMap<String, IRegion> implements IN
         return false;
     }
 
+    public boolean setIsMuted(String regionName, boolean isMuted) {
+        if (this.containsKey(regionName)) {
+            getRegion(regionName).setIsMuted(isMuted);
+            return true;
+        }
+        return false;
+    }
+
     public Collection<IRegion> getRegions() {
         return Collections.unmodifiableCollection(this.values());
     }

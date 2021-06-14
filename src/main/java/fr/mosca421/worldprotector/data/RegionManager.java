@@ -156,6 +156,20 @@ public class RegionManager extends WorldSavedData {
         }
     }
 
+    public boolean setMutedState(String regionName, boolean isMuted) {
+        Optional<IRegion> maybeRegion = getRegion(regionName);
+        if (maybeRegion.isPresent()) {
+            IRegion region = maybeRegion.get();
+            boolean wasUpdated = regionMap.get(region.getDimension()).setIsMuted(regionName, isMuted);
+            if (wasUpdated) {
+                markDirty();
+            }
+            return wasUpdated;
+        } else {
+            return false;
+        }
+    }
+
     public Collection<IRegion> getAllRegionsFor(RegistryKey<World> dim) {
         if (regionMap.containsKey(dim)) {
             return regionMap.get(dim).getRegions();

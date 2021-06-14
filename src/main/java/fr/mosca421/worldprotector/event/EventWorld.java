@@ -26,7 +26,6 @@ import java.util.List;
 
 import static fr.mosca421.worldprotector.event.EventMobs.isMonster;
 import static fr.mosca421.worldprotector.util.RegionUtils.getHandlingRegionsFor;
-import static fr.mosca421.worldprotector.util.RegionUtils.isPlayerActionProhibited;
 
 @Mod.EventBusSubscriber(modid = WorldProtector.MODID)
 public class EventWorld {
@@ -49,7 +48,9 @@ public class EventWorld {
                     PlayerEntity player = (PlayerEntity) event.getEntity();
                     if (r.containsFlag(RegionFlag.TRAMPLE_FARMLAND_PLAYER.toString())) {
                         event.setCanceled(true);
-                        MessageUtils.sendStatusMessage(player, "message.event.world.trample_farmland");
+                        if (!r.isMuted()) {
+                            MessageUtils.sendStatusMessage(player, "message.event.world.trample_farmland");
+                        }
                     }
                 } else {
                     // cancel trampling by other entities
@@ -77,10 +78,15 @@ public class EventWorld {
     public static void onBonemealUse(BonemealEvent event){
         if (!event.getWorld().isRemote) {
             PlayerEntity player = (PlayerEntity) event.getEntity();
-            boolean isBonemealUseProhibited = isPlayerActionProhibited(event.getPos(), player, RegionFlag.USE_BONEMEAL);
-            if (isBonemealUseProhibited) {
-                event.setCanceled(true);
-                MessageUtils.sendStatusMessage(player, "message.event.world.use_bone_meal");
+            List<IRegion> regions = RegionUtils.getHandlingRegionsFor(event.getPos(), player.world);
+            for (IRegion region : regions) {
+                if (region.containsFlag(RegionFlag.USE_BONEMEAL) && region.forbids(player)) {
+                    event.setCanceled(true);
+                    if (!region.isMuted()) {
+                        MessageUtils.sendStatusMessage(player, "message.event.world.use_bone_meal");
+                    }
+                    return;
+                }
             }
         }
     }
@@ -101,21 +107,27 @@ public class EventWorld {
                     }
                     if (region.forbids(player)) {
                         event.setCanceled(true);
-                        MessageUtils.sendStatusMessage(player, "message.event.world.exp_drop.all");
+                        if (!region.isMuted()) {
+                            MessageUtils.sendStatusMessage(player, "message.event.world.exp_drop.all");
+                        }
                         return;
                     }
                 }
                 // prevent monster xp drop
                 if (region.containsFlag(RegionFlag.XP_DROP_MONSTER) && isMonster(entity) && region.forbids(player)) {
                     event.setCanceled(true);
-                    MessageUtils.sendStatusMessage(player, "message.event.world.exp_drop.monsters");
+                    if (!region.isMuted()) {
+                        MessageUtils.sendStatusMessage(player, "message.event.world.exp_drop.monsters");
+                    }
                     return;
                 }
                 // prevent other entity xp drop (villagers, animals, ..)
                 if (region.containsFlag(RegionFlag.XP_DROP_OTHER) && !isMonster(entity) && !entityDroppingXpIsPlayer) {
                     if (region.forbids(player)) {
                         event.setCanceled(true);
-                        MessageUtils.sendStatusMessage(player, "message.event.world.exp_drop.non_hostile");
+                        if (!region.isMuted()) {
+                            MessageUtils.sendStatusMessage(player, "message.event.world.exp_drop.non_hostile");
+                        }
                         return;
                     }
                 }
@@ -179,7 +191,9 @@ public class EventWorld {
 
                 if (entity instanceof PlayerEntity) {
                     event.setCanceled(true);
-                    MessageUtils.sendStatusMessage((PlayerEntity) entity, "message.event.player.change_dim");
+                    if (!region.isMuted()) {
+                        MessageUtils.sendStatusMessage((PlayerEntity) entity, "message.event.player.change_dim");
+                    }
                     return;
                 }
             }

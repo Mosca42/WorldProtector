@@ -51,23 +51,31 @@ public class EventTeleport {
 
     private static void handlePlayerEnderPearlUse(EntityTeleportEvent.EnderPearl event, List<IRegion> regionsFrom, List<IRegion> regionsTo) {
         PlayerEntity player = event.getPlayer();
-        boolean playerTpToProhibited = regionsTo.stream()
-                .anyMatch(region -> region.containsFlag(RegionFlag.USE_ENDERPEARL_TO_REGION) && region.forbids(player));
-        if (playerTpToProhibited) {
-            MessageUtils.sendStatusMessage(player, "message.event.teleport.ender_pearl.to_region");
+        for (IRegion region : regionsFrom) {
+            if (region.containsFlag(RegionFlag.USE_ENDERPEARL_FROM_REGION) && region.forbids(player)) {
+                event.setCanceled(true);
+                if (!region.isMuted()) {
+                    MessageUtils.sendStatusMessage(player, "message.event.teleport.ender_pearl.from_region");
+                }
+                // refund pearl
+                int count = player.getHeldItem(player.getActiveHand()).getCount();
+                player.getHeldItem(player.getActiveHand()).setCount(count + 1);
+                return;
+            }
         }
-        boolean playerTpFromProhibited = regionsFrom.stream()
-                .anyMatch(region -> region.containsFlag(RegionFlag.USE_ENDERPEARL_FROM_REGION) && region.forbids(player));
-        if (playerTpFromProhibited) {
-            MessageUtils.sendStatusMessage(player, "message.event.teleport.ender_pearl.from_region");
+        for (IRegion region : regionsFrom) {
+            if (region.containsFlag(RegionFlag.USE_ENDERPEARL_TO_REGION) && region.forbids(player)) {
+                event.setCanceled(true);
+                if (!region.isMuted()) {
+                    MessageUtils.sendStatusMessage(player, "message.event.teleport.ender_pearl.to_region");
+                }
+                // refund pearl
+                int count = player.getHeldItem(player.getActiveHand()).getCount();
+                player.getHeldItem(player.getActiveHand()).setCount(count + 1);
+                return;
+            }
         }
 
-        if (playerTpFromProhibited || playerTpToProhibited) {
-            event.setCanceled(true);
-            // refund pearl
-            int count = player.getHeldItem(player.getActiveHand()).getCount();
-            player.getHeldItem(player.getActiveHand()).setCount(count + 1);
-        }
     }
 
     private static void handleShulkerTp(EntityTeleportEvent.EnderEntity event, List<IRegion> regionsFrom, List<IRegion> regionsTo) {

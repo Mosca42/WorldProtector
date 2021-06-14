@@ -28,14 +28,18 @@ public class Region implements IRegion {
 	private final Map<UUID, String> players;
 	private boolean isActive;
 	private int priority = 2;
+	private boolean isMuted;
+	private int tpTargetX;
+	private int tpTargetY;
+	private int tpTargetZ;
 	private String enterMessage = Strings.EMPTY;
 	private String exitMessage = Strings.EMPTY;
 	private String enterMessageSmall = Strings.EMPTY;
 	private String exitMessageSmall = Strings.EMPTY;
+	// nbt keys
 	public static final String TP_X = "tp_x";
 	public static final String TP_Y = "tp_y";
 	public static final String TP_Z = "tp_z";
-	// nbt keys
 	public static final String NAME = "name";
 	public static final String UUID = "uuid";
 	public static final String DIM = "dimension";
@@ -45,9 +49,7 @@ public class Region implements IRegion {
 	public static final String MAX_X = "maxX";
 	public static final String MAX_Y = "maxY";
 	public static final String MAX_Z = "maxZ";
-	private int tpTargetX;
-	private int tpTargetY;
-	private int tpTargetZ;
+
 	public static final String PRIORITY = "priority";
 	public static final String ACTIVE = "active";
 	public static final String PLAYERS = "players";
@@ -56,6 +58,10 @@ public class Region implements IRegion {
 	public static final String ENTER_MSG_2 = "enter_msg_small";
 	public static final String EXIT_MSG_1 = "exit_msg";
 	public static final String EXIT_MSG_2 = "exit_msg_small";
+	public static final String MUTED = "muted";
+
+	public static final String VERSION = "version";
+	public static final String DATA_VERSION = "2.1.4.0";
 
 	public Region(CompoundNBT nbt) {
 		this.flags = new HashSet<>();
@@ -71,6 +77,7 @@ public class Region implements IRegion {
 		this.tpTargetZ = (int) this.area.getCenter().getZ();
 		this.dimension = dimension;
 		this.isActive = true;
+		this.isMuted = false;
 		this.players = new HashMap<>();
 		this.flags = new HashSet<>();
 	}
@@ -83,6 +90,7 @@ public class Region implements IRegion {
 		this.area = area;
 		this.dimension = dimension;
 		this.isActive = true;
+		this.isMuted = false;
 		this.players = new HashMap<>();
 		this.flags = new HashSet<>();
 	}
@@ -95,6 +103,7 @@ public class Region implements IRegion {
 		this.area = copy.getArea();
 		this.dimension = copy.getDimension();
 		this.isActive = copy.isActive();
+		this.isMuted = copy.isMuted();
 		this.players = copy.getPlayers();
 		this.flags = copy.getFlags();
 		this.priority = copy.getPriority();
@@ -267,8 +276,18 @@ public class Region implements IRegion {
 	}
 
 	@Override
+	public boolean isMuted() {
+		return this.isMuted;
+	}
+
+	@Override
 	public void setIsActive(boolean isActive) {
 		this.isActive = isActive;
+	}
+
+	@Override
+	public void setIsMuted(boolean isMuted) {
+		this.isMuted = isMuted;
 	}
 
 	public void activate() {
@@ -297,6 +316,7 @@ public class Region implements IRegion {
 	@Override
 	public CompoundNBT serializeNBT() {
 		CompoundNBT nbt = new CompoundNBT();
+		nbt.putString(VERSION, DATA_VERSION);
 		nbt.putString(NAME, name);
 		nbt.putInt(MIN_X, (int) area.minX);
 		nbt.putInt(MIN_Y, (int) area.minY);
@@ -310,6 +330,7 @@ public class Region implements IRegion {
 		nbt.putInt(PRIORITY, priority);
 		nbt.putString(DIM, dimension.getLocation().toString());
 		nbt.putBoolean(ACTIVE, isActive);
+		nbt.putBoolean(MUTED, isMuted);
 		nbt.putString(ENTER_MSG_1, enterMessage);
 		nbt.putString(ENTER_MSG_2, enterMessageSmall);
 		nbt.putString(EXIT_MSG_1, exitMessage);
@@ -339,8 +360,17 @@ public class Region implements IRegion {
 		);
 	}
 
+	private CompoundNBT migrateRegionData(CompoundNBT nbt){
+		// TODO:
+
+		nbt.putString(VERSION, DATA_VERSION);
+
+		return nbt;
+	}
+
 	@Override
 	public void deserializeNBT(CompoundNBT nbt) {
+		nbt = migrateRegionData(nbt);
 		this.name = nbt.getString(NAME);
 		this.area = areaFromNBT(nbt);
 		this.tpTargetX = nbt.getInt(TP_X);
@@ -349,6 +379,7 @@ public class Region implements IRegion {
 		this.priority = nbt.getInt(PRIORITY);
 		this.dimension = RegistryKey.getOrCreateKey(Registry.WORLD_KEY, new ResourceLocation(nbt.getString(DIM)));
 		this.isActive = nbt.getBoolean(ACTIVE);
+		this.isMuted = nbt.getBoolean(MUTED);
 		this.enterMessage = nbt.getString(ENTER_MSG_2);
 		this.enterMessageSmall = nbt.getString(ENTER_MSG_2);
 		this.exitMessage = nbt.getString(EXIT_MSG_1);
@@ -390,6 +421,7 @@ public class Region implements IRegion {
 				.add("flags=" + flags)
 				.add("players=" + players)
 				.add("isActive=" + isActive)
+				.add("isMuted=" + isMuted)
 				.add("priority=" + priority)
 				.add("enterMessage='" + enterMessage + "'")
 				.add("exitMessage='" + exitMessage + "'")

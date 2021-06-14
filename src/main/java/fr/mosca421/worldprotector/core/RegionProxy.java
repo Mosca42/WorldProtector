@@ -86,7 +86,17 @@ public class RegionProxy implements IRegion{
     }
 
     @Override
+    public boolean isMuted() {
+        return false;
+    }
+
+    @Override
     public void setIsActive(boolean isActive) {
+
+    }
+
+    @Override
+    public void setIsMuted(boolean isMuted) {
 
     }
 

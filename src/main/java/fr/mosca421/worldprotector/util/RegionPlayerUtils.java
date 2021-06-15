@@ -1,16 +1,14 @@
 package fr.mosca421.worldprotector.util;
 
-import com.google.common.base.Joiner;
 import fr.mosca421.worldprotector.data.RegionManager;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.management.OpEntry;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.util.text.*;
+import net.minecraft.util.text.event.ClickEvent;
+import net.minecraft.util.text.event.HoverEvent;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import static fr.mosca421.worldprotector.util.MessageUtils.sendMessage;
@@ -97,14 +95,22 @@ public final class RegionPlayerUtils {
         return false;
     }
 
-    public static void listPlayersInRegion(String regionName, PlayerEntity player){
-        Set<String> players = RegionManager.get().getRegionPlayers(regionName);
-        if (!players.isEmpty()) {
-            String playerString = Joiner.on(", ").join(players);
-            sendMessage(player, new StringTextComponent("Players: " + playerString));
-        } else {
-            sendMessage(player, new StringTextComponent("No players defined in region."));
-        }
+    public static void listPlayersInRegion(String regionName, PlayerEntity player) {
+        RegionManager.get().getRegion(regionName).ifPresent(region -> {
+            sendMessage(player, new TranslationTextComponent(TextFormatting.AQUA + "== Players in Region '" + regionName + " ' =="));
+            if (region.getPlayers().isEmpty()) {
+                sendMessage(player, new TranslationTextComponent("message.region.info.noplayers"));
+                return;
+            }
+            region.getPlayers().values().forEach(playerName -> {
+                IFormattableTextComponent playerComponent = new StringTextComponent(" - '" + playerName + "' ")
+                        .appendSibling(TextComponentUtils.wrapWithSquareBrackets(new StringTextComponent("x"))
+                                .setStyle(Style.EMPTY.setColor(Color.fromTextFormatting(TextFormatting.RED))
+                                        .setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/wp player remove " + regionName + " " + playerName))
+                                        .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new StringTextComponent("Remove player from region")))));
+                sendMessage(player, playerComponent);
+            });
+        });
     }
 
     public static void giveHelpMessage(PlayerEntity player) {
@@ -112,7 +118,6 @@ public final class RegionPlayerUtils {
         sendMessage(player, "help.players.1");
         sendMessage(player, "help.players.2");
         sendMessage(player, "help.players.3");
-        sendMessage(player, new TranslationTextComponent(TextFormatting.AQUA + "== WorldProtector Help =="));
     }
 
 }

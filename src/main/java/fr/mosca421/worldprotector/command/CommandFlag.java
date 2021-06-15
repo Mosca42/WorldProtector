@@ -28,6 +28,11 @@ public class CommandFlag {
 						.executes(ctx -> giveHelp(ctx.getSource())))
 				.then(Commands.literal(Command.LIST.toString())
 						.executes(ctx -> giveList(ctx.getSource())))
+				.then(Commands.literal(Command.LIST.toString())
+						.executes(ctx -> giveList(ctx.getSource()))
+						.then(Commands.argument(Command.REGION.toString(), StringArgumentType.word())
+								.suggests((ctx, builder) -> ISuggestionProvider.suggest(RegionManager.get().getAllRegionNames(), builder))
+								.executes(ctx -> giveFlagListForRegion(ctx.getSource(), StringArgumentType.getString(ctx, Command.REGION.toString())))))
 				.then(Commands.literal(Command.ADD.toString())
 						.then(Commands.argument(Command.REGION.toString(), StringArgumentType.word())
 								.suggests((ctx, builder) -> ISuggestionProvider.suggest(RegionManager.get().getAllRegionNames(), builder))
@@ -46,11 +51,13 @@ public class CommandFlag {
 								.suggests((ctx, builder) -> ISuggestionProvider.suggest(RegionManager.get().getAllRegionNames(), builder))
 								.then(Commands.argument(Command.FLAG.toString(), StringArgumentType.string())
 										.suggests((ctx, builder) -> ISuggestionProvider.suggest(RegionManager.get().getRegionFlags(ctx.getArgument(Command.REGION.toString(), String.class), ctx.getSource().getWorld().getDimensionKey()), builder))
-										.executes(ctx -> remove(ctx.getSource(), StringArgumentType.getString(ctx, Command.REGION.toString()), StringArgumentType.getString(ctx, Command.FLAG.toString()))))))
+										.executes(ctx -> remove(ctx.getSource(), StringArgumentType.getString(ctx, Command.REGION.toString()), StringArgumentType.getString(ctx, Command.FLAG.toString()))))));
+			/*
 				.then(Commands.literal(Command.INFO.toString())
 						.then(Commands.argument(Command.REGION.toString(), StringArgumentType.word())
 								.suggests((ctx, builder) -> ISuggestionProvider.suggest(RegionManager.get().getAllRegionNames(), builder))
 								.executes(ctx -> info(ctx.getSource(), StringArgumentType.getString(ctx, Command.REGION.toString())))));
+			 */
 	}
 
 	private static int giveHelp(CommandSource source) {
@@ -65,6 +72,15 @@ public class CommandFlag {
 	private static int giveList(CommandSource source) {
 		try {
 			RegionFlagUtils.listAvailableFlags(source.asPlayer());
+		} catch (CommandSyntaxException e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+
+	private static int giveFlagListForRegion(CommandSource source, String regionName) {
+		try {
+			RegionFlagUtils.listRegionFlags(source.asPlayer(), regionName);
 		} catch (CommandSyntaxException e) {
 			e.printStackTrace();
 		}

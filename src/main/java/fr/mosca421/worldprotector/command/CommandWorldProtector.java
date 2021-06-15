@@ -47,7 +47,6 @@ public class CommandWorldProtector {
             sendMessage(player, "help.wp.2");
             sendMessage(player, "help.wp.3");
             sendMessage(player, "help.wp.4");
-            sendMessage(player, new TranslationTextComponent(TextFormatting.AQUA + "== WorldProtector Help =="));
         } catch (CommandSyntaxException e) {
             e.printStackTrace();
         }

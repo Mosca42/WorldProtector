@@ -1,6 +1,7 @@
-1.16.5-2.1.4.0
-* Regions now can be muted so players no longer receive messages when a action is prohibited.
-This can be controlled by /wp region mute and /wp region unmute.
+1.16.5-2.1.4.1
+* Regions now can be muted so players no longer receive messages when an action is prohibited.
+This can be controlled by /wp region mute and /wp region unmute. Regions are not muted by default!
+* Fix server not spamming console when using exe-command flag (Thanks to Silently).
 1.16.5-2.1.3.1
 * Fix WorldProtector commands not working with Journey Map. Added alternative for /wp command: /w-p and /worldprotector. (Thanks to Silently)
 * Fix region cycling when region stick in offhand and flag stick in mainhand (Thanks to Silently).

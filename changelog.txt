@@ -1,6 +1,6 @@
 1.16.5-2.1.5.0
 * Change command to list flags for region form /wp flag info <region> to /wp flag list <region>.
-* Enhanced /wp region info <region> command to show links to list players and flags defined in that regions.
+* Enhanced /wp region info <region> command to show links to list players and flags defined in that region.
 * Enhanced /wp player list <region> and /wp flag list <region> command to show a link to easily remove player/flags.
 * Fix mute flag state for regions not showing correctly.
 * Enhanced /wp region info <region> command to show links to de-/activate and un-/mute the region.

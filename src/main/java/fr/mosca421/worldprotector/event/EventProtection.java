@@ -94,7 +94,8 @@ public class EventProtection {
 					boolean cancelEvent = region.containsFlag(RegionFlag.IGNITE_EXPLOSIVES) && !region.permits(player);
 					event.setCanceled(cancelEvent);
 					if (cancelEvent) {
-						if (!region.isMuted()) {
+						boolean isPlayerExploder = event.getExplosion().getExploder() instanceof PlayerEntity;
+						if (!region.isMuted() && isPlayerExploder) {
 							sendStatusMessage(player, "message.event.protection.ignite_tnt");
 						}
 					}

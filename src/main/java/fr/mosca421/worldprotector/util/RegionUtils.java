@@ -3,7 +3,6 @@ package fr.mosca421.worldprotector.util;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import fr.mosca421.worldprotector.core.IRegion;
 import fr.mosca421.worldprotector.core.Region;
-import fr.mosca421.worldprotector.core.RegionFlag;
 import fr.mosca421.worldprotector.data.RegionManager;
 import fr.mosca421.worldprotector.item.ItemRegionMarker;
 import net.minecraft.command.CommandSource;
@@ -24,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static fr.mosca421.worldprotector.util.MessageUtils.*;
@@ -349,52 +347,6 @@ public final class RegionUtils {
 			}
 		}
 		return handlingRegions;
-	}
-
-	public static List<IRegion> filterHandlingRegions(BlockPos position, World world, RegionFlag flagFilter){
-		return getHandlingRegionsFor(position, world)
-				.stream()
-				.filter(region -> region.containsFlag(flagFilter.toString()))
-				.collect(Collectors.toList());
-	}
-
-	public static List<IRegion> filterHandlingRegions(BlockPos position, World world, RegionFlag flagFilter, PlayerEntity player){
-		return getHandlingRegionsFor(position, world)
-				.stream()
-				.filter(region -> region.containsFlag(flagFilter.toString()))
-				.filter(region -> !region.permits(player))
-				.collect(Collectors.toList());
-	}
-
-	public static void cancelEventsInRegions(BlockPos eventPos, World worldIn, RegionFlag flagFilter, PlayerEntity player, Runnable cancelAction){
-		getHandlingRegionsFor(eventPos, worldIn)
-				.stream()
-				.filter(region -> region.containsFlag(flagFilter.toString()))
-				.filter(region -> !region.permits(player))
-				.forEach(region -> cancelAction.run());
-	}
-
-	public static void cancelEventsInRegions(BlockPos eventPos, World worldIn, RegionFlag flagFilter, Predicate<IRegion> isPermittedInRegion, Runnable cancelAction){
-		getHandlingRegionsFor(eventPos, worldIn)
-				.stream()
-				.filter(region -> region.containsFlag(flagFilter.toString()))
-				.filter(isPermittedInRegion)
-				.forEach(region -> cancelAction.run());
-	}
-
-	public static boolean isActionProhibited(BlockPos position, IWorld world, RegionFlag flag) {
-		return RegionUtils.getHandlingRegionsFor(position, (World) world).stream()
-				.anyMatch(region -> region.containsFlag(flag));
-	}
-
-	public static boolean isActionProhibited(BlockPos position, Entity entity, RegionFlag flag) {
-		return RegionUtils.getHandlingRegionsFor(position, entity.world).stream()
-				.anyMatch(region -> region.containsFlag(flag));
-	}
-
-	public static boolean isPlayerActionProhibited(BlockPos position, PlayerEntity player, RegionFlag flag) {
-		return RegionUtils.getHandlingRegionsFor(position, player.world).stream()
-				.anyMatch(region -> region.containsFlag(flag) && region.forbids(player));
 	}
 
 	public static String getDimensionString(World world) {

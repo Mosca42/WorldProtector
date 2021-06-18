@@ -1,3 +1,5 @@
+1.16.5-2.1.5.2
+* Fix sending message to player if player was not causing explosion (flag: ignite-explosions).
 1.16.5-2.1.5.1
 * Fix actual region dimension being 1 block wider in each direction (Thanks Silently!).
 * Fix area check not being correct for positive axis directions.

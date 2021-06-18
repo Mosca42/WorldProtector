@@ -404,8 +404,7 @@ public final class RegionUtils {
 	private static AxisAlignedBB getAreaFromNBT(CompoundNBT nbtTag) {
 		return new AxisAlignedBB(
 				nbtTag.getInt(ItemRegionMarker.X1), nbtTag.getInt(ItemRegionMarker.Y1), nbtTag.getInt(ItemRegionMarker.Z1),
-				nbtTag.getInt(ItemRegionMarker.X2), nbtTag.getInt(ItemRegionMarker.Y2), nbtTag.getInt(ItemRegionMarker.Z2))
-				.grow(1);
+				nbtTag.getInt(ItemRegionMarker.X2), nbtTag.getInt(ItemRegionMarker.Y2), nbtTag.getInt(ItemRegionMarker.Z2));
 	}
 
 	private static BlockPos getTpTargetFromNBT(CompoundNBT nbtTag) {

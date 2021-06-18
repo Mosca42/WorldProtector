@@ -218,6 +218,7 @@ public class EventPlayers {
     @SubscribeEvent
     public static void onCommandSend(CommandEvent event) {
         try {
+            event.getParseResults().getContext().getSource().assertIsEntity();
             PlayerEntity player = event.getParseResults().getContext().getSource().asPlayer();
             BlockPos playerPos = player.getPosition();
             List<IRegion> regions = RegionUtils.getHandlingRegionsFor(playerPos, player.world);
@@ -233,7 +234,8 @@ public class EventPlayers {
             // TODO: add command list to block only specific commands, regardless of mod and permission of command
             // event.getParseResults().getContext().getNodes().forEach(node -> WorldProtector.LOGGER.debug(node.getNode().getName()));
         } catch (CommandSyntaxException e) {
-            e.printStackTrace();
+            // Most likely thrown because command was not send by a player.
+            // This is fine because we don't want this flag to be triggered from non-players
         }
     }
 

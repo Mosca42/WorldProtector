@@ -234,20 +234,20 @@ The following features will be implemented first in the 1.16.5 version, but will
 1. Flags per dimension
 2. Black- and Whitelist options for regions and dimensions
 3. Configuration support
-   * Option to disable specific event checks completely for optimization
-   * Default blacklist/whitelist setting for regions
-   * Command permission
+    * Option to disable specific event checks completely for optimization
+    * Default blacklist/whitelist setting for regions
+    * Command permission
 
-4. Permission system
-   * Owner for regions
-   * Permission groups
-   * Permission levels for region manipulation (creating, deleting, activating, deactivating)
-   * Configuration support
+* Permission system
+    * Owner for regions
+    * Permission groups
+    * Permission levels for region manipulation (creating, deleting, activating, deactivating)
+    * Configuration support
 
 5. Modularisation
-   * Configuration for server-side only usage
-   * Item-less alternative for the Region Marker
-   * CLI offers all functionality without using Items
+    * Configuration for server-side only usage
+    * Item-less alternative for the Region Marker
+    * CLI offers all functionality without using Items
 6. Region highlighting
 7. Define any shape as a region
 

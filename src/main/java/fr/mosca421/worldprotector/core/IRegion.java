@@ -39,7 +39,11 @@ public interface IRegion extends INBTSerializable<CompoundNBT> {
 
     boolean isActive();
 
+    boolean isMuted();
+
     void setIsActive(boolean isActive);
+
+    void setIsMuted(boolean isMuted);
 
     boolean addPlayer(PlayerEntity player);
 

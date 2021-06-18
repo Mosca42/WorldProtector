@@ -24,6 +24,8 @@ public enum Command {
     TELEPORT_SHORT("tp"),
     ACTIVATE("activate"),
     DEACTIVATE("deactivate"),
+    MUTE("mute"),
+    UNMUTE("unmute"),
     PRIORITY("priority"),
     SET_PRIORITY("set-priority"),
     PLAYER("player"),

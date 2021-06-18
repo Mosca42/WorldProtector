@@ -31,6 +31,13 @@ public enum RegionFlag {
     TRAMPLE_FARMLAND_PLAYER("trample-farmland-player"),
     TRAMPLE_FARMLAND_OTHER("trample-farmland-other"),
     //
+    //PISTON_PUSH("piston-push"),
+    //PISTON_PULL("piston-pull"),
+    //
+    //FLUID_FLOWING("fluid-flowing"),
+    //WATER_FLOWING("water-flowing"),
+    //LAVA_FLOWING("lava-flowing"),
+    //
     DRAGON_BLOCK_PROT("dragon-destruction"),
     WITHER_BLOCK_PROT("wither-destruction"),
     ZOMBIE_DOOR_PROT("zombie-destruction"),

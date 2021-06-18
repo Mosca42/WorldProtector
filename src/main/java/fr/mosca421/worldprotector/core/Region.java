@@ -409,7 +409,13 @@ public class Region implements IRegion {
 
 	@Override
 	public boolean containsPosition(BlockPos position) {
-		return this.area.contains(new Vector3d(position.getX(), position.getY(), position.getZ()));
+		int x = position.getX();
+		int y = position.getY();
+		int z = position.getZ();
+		// INFO: this.area.contains(x,y,z); does not work. See implementation. Forge-Version 36.1.25
+		return x >= this.area.minX && x <= this.area.maxX
+				&& y >= this.area.minY && y <= this.area.maxY
+				&& z >= this.area.minZ && z <= this.area.maxZ;
 	}
 
 	@Override

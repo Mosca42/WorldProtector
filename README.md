@@ -96,17 +96,25 @@ Use ```/wp help``` for more information. Or ```/wp help <command>``` for informa
 
 ### Flags
 
-Currently, there are **57 flags** available:
+Currently, there are **57 flags** available. Click below to show the complete list.
+
+To add a flag use the command ```/wp flag add <region> <flag>```. To remove a flag from a region
+use ```/wp flag remove <region> <flag>. ```
+
+You are also able to add or remove all flags by using the special flag 'all': ```/wp flag <add|remove> <region> all```
+
+<details>
+  <summary> Flag list (click me):</summary>
 
 - **break**: prevents players from breaking blocks
 - **place**: prevents players from placing blocks
 - **ignite-explosives**: prevents explosives from blowing up
-- **explosions-blocks**: prevents all explosions from destroying blocks (doesn't work under Sponge)
-- **explosions-entities**: prevents all explosions from damaging entities (doesn't work under Sponge)
-- **creeper-explosions-blocks**: prevents explosions caused by Creepers to destroy blocks (doesn't work under Sponge)
-- **creeper-explosions-entities**: prevents explosions caused by Creepers to damage entities (doesn't work under Sponge)
-- **other-explosions-blocks**: prevents all other explosions from destroying blocks (doesn't work under Sponge)
-- **other-explosions-entities**: prevents all other explosions from damaging entities (doesn't work under Sponge)
+- **explosions-blocks**: prevents all explosions from destroying blocks
+- **explosions-entities**: prevents all explosions from damaging entities
+- **creeper-explosions-blocks**: prevents explosions caused by Creepers to destroy blocks
+- **creeper-explosions-entities**: prevents explosions caused by Creepers to damage entities
+- **other-explosions-blocks**: prevents all other explosions from destroying blocks
+- **other-explosions-entities**: prevents all other explosions from damaging entities
 - **tools-secondary**: prevents all type of secondary tool actions (strip wood, till farmland, create paths)
 - **strip-wood**: prevents wood from being stripped
 - **till-farmland**: prevents farmland from being tilled
@@ -114,7 +122,7 @@ Currently, there are **57 flags** available:
 - **trample-farmland**: prevents all farmland trampling
 - **trample-farmland-player**: prevents players from trampling farmland
 - **trample-farmland-other**: prevents non-player entities from trampling farmland
-- **lightning**: prevents entities being hit by lightning (or at least get hurt/transformed)
+- **lightning**: prevents entities from being hit by lightning (or at least get hurt/transformed)
 - **animal-taming**: prevents players from taming animals
 - **animal-breeding**: prevents players from breeding animals
 - **animal-mounting**: prevents players from mounting animals
@@ -157,7 +165,7 @@ Currently, there are **57 flags** available:
 - **spawn-portal**: prevents creating of portal blocks by lighting obsidian
 - **use-portal**: prevents all entities from using portals (changing dimensions)
 
-You are also able to add or remove all flags by using the special flag 'all': ```/wp flag remove <region> all```
+</details>
 
 ### Region priority / Overlapping regions
 
@@ -194,18 +202,9 @@ Thanks to BrokenSwing for his help about regions and safeguard in the world.
 
 Thanks to TheBossMax2 for the mod logo.
 
-### Links
-
-* [WorldProtector Discord](https://discord.gg/MsA8XPc)
-* [WorldProtector on Curseforge](https://www.curseforge.com/minecraft/mc-mods/worldprotector)
-
 ### License
 
-This mod is open sourced under the Creative Commons 3.0 Attribution Non-Commercial License
-https://creativecommons.org/licenses/by-nc/3.0/legalcode
-
-Summary
-https://creativecommons.org/licenses/by-nc/3.0/
+This mod is open sourced under the Creative Commons 3.0 Attribution Non-Commercial License (see Links below).
 
 You are free to:
 
@@ -214,29 +213,61 @@ You are free to:
 * The licensor cannot revoke these freedoms as long as you follow the license terms.
 
 Under the following conditions:
-* Attribution — You must give appropriate credit, provide a link to the license, and indicate if changes were made. You may do so in any reasonable manner, but not in any way that suggests the licensor endorses you or your use.
+
+* Attribution — You must give appropriate credit, provide a link to the license, and indicate if changes were made. You
+  may do so in any reasonable manner, but not in any way that suggests the licensor endorses you or your use.
 * NonCommercial — You may not use the material for commercial purposes.
-* No additional restrictions — You may not apply legal terms or technological measures that legally restrict others from doing anything the license permits.
+* No additional restrictions — You may not apply legal terms or technological measures that legally restrict others from
+  doing anything the license permits.
 
-### Possible future features/improvements
+### Links
 
-* Flags per dimension
-* Blacklist/Whitelist option for regions and dimensions
-* Region highlighting
-* Flag ideas: use-firework, elytra-fly, enter-chunk, leave-chunk, de-/activate-spawner, InputUpdateEvent for im-mobility
-* Configuration support
+* [WorldProtector - Discord](https://discord.gg/MsA8XPc)
+* [WorldProtector - Github](https://github.com/Mosca42/WorldProtector)
+* [WorldProtector - Curseforge](https://www.curseforge.com/minecraft/mc-mods/worldprotector)
+* [Creative Commons 3.0 Attribution Non-Commercial License](https://creativecommons.org/licenses/by-nc/3.0/)
+
+## Development roadmap
+
+The following features will be implemented first in the 1.16.5 version, but will also be ported to all future versions.
+
+1. Flags per dimension
+2. Black- and Whitelist options for regions and dimensions
+3. Configuration support
     * Option to disable specific event checks completely for optimization
     * Default blacklist/whitelist setting for regions
-    * Option to disable messages being sent to players
+    * Command permission
+
 * Permission system
     * Owner for regions
+    * Permission groups
     * Permission levels for region manipulation (creating, deleting, activating, deactivating)
-* CLI: make region info commands available for all players
-* CLI: add and remove multiple flags at once
-* CLI: add option to define a region without the region marker
-* Provide simple gui for choosing flag/region, since there could be many to cycle through
-* Define any shape as a region
-* Security feature: Check for corrupted client jar
+    * Configuration support
+
+5. Modularisation
+    * Configuration for server-side only usage
+    * Item-less alternative for the Region Marker
+    * CLI offers all functionality without using Items
+6. Region highlighting
+7. Define any shape as a region
+
+#### Possible new flags:
+
+* use-firework
+* elytra-fly
+* enter-chunk
+* leave-chunk
+* de-/activate-spawner
+* InputUpdateEvent for im-mobility
+* piston-push
+* piston-pull
+* NBT block manipulation
+
+#### Quality of life features:
+
+* [CLI]: add and remove multiple flags at once
+* [CLI]: add option to define a region without the region marker
+* [GUI]: Provide simple gui for choosing flag/region, since there could be many to cycle through
 
 ## FAQ
 
@@ -252,8 +283,10 @@ Under the following conditions:
 - **A**: Maybe. Consider creating an issue on
   the [WorldProtector Github](https://github.com/Mosca42/WorldProtector/issues) page.
 
+
 - **Q**: Why can't I use the commands provided by WorldProtector?
 - **A**: Make sure you are OP Level 4 on your server or enable cheats in your singleplayer world.
+
 
 - **Q**: Why are not all commands with ``/wp <command>`` working and prompting errors?
 - **A**: JourneyMap also uses the ``/wp`` command. Try using ``/w-p`` or ``/worldprotector`` instead.

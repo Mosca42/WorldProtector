@@ -99,6 +99,12 @@ public enum RegionFlag {
     // USE_FIREWORK("use-firework"),
     //
     USE_PORTAL("use-portal"),
+    USE_PORTAL_PLAYERS("use-portal-players"),
+    USE_PORTAL_ITEMS("use-portal-items"),
+    USE_PORTAL_ANIMALS("use-portal-animals"),
+    USE_PORTAL_MONSTERS("use-portal-monsters"),
+    USE_PORTAL_VILLAGERS("use-portal-villagers"),
+    USE_PORTAL_MINECARTS("use-portal-minecarts"),
     SPAWN_PORTAL("spawn-portal");
     //
     // EXIT_MESSAGE_TITLE("exit-message"), // TODO: Currently not working correctly

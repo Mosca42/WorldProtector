@@ -163,7 +163,13 @@ You are also able to add or remove all flags by using the special flag 'all': ``
 - **set-spawn**: prevents players from setting their spawn point
 - **sleep**: prevents players from sleeping
 - **spawn-portal**: prevents creating of portal blocks by lighting obsidian
-- **use-portal**: prevents all entities from using portals (changing dimensions)
+- **use-portal**: prevents all entities from using portals
+- **use-portal-players**: prevents players from using portals
+- **use-portal-villagers**: prevents villager entities from using portals
+- **use-portal-animals**: prevents animal entities from using portals
+- **use-portal-monsters**: prevents monster entities from using portals
+- **use-portal-minecarts**: prevents minecart entities from using portals
+- **use-portal-items**: prevents item entities from using portals
 
 </details>
 

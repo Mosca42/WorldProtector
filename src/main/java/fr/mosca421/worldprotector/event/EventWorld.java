@@ -189,7 +189,7 @@ public class EventWorld {
         for (IRegion region : regions) {
             if (region.containsFlag(RegionFlag.USE_PORTAL.toString())) {
 
-                if (entity instanceof PlayerEntity) {
+                if (entity instanceof PlayerEntity && !region.permits((PlayerEntity) entity)) {
                     event.setCanceled(true);
                     if (!region.isMuted()) {
                         MessageUtils.sendStatusMessage((PlayerEntity) entity, "message.event.player.change_dim");

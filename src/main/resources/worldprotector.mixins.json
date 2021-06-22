@@ -9,11 +9,9 @@
     "MixinFlyingEntity",
     "MixinItemEntity",
     "MixinMonsterEntity",
-    "MixinPressurePlateBlock",
     "MixinShulkerEntity",
     "MixinSlimeEntity",
-    "MixinWaterMobEntity",
-    "MixinWeightedPressurePlateBlock"
+    "MixinWaterMobEntity"
   ],
   "client": [],
   "server": []

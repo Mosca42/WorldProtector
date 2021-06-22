@@ -4,14 +4,16 @@
   "package": "fr.mosca421.worldprotector.mixin",
   "refmap": "${mod_id}.refmap.json",
   "mixins": [
-    "MixinItemEntity",
+    "MixinAbstractMinecartEntity",
+    "MixinAgeableEntity",
     "MixinFlyingEntity",
+    "MixinItemEntity",
+    "MixinMonsterEntity",
+    "MixinPressurePlateBlock",
     "MixinShulkerEntity",
     "MixinSlimeEntity",
-    "MixinAgeableEntity",
-    "MixinMonsterEntity",
     "MixinWaterMobEntity",
-    "MixinAbstractMinecartEntity"
+    "MixinWeightedPressurePlateBlock"
   ],
   "client": [],
   "server": []

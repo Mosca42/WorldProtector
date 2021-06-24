@@ -106,8 +106,8 @@ You are also able to add or remove all flags by using the special flag 'all': ``
 <details>
   <summary> Flag list (click me):</summary>
 
-- **break**: prevents players from breaking blocks
-- **place**: prevents players from placing blocks
+- **break**: prevents players from breaking blocks and picking up fluids
+- **place**: prevents players from placing blocks and fluids
 - **ignite-explosives**: prevents explosives from blowing up
 - **explosions-blocks**: prevents all explosions from destroying blocks
 - **explosions-entities**: prevents all explosions from damaging entities
@@ -131,7 +131,7 @@ You are also able to add or remove all flags by using the special flag 'all': ``
 - **spawning-animal**: prevents spawning of animals
 - **spawning-irongolem**: prevents spawning of iron golems
 - **spawning-xp**: prevents spawning of xp orbs completely
-- **use**: prevents players to interact with most blocks like buttons, fences, doors, etc.
+- **use**: prevents players to interact with most blocks like buttons, doors, pressure plates, etc.
 - **use-bonemeal**: prevents players from using bone meal
 - **access-container**: prevents players from accessing most containers
 - **access-enderchest**: prevents players from accessing their ender chest

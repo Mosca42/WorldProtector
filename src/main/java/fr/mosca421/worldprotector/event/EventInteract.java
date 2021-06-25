@@ -122,8 +122,9 @@ public class EventInteract {
 		boolean cancelEvent = false;
 		// tripwire does not work yet
 		if (block instanceof AbstractPressurePlateBlock
-				|| block instanceof TripWireHookBlock
-				|| block instanceof TripWireBlock) {
+			/*	|| block instanceof TripWireHookBlock
+				|| block instanceof TripWireBlock*/) {
+			// TODO: check for tripwire blocks in a row and surpress updates
 			List<IRegion> regions = RegionUtils.getHandlingRegionsFor(pos, (World) event.getWorld());
 			for (IRegion region : regions) {
 				if (region.containsFlag(RegionFlag.USE)) {

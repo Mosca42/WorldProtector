@@ -190,6 +190,12 @@ achieve this:
 
 ```/wp region set-priority arena 2```
 
+### Examples
+
+Gif showing the new command line QoL features introduced in version 1.16.5-2.1.5.1:
+
+![Region info quality of life features (1.16.5-2.1.5.1+)](region-qol-features.gif)
+
 ## Additional information
 
 - The mod has to be installed on the client and on the server.

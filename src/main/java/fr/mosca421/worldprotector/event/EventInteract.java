@@ -9,10 +9,13 @@ import net.minecraft.block.*;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.item.minecart.ContainerMinecartEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
+import net.minecraft.item.Items;
 import net.minecraft.tileentity.EnderChestTileEntity;
 import net.minecraft.tileentity.LecternTileEntity;
 import net.minecraft.tileentity.LockableTileEntity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
@@ -20,6 +23,7 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
+import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
@@ -42,6 +46,10 @@ public class EventInteract {
 				boolean isContainer = targetEntity instanceof LecternTileEntity || isLockableTileEntity;
 				boolean isPlayerProhibited = region.forbids(player);
 
+				// used to allow player to place blocks when shift clicking container or usable bock
+				boolean playerHasNoBlocksToPlaceInHands = player.getHeldItem(Hand.MAIN_HAND).getItem().equals(Items.AIR)
+								&& player.getHeldItem(Hand.OFF_HAND).getItem().equals(Items.AIR);
+
 				BlockRayTraceResult pos = event.getHitVec();
 				if (pos != null && pos.getType() == RayTraceResult.Type.BLOCK) {
 					BlockPos bPos = pos.getPos();
@@ -59,7 +67,7 @@ public class EventInteract {
 							target instanceof BrewingStandBlock;
 
 					if (region.containsFlag(RegionFlag.USE) && isPlayerProhibited && isUsableBlock) {
-						if (!player.isSneaking()) {
+						if (player.isSneaking() && playerHasNoBlocksToPlaceInHands || !player.isSneaking()) {
 							event.setCanceled(true);
 							if (!region.isMuted()) {
 								MessageUtils.sendStatusMessage(player, "message.event.interact.use");
@@ -72,7 +80,7 @@ public class EventInteract {
 
 				// check for ender chest access
 				if (region.containsFlag(RegionFlag.ENDER_CHEST_ACCESS) && isEnderChest && isPlayerProhibited) {
-					if (!player.isSneaking()) {
+					if (player.isSneaking() && playerHasNoBlocksToPlaceInHands || !player.isSneaking()) {
 						event.setCanceled(true);
 						if (!region.isMuted()) {
 							MessageUtils.sendStatusMessage(player, "message.event.interact.access_ender_chest");
@@ -82,7 +90,7 @@ public class EventInteract {
 				}
 				// check for container access
 				if (region.containsFlag(RegionFlag.CONTAINER_ACCESS) && isContainer && isPlayerProhibited) {
-					if (!player.isSneaking()) {
+					if (player.isSneaking() && playerHasNoBlocksToPlaceInHands || !player.isSneaking()) {
 						event.setCanceled(true);
 						if (!region.isMuted()) {
 							MessageUtils.sendStatusMessage(player, "message.event.interact.access_container");

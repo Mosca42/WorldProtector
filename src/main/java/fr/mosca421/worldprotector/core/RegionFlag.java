@@ -106,8 +106,8 @@ public enum RegionFlag {
     USE_PORTAL_MONSTERS("use-portal-monsters"),
     USE_PORTAL_VILLAGERS("use-portal-villagers"),
     USE_PORTAL_MINECARTS("use-portal-minecarts"),
-    SPAWN_PORTAL("spawn-portal"),
-    STOP_LEAF_DECAY("stop-leaf-decay");
+    SPAWN_PORTAL("spawn-portal");
+    // STOP_LEAF_DECAY("stop-leaf-decay");
     //
     // EXIT_MESSAGE_TITLE("exit-message"), // TODO: Currently not working correctly
     // ENTER_MESSAGE_TITLE("enter-message"), // TODO: Currently not working correctly

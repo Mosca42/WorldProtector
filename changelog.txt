@@ -1,3 +1,6 @@
+1.16.5-2.1.6.1
+* Disabled not used leaf decay flag
+* Fix players able to bypass use, access-container and access-enderchest flags by sneaking.
 1.16.5-2.1.6.0
 * Added mixin support. Implemented mixins for various Entities to fire EntityTravelToDimensionEvent.
 * Added flags: use-portal-items, use-portal-villagers, use-portal-players, use-portal-monsters, use-portal-animals, use-portal-minecarts.

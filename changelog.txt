@@ -1,3 +1,5 @@
+1.16.5-2.1.6.2
+* Fix attack-players flag not working as intended
 1.16.5-2.1.6.1
 * Disabled not used leaf decay flag
 * Fix players able to bypass use, access-container and access-enderchest flags by sneaking.

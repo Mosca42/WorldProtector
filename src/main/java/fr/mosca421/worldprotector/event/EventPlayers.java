@@ -42,12 +42,12 @@ public class EventPlayers {
     public static void onAttackEntity(AttackEntityEvent event) {
         if (!event.getPlayer().world.isRemote) {
             if (event.getTarget() instanceof PlayerEntity) {
-                PlayerEntity player = (PlayerEntity) event.getTarget();
-                List<IRegion> regions = RegionUtils.getHandlingRegionsFor(player.getPosition(), player.world);
+                PlayerEntity target = (PlayerEntity) event.getTarget();
+                List<IRegion> regions = RegionUtils.getHandlingRegionsFor(target.getPosition(), target.world);
                 for (IRegion region : regions) {
-                    if (region.containsFlag(RegionFlag.ATTACK_PLAYERS.toString()) && region.forbids(player)) {
+                    if (region.containsFlag(RegionFlag.ATTACK_PLAYERS.toString()) && region.forbids(event.getPlayer())) {
                         if (!region.isMuted()) {
-                            sendStatusMessage(player, "message.event.player.pvp");
+                            sendStatusMessage(event.getPlayer(), "message.event.player.pvp");
                         }
                         event.setCanceled(true);
                         return;

@@ -1,3 +1,5 @@
+1.16.5-2.1.7.0
+* Add configuration support. For now only covers default OP level to use WorldProtector commands.
 1.16.5-2.1.6.2
 * Fix attack-players flag not working as intended
 1.16.5-2.1.6.1

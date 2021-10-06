@@ -2,6 +2,7 @@ package fr.mosca421.worldprotector.core;
 
 import fr.mosca421.worldprotector.util.RegionPlayerUtils;
 import joptsimple.internal.Strings;
+import net.minecraft.client.MinecraftGame;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -259,7 +260,7 @@ public class Region implements IRegion {
 	 */
 	@Override
 	public boolean permits(PlayerEntity player) {
-		if (RegionPlayerUtils.isOp(player)) {
+		if (RegionPlayerUtils.hasNeededOpLevel(player)) {
 			return true;
 		}
 		return players.containsKey(player.getUniqueID());

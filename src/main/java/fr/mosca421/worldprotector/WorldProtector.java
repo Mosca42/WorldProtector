@@ -1,6 +1,7 @@
 package fr.mosca421.worldprotector;
 
 import fr.mosca421.worldprotector.command.CommandsRegister;
+import fr.mosca421.worldprotector.config.RegionDefaultConfig;
 import fr.mosca421.worldprotector.data.RegionManager;
 import fr.mosca421.worldprotector.registry.ItemRegister;
 import net.minecraft.item.ItemGroup;
@@ -10,7 +11,9 @@ import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
@@ -27,6 +30,8 @@ public class WorldProtector {
 		MinecraftForge.EVENT_BUS.register(this);
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         ItemRegister.ITEMS.register(modEventBus);
+
+		ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, RegionDefaultConfig.CONFIG_SPEC, MODID + "-common.toml" );
 	}
 
 	public static final ItemGroup WORLD_PROTECTOR_TAB = new ItemGroup(MODID) {

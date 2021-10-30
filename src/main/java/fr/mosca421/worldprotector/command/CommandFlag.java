@@ -50,12 +50,6 @@ public class CommandFlag {
 								.then(Commands.argument(Command.FLAG.toString(), StringArgumentType.string())
 										.suggests((ctx, builder) -> ISuggestionProvider.suggest(RegionManager.get().getRegionFlags(ctx.getArgument(Command.REGION.toString(), String.class), ctx.getSource().getWorld().getDimensionKey()), builder))
 										.executes(ctx -> remove(ctx.getSource(), StringArgumentType.getString(ctx, Command.REGION.toString()), StringArgumentType.getString(ctx, Command.FLAG.toString()))))));
-			/* TODO: add short flag description? maybe with lang file?
-				.then(Commands.literal(Command.INFO.toString())
-						.then(Commands.argument(Command.REGION.toString(), StringArgumentType.word())
-								.suggests((ctx, builder) -> ISuggestionProvider.suggest(RegionManager.get().getAllRegionNames(), builder))
-								.executes(ctx -> info(ctx.getSource(), StringArgumentType.getString(ctx, Command.REGION.toString())))));
-			 */
 	}
 
 	private static int giveHelp(CommandSource source) {

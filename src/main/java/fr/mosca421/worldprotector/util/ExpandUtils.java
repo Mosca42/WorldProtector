@@ -1,24 +1,19 @@
 package fr.mosca421.worldprotector.util;
 
+import fr.mosca421.worldprotector.command.Command;
 import fr.mosca421.worldprotector.item.ItemRegionMarker;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.util.text.*;
 
 import static fr.mosca421.worldprotector.item.ItemRegionMarker.*;
+import static fr.mosca421.worldprotector.util.MessageUtils.buildHelpHeader;
 import static fr.mosca421.worldprotector.util.MessageUtils.sendMessage;
 
 public final class ExpandUtils {
 
 	private ExpandUtils() {
-	}
-
-	public static void giveHelpMessage(PlayerEntity player) {
-		sendMessage(player, new TranslationTextComponent(TextFormatting.AQUA + "== WorldProtector Help =="));
-		sendMessage(player, "help.expand.1");
-		sendMessage(player, "help.expand.2");
 	}
 
 	public static void expandVert(PlayerEntity player, ItemStack item, int y1, int y2) {

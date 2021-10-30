@@ -6,8 +6,6 @@ import fr.mosca421.worldprotector.core.RegionFlag;
 import fr.mosca421.worldprotector.data.RegionManager;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.text.*;
-import net.minecraft.util.text.event.ClickEvent;
-import net.minecraft.util.text.event.HoverEvent;
 
 import java.util.List;
 
@@ -96,39 +94,7 @@ public final class RegionFlagUtils {
 		}
 	}
 
-	public static void listAvailableFlags(PlayerEntity player) {
-		String flags = Joiner.on(", ").join(RegionFlag.getFlags());
-		sendMessage(player, new StringTextComponent("Flags: " + flags));
-	}
-
-	public static void listRegionFlags(PlayerEntity player, String regionName) {
-		RegionManager.get().getRegion(regionName).ifPresent(region -> {
-			sendMessage(player, new TranslationTextComponent(TextFormatting.AQUA + "== Flags in Region '" + regionName + " ' =="));
-			if (region.getFlags().isEmpty()) {
-				sendMessage(player, new TranslationTextComponent("message.region.info.noflags"));
-				return;
-			}
-			region.getFlags().forEach(flag -> {
-				IFormattableTextComponent flagComponent = new StringTextComponent(" - '" + flag + "' ")
-						.appendSibling(TextComponentUtils.wrapWithSquareBrackets(new StringTextComponent("x"))
-								.setStyle(Style.EMPTY.setColor(Color.fromTextFormatting(TextFormatting.RED))
-										.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/wp flag remove " + regionName + " " + flag))
-										.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new StringTextComponent("Remove flag '" + flag + "'")))));
-				sendMessage(player, flagComponent);
-			});
-		});
-	}
-
-	public static void giveHelpMessage(PlayerEntity player) {
-		sendMessage(player, new TranslationTextComponent(TextFormatting.AQUA + "== WorldProtector Help =="));
-		sendMessage(player, "help.flags.1");
-		sendMessage(player, "help.flags.2");
-		sendMessage(player, "help.flags.3");
-		sendMessage(player, "help.flags.4");
-	}
-
 	public static String getFlagString(IRegion region) {
 		return Joiner.on(", ").join(region.getFlags());
 	}
-
 }

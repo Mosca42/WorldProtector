@@ -1,7 +1,21 @@
 1.16.5-2.1.7.0
+* Bump forge version to 36.2.8
+* Add command to define a region without the Region Marker: /wp region define <x1, y1, z1> <x2, y2, z2>.
+This works similar to the vanilla /fill command. The coordinates can be filled in for the block you are looking at.
+This is mainly intended for server console users or scripts using the server console.
+* Remove /wp flag list command to list all flags (there are just to many now).
+I am planning to add a list of all flags with descriptions when I add patchouli support.
+* Unified help and command appearance in chat.
+* Add links to help commands to suggest or run commands with just a mouseclick. Hover over the links to get information. Try it out!
+* Command /wp expand y_default <y1> <y2> is now /wp expand y-default <y1> <y2> to be consistent with other commands.
+* Config is (for now) defined as server configuration.
+* Add config option for default /wp base command used in links suggested in chat (this will most likely be moved into client config later).
+* WorldProtector now recognizes the JourneyMap mod and sets the base command to /w-p instead of /wp (later is used by JourneyMap for waypoints).
+* Add config option for default region priority and region priority increment (used in links in commands)
+(this will most likely be moved into client config later).
 * Add configuration support. For now only covers default OP level to use WorldProtector commands.
 1.16.5-2.1.6.2
-* Fix attack-players flag not working as intended
+* Fix attack-players flag not working as intended.
 1.16.5-2.1.6.1
 * Disabled not used leaf decay flag
 * Fix players able to bypass use, access-container and access-enderchest flags by sneaking.

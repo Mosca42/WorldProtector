@@ -5,10 +5,14 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import fr.mosca421.worldprotector.data.RegionManager;
+import fr.mosca421.worldprotector.util.MessageUtils;
 import fr.mosca421.worldprotector.util.RegionUtils;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.command.ISuggestionProvider;
+
+import java.util.Collection;
+import java.util.stream.Collectors;
 
 public class CommandRegion {
 
@@ -26,7 +30,7 @@ public class CommandRegion {
                 .then(Commands.literal(Command.LIST.toString())
                         .executes(ctx -> giveRegionList(ctx.getSource()))
                         .then(Commands.argument(Command.DIMENSION.toString(), StringArgumentType.string())
-                                .suggests((ctx, builder) -> ISuggestionProvider.suggest(RegionUtils.getQuotedDimensionList(), builder))
+                                .suggests((ctx, builder) -> ISuggestionProvider.suggest(getQuotedDimensionList(), builder))
                                 .executes(ctx -> giveRegionListForDim(ctx.getSource(), StringArgumentType.getString(ctx, Command.DIMENSION.toString())))))
                 .then(Commands.literal(Command.INFO.toString())
                         .executes(ctx -> listRegionsAround(ctx.getSource()))
@@ -89,7 +93,7 @@ public class CommandRegion {
 
     private static int info(CommandSource source, String regionName) {
         try {
-            RegionUtils.giveRegionInfo(source.asPlayer(), regionName);
+            RegionUtils.promptInteractiveRegionInfo(source.asPlayer(), regionName);
         } catch (CommandSyntaxException e) {
             e.printStackTrace();
         }
@@ -154,7 +158,7 @@ public class CommandRegion {
 
     private static int giveHelp(CommandSource source) {
         try {
-            RegionUtils.giveHelpMessage(source.asPlayer());
+            MessageUtils.promptRegionHelp(source.asPlayer());
         } catch (CommandSyntaxException e) {
             e.printStackTrace();
         }
@@ -244,4 +248,9 @@ public class CommandRegion {
         return 0;
     }
 
+    private static Collection<String> getQuotedDimensionList() {
+        return RegionUtils.getDimensionList().stream()
+                .map(dim -> "'" + dim + "'")
+                .collect(Collectors.toList());
+    }
 }

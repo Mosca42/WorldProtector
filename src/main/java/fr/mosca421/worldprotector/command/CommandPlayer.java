@@ -4,6 +4,7 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import fr.mosca421.worldprotector.data.RegionManager;
+import fr.mosca421.worldprotector.util.MessageUtils;
 import fr.mosca421.worldprotector.util.RegionPlayerUtils;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
@@ -104,7 +105,7 @@ public class CommandPlayer {
 
     private static int giveHelp(CommandSource source) {
         try {
-            RegionPlayerUtils.giveHelpMessage(source.asPlayer());
+            MessageUtils.promptPlayerCommandHelp(source.asPlayer());
         } catch (CommandSyntaxException e) {
             e.printStackTrace();
         }

@@ -5,6 +5,7 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import fr.mosca421.worldprotector.core.RegionFlag;
 import fr.mosca421.worldprotector.data.RegionManager;
+import fr.mosca421.worldprotector.util.MessageUtils;
 import fr.mosca421.worldprotector.util.RegionFlagUtils;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
@@ -27,9 +28,6 @@ public class CommandFlag {
 				.then(Commands.literal(Command.HELP.toString())
 						.executes(ctx -> giveHelp(ctx.getSource())))
 				.then(Commands.literal(Command.LIST.toString())
-						.executes(ctx -> giveList(ctx.getSource())))
-				.then(Commands.literal(Command.LIST.toString())
-						.executes(ctx -> giveList(ctx.getSource()))
 						.then(Commands.argument(Command.REGION.toString(), StringArgumentType.word())
 								.suggests((ctx, builder) -> ISuggestionProvider.suggest(RegionManager.get().getAllRegionNames(), builder))
 								.executes(ctx -> giveFlagListForRegion(ctx.getSource(), StringArgumentType.getString(ctx, Command.REGION.toString())))))
@@ -52,7 +50,7 @@ public class CommandFlag {
 								.then(Commands.argument(Command.FLAG.toString(), StringArgumentType.string())
 										.suggests((ctx, builder) -> ISuggestionProvider.suggest(RegionManager.get().getRegionFlags(ctx.getArgument(Command.REGION.toString(), String.class), ctx.getSource().getWorld().getDimensionKey()), builder))
 										.executes(ctx -> remove(ctx.getSource(), StringArgumentType.getString(ctx, Command.REGION.toString()), StringArgumentType.getString(ctx, Command.FLAG.toString()))))));
-			/*
+			/* TODO: add short flag description? maybe with lang file?
 				.then(Commands.literal(Command.INFO.toString())
 						.then(Commands.argument(Command.REGION.toString(), StringArgumentType.word())
 								.suggests((ctx, builder) -> ISuggestionProvider.suggest(RegionManager.get().getAllRegionNames(), builder))
@@ -62,16 +60,7 @@ public class CommandFlag {
 
 	private static int giveHelp(CommandSource source) {
 		try {
-			RegionFlagUtils.giveHelpMessage(source.asPlayer());
-		} catch (CommandSyntaxException e) {
-			e.printStackTrace();
-		}
-		return 0;
-	}
-
-	private static int giveList(CommandSource source) {
-		try {
-			RegionFlagUtils.listAvailableFlags(source.asPlayer());
+			MessageUtils.promptFlagCommandHelp(source.asPlayer());
 		} catch (CommandSyntaxException e) {
 			e.printStackTrace();
 		}
@@ -80,7 +69,7 @@ public class CommandFlag {
 
 	private static int giveFlagListForRegion(CommandSource source, String regionName) {
 		try {
-			RegionFlagUtils.listRegionFlags(source.asPlayer(), regionName);
+			MessageUtils.promptRegionFlags(source.asPlayer(), regionName);
 		} catch (CommandSyntaxException e) {
 			e.printStackTrace();
 		}

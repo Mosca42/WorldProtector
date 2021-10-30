@@ -16,7 +16,7 @@ public enum Command {
     NAME("name"),
     EXPAND("expand"),
     VERT("vert"),
-    DEFAULT_Y("y_default"),
+    DEFAULT_Y("y-default"),
     LIST("list"),
     DEFINE("define"),
     REDEFINE("redefine"),

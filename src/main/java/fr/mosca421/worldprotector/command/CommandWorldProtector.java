@@ -2,13 +2,11 @@ package fr.mosca421.worldprotector.command;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import fr.mosca421.worldprotector.config.ServerConfigBuilder;
+import fr.mosca421.worldprotector.util.MessageUtils;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
-
-import static fr.mosca421.worldprotector.util.MessageUtils.sendMessage;
 
 public class CommandWorldProtector {
 
@@ -29,7 +27,7 @@ public class CommandWorldProtector {
 
     private static LiteralArgumentBuilder<CommandSource> withSubCommands(LiteralArgumentBuilder<CommandSource> baseCommand) {
         return baseCommand
-                .requires(cs -> cs.hasPermissionLevel(4))
+                .requires(cs -> cs.hasPermissionLevel(ServerConfigBuilder.OP_COMMAND_PERMISSION_LEVEL.get()))
                 .executes(ctx -> giveHelp(ctx.getSource()))
                 .then(Commands.literal(Command.HELP.toString())
                         .executes(ctx -> giveHelp(ctx.getSource())))
@@ -42,16 +40,11 @@ public class CommandWorldProtector {
     private static int giveHelp(CommandSource source) {
         try {
             PlayerEntity player = source.asPlayer();
-            sendMessage(player, new TranslationTextComponent(TextFormatting.AQUA + "== WorldProtector Help =="));
-            sendMessage(player, "help.wp.1");
-            sendMessage(player, "help.wp.2");
-            sendMessage(player, "help.wp.3");
-            sendMessage(player, "help.wp.4");
+            MessageUtils.promptBaseCommandHelp(player);
         } catch (CommandSyntaxException e) {
             e.printStackTrace();
         }
         return 0;
 
     }
-
 }

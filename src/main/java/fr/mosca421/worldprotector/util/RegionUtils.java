@@ -67,6 +67,16 @@ public final class RegionUtils {
 		}
 	}
 
+	public static void createRegion(String regionName, PlayerEntity player, BlockPos startPos, BlockPos endPos) {
+		if (regionName.contains(" ")) { // region contains whitespace
+			sendStatusMessage(player, "message.region.define.error");
+			return;
+		}
+		Region region = new Region(regionName, new AxisAlignedBB(startPos, endPos), player.world.getDimensionKey());
+		RegionManager.get().addRegion(region, player);
+		sendMessage(player, new TranslationTextComponent("message.region.define", regionName));
+	}
+
 	public static void redefineRegion(String regionName, PlayerEntity player, ItemStack item) {
 		if (item.getItem() instanceof ItemRegionMarker) {
 			if (item.getTag() != null) {
@@ -241,7 +251,7 @@ public final class RegionUtils {
 				// Region flags: [n flag(s)] [+]
 				IFormattableTextComponent regionFlagMessage = new TranslationTextComponent("message.region.info.flags",
 						region.getFlags().isEmpty()
-				? new TranslationTextComponent("message.region.info.noflags").toString()
+				? new TranslationTextComponent("message.region.info.noflags").getString()
 						: buildFlagListLink(region));
 				regionFlagMessage.appendSibling(buildAddFlagLink(regionName));
 				sendMessage(player, regionFlagMessage);

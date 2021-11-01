@@ -227,7 +227,7 @@ public final class RegionUtils {
 						.appendSibling(new StringTextComponent(TextFormatting.BOLD + " information =="));
 				sendMessage(player, regionInfoHeader);
 
-				IFormattableTextComponent regionTeleportMessage = new TranslationTextComponent("message.region.list.entry", region.getName())
+				IFormattableTextComponent regionTeleportMessage = new TranslationTextComponent("message.region.info.teleport")
 						.appendSibling(buildDimensionTeleportLink(region));
 				sendMessage(player, regionTeleportMessage);
 

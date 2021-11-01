@@ -122,6 +122,8 @@ Currently, there are **57 flags** available. Click below to show the complete li
 To add a flag use the command ```/wp flag add <region> <flag>```. To remove a flag from a region
 use ```/wp flag remove <region> <flag>. ```
 
+To add or remove multiple flags at once just separate them with a space between them. 
+
 You are also able to add or remove all flags by using the special flag 'all': ```/wp flag <add|remove> <region> all```
 
 <details>

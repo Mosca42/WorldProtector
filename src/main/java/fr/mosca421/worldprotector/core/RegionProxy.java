@@ -1,5 +1,6 @@
 package fr.mosca421.worldprotector.core;
 
+import fr.mosca421.worldprotector.util.PlayerUtils;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.RegistryKey;
@@ -106,7 +107,17 @@ public class RegionProxy implements IRegion{
     }
 
     @Override
+    public boolean addPlayer(PlayerUtils.MCPlayerInfo playerInfo) {
+        return false;
+    }
+
+    @Override
     public boolean removePlayer(PlayerEntity player) {
+        return false;
+    }
+
+    @Override
+    public boolean removePlayer(String playerName) {
         return false;
     }
 

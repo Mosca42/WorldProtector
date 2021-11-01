@@ -1,5 +1,7 @@
 package fr.mosca421.worldprotector.core;
 
+import fr.mosca421.worldprotector.WorldProtector;
+import fr.mosca421.worldprotector.util.PlayerUtils;
 import fr.mosca421.worldprotector.util.RegionPlayerUtils;
 import joptsimple.internal.Strings;
 import net.minecraft.client.MinecraftGame;
@@ -304,6 +306,27 @@ public class Region implements IRegion {
 		String oldPlayer = this.players.put(player.getUniqueID(), player.getName().getString());
 		return !player.getName().getString().equals(oldPlayer);
 	}
+
+	@Override
+	public boolean addPlayer(PlayerUtils.MCPlayerInfo playerInfo) {
+		WorldProtector.LOGGER.debug("###### 4 #####");
+		String oldPlayer = this.players.put(java.util.UUID.fromString(playerInfo.playerUUID), playerInfo.playerName);
+		WorldProtector.LOGGER.debug("###### 5 #####");
+		return !playerInfo.playerName.equals(oldPlayer);
+	}
+
+	@Override
+	public boolean removePlayer(String playerName) {
+		Optional<UUID> playerUUID = this.players.entrySet().stream()
+				.filter((entry) -> entry.getValue().equals(playerName))
+				.findFirst().map(Map.Entry::getKey);
+		if (playerUUID.isPresent()) {
+			String oldPlayer = this.players.remove(playerUUID.get());
+			return oldPlayer != null;
+		}
+		return false;
+	}
+
 
 	@Override
 	public boolean removePlayer(PlayerEntity player) {

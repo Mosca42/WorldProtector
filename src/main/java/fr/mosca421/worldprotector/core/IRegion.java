@@ -1,5 +1,6 @@
 package fr.mosca421.worldprotector.core;
 
+import fr.mosca421.worldprotector.util.PlayerUtils;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.RegistryKey;
@@ -47,7 +48,11 @@ public interface IRegion extends INBTSerializable<CompoundNBT> {
 
     boolean addPlayer(PlayerEntity player);
 
+    boolean addPlayer(PlayerUtils.MCPlayerInfo playerInfo);
+
     boolean removePlayer(PlayerEntity player);
+
+    boolean removePlayer(String playerName);
 
     boolean containsFlag(String flag);
 

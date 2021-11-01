@@ -144,7 +144,7 @@ public final class RegionPlayerUtils {
     }
 
     public static IFormattableTextComponent buildRemovePlayerLink(String playerName, String region) {
-        String command =  "/" + WP_CMD + " " + Command.PLAYER + " " + Command.REMOVE + " " + region + " " + playerName;
+        String command =  "/" + WP_CMD + " " + Command.PLAYER + " " + Command.REMOVE_OFFLINE + " " + region + " " + playerName;
         return new StringTextComponent(" - ")
                 // TODO: Langkey and overload method with translatableComponent
                 .appendSibling(buildRunCommandLink("x", command, TextFormatting.RED, "Remove player '" + playerName + "' from region " + "'" + region + "'"))

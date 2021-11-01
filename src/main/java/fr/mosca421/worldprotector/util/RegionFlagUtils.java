@@ -8,6 +8,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.text.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static fr.mosca421.worldprotector.util.MessageUtils.sendMessage;
 
@@ -35,7 +36,10 @@ public final class RegionFlagUtils {
 
 	public static void addFlags(String regionName, PlayerEntity player, List<String> flags) {
 		if (RegionManager.get().containsRegion(regionName)) {
-			List<String> addedFlags = RegionManager.get().addFlags(regionName, flags);
+			List<String> validFlags = flags.stream()
+					.filter(RegionFlag::contains)
+					.collect(Collectors.toList());
+			List<String> addedFlags = RegionManager.get().addFlags(regionName, validFlags);
 			String flagString = String.join(", ", addedFlags);
 			if (!addedFlags.isEmpty()) {
 				sendMessage(player, new TranslationTextComponent("message.flags.add.multiple", flagString, regionName));
@@ -58,7 +62,10 @@ public final class RegionFlagUtils {
 
 	public static void removeFlags(String regionName, PlayerEntity player, List<String> flags) {
 		if (RegionManager.get().containsRegion(regionName)) {
-			List<String> removedFlags = RegionManager.get().removeFlags(regionName, flags);
+			List<String> validFlags = flags.stream()
+					.filter(RegionFlag::contains)
+					.collect(Collectors.toList());
+			List<String> removedFlags = RegionManager.get().removeFlags(regionName, validFlags);
 			String flagString = String.join(", ", removedFlags);
 			if (!removedFlags.isEmpty()) {
 				sendMessage(player, new TranslationTextComponent("message.flags.remove.multiple", flagString, regionName));

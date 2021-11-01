@@ -13,6 +13,9 @@ import net.minecraft.command.ISuggestionProvider;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.text.TranslationTextComponent;
 
+import java.util.Arrays;
+import java.util.List;
+
 import static fr.mosca421.worldprotector.util.MessageUtils.sendMessage;
 import static fr.mosca421.worldprotector.util.MessageUtils.sendStatusMessage;
 
@@ -34,22 +37,15 @@ public class CommandFlag {
 				.then(Commands.literal(Command.ADD.toString())
 						.then(Commands.argument(Command.REGION.toString(), StringArgumentType.word())
 								.suggests((ctx, builder) -> ISuggestionProvider.suggest(RegionManager.get().getAllRegionNames(), builder))
-								.then(Commands.argument(Command.FLAG.toString(), StringArgumentType.string())
+								.then(Commands.argument(Command.FLAG.toString(), StringArgumentType.greedyString())
 										.suggests((ctx, builder) -> ISuggestionProvider.suggest(RegionFlag.getFlags(), builder))
-										.then(Commands.argument(Command.NAME.toString(), StringArgumentType.greedyString())
-												.executes(ctx -> add(ctx.getSource(), StringArgumentType.getString(ctx, Command.REGION.toString()), StringArgumentType.getString(ctx, Command.FLAG.toString()), StringArgumentType.getString(ctx, Command.NAME.toString())))))))
-				.then(Commands.literal(Command.ADD.toString())
-						.then(Commands.argument(Command.REGION.toString(), StringArgumentType.word())
-								.suggests((ctx, builder) -> ISuggestionProvider.suggest(RegionManager.get().getAllRegionNames(), builder))
-								.then(Commands.argument(Command.FLAG.toString(), StringArgumentType.string())
-										.suggests((ctx, builder) -> ISuggestionProvider.suggest(RegionFlag.getFlags(), builder))
-										.executes(ctx -> add(ctx.getSource(), StringArgumentType.getString(ctx, Command.REGION.toString()), StringArgumentType.getString(ctx, Command.FLAG.toString()), "")))))
+										.executes(ctx -> addFlags(ctx.getSource(), StringArgumentType.getString(ctx, Command.REGION.toString()), StringArgumentType.getString(ctx, Command.FLAG.toString()))))))
 				.then(Commands.literal(Command.REMOVE.toString())
 						.then(Commands.argument(Command.REGION.toString(), StringArgumentType.word())
 								.suggests((ctx, builder) -> ISuggestionProvider.suggest(RegionManager.get().getAllRegionNames(), builder))
-								.then(Commands.argument(Command.FLAG.toString(), StringArgumentType.string())
+								.then(Commands.argument(Command.FLAG.toString(), StringArgumentType.greedyString())
 										.suggests((ctx, builder) -> ISuggestionProvider.suggest(RegionManager.get().getRegionFlags(ctx.getArgument(Command.REGION.toString(), String.class), ctx.getSource().getWorld().getDimensionKey()), builder))
-										.executes(ctx -> remove(ctx.getSource(), StringArgumentType.getString(ctx, Command.REGION.toString()), StringArgumentType.getString(ctx, Command.FLAG.toString()))))));
+										.executes(ctx -> removeFlags(ctx.getSource(), StringArgumentType.getString(ctx, Command.REGION.toString()), StringArgumentType.getString(ctx, Command.FLAG.toString()))))));
 	}
 
 	private static int giveHelp(CommandSource source) {
@@ -70,7 +66,7 @@ public class CommandFlag {
 		return 0;
 	}
 
-	private static int add(CommandSource source, String regionName, String flag, String enterOrExitFlagMsg) {
+	private static int addFlag(CommandSource source, String regionName, String flag) {
 		try {
 			PlayerEntity player = source.asPlayer();
 			if (RegionManager.get().containsRegion(regionName)) {
@@ -112,7 +108,47 @@ public class CommandFlag {
 		return 0;
 	}
 
-	private static int remove(CommandSource source, String regionName, String flag) {
+	private static int addFlags(CommandSource source, String regionName, String flags) {
+		try {
+			List<String> flagsList = Arrays.asList(flags.split(" "));
+			if (flagsList.size() == 1) {
+				return addFlag(source, regionName, flagsList.get(0));
+			}
+			PlayerEntity player = source.asPlayer();
+			if (RegionManager.get().containsRegion(regionName)) {
+				RegionManager.get().getRegion(regionName).ifPresent((region) -> {
+					RegionFlagUtils.addFlags(regionName, player, flagsList);
+				});
+			} else {
+				sendMessage(player, new TranslationTextComponent("message.region.unknown", regionName));
+			}
+		} catch (CommandSyntaxException | IllegalArgumentException e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+
+	private static int removeFlags(CommandSource source, String regionName, String flags) {
+		try {
+			List<String> flagsList = Arrays.asList(flags.split(" "));
+			if (flagsList.size() == 1) {
+				return removeFlag(source, regionName, flagsList.get(0));
+			}
+			PlayerEntity player = source.asPlayer();
+			if (RegionManager.get().containsRegion(regionName)) {
+				RegionManager.get().getRegion(regionName).ifPresent((region) -> {
+					RegionFlagUtils.removeFlags(regionName, player, flagsList);
+				});
+			} else {
+				sendMessage(player, new TranslationTextComponent("message.region.unknown", regionName));
+			}
+		} catch (CommandSyntaxException | IllegalArgumentException e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+
+	private static int removeFlag(CommandSource source, String regionName, String flag) {
 		try {
 			PlayerEntity player = source.asPlayer();
 			if (RegionManager.get().containsRegion(regionName)) {

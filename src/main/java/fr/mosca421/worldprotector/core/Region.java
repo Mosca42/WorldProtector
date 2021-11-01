@@ -309,9 +309,7 @@ public class Region implements IRegion {
 
 	@Override
 	public boolean addPlayer(PlayerUtils.MCPlayerInfo playerInfo) {
-		WorldProtector.LOGGER.debug("###### 4 #####");
 		String oldPlayer = this.players.put(java.util.UUID.fromString(playerInfo.playerUUID), playerInfo.playerName);
-		WorldProtector.LOGGER.debug("###### 5 #####");
 		return !playerInfo.playerName.equals(oldPlayer);
 	}
 

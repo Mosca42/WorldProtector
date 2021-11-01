@@ -112,7 +112,6 @@ public class CommandPlayer {
 
     private static int addPlayer(CommandSource source, String regionName, String playerName) {
         try {
-            WorldProtector.LOGGER.debug(playerName);
             PlayerUtils.MCPlayerInfo playerInfo = PlayerUtils.queryPlayerUUIDByName(playerName);
             if (playerInfo == null) {
                 sendMessage(source.asPlayer(), new TranslationTextComponent( "message.region.playernotexisting", playerName));

@@ -1,7 +1,7 @@
 1.16.5-2.1.7.0
 * Add support for adding and removing multiple flags at once. Syntax is the same as for single flags with the flags separated by spaces: /wp flag <add|remove> <region> <flags>.
 E.g. '/wp flag add <region> break place use' adds all three flags to a region. The same goes for the remove command.
-* Add command to add and remove offline players to/from a region: /wp player add-offline <regionName> <playerName> and /wp player add-offline <regionName> <playerName> respectively.
+* Add command to add and remove offline players to/from a region: /wp player add-offline <regionName> <playerName> and /wp player remove-offline <regionName> <playerName> respectively.
 * Bump forge version to 36.2.8
 * Add command to define a region without the Region Marker: /wp region define <x1, y1, z1> <x2, y2, z2>.
 This works similar to the vanilla /fill command. The coordinates can be filled in for the block you are looking at.

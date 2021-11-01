@@ -126,18 +126,22 @@ public final class MessageUtils {
     }
 
     public static void promptRegionFlags(PlayerEntity player, String regionName) {
-        RegionManager.get().getRegion(regionName).ifPresent(region -> {
-            // TODO: lang-key
-            sendMessage(player, new TranslationTextComponent(TextFormatting.BOLD + "== Flags in Region '" + regionName + "' =="));
-            if (region.getFlags().isEmpty()) {
-                sendMessage(player, new TranslationTextComponent("message.region.info.noflags"));
-                return;
-            }
-            region.getFlags().forEach(flag -> {
-                sendMessage(player, MessageUtils.buildRemoveFlagLink(flag, regionName));
+        if(RegionManager.get().containsRegion(regionName)) {
+            RegionManager.get().getRegion(regionName).ifPresent(region -> {
+                // TODO: lang-key
+                sendMessage(player, new TranslationTextComponent(TextFormatting.BOLD + "== Flags in Region '" + regionName + "' =="));
+                if (region.getFlags().isEmpty()) {
+                    sendMessage(player, new TranslationTextComponent("message.region.info.noflags"));
+                    return;
+                }
+                region.getFlags().forEach(flag -> {
+                    sendMessage(player, MessageUtils.buildRemoveFlagLink(flag, regionName));
+                });
+                sendMessage(player, new StringTextComponent(""));
             });
-            sendMessage(player, new StringTextComponent(""));
-        });
+        } else {
+            sendMessage(player, new TranslationTextComponent("message.region.unknown", regionName));
+        }
     }
 
     public static IFormattableTextComponent buildRemoveFlagLink(String flag, String region) {

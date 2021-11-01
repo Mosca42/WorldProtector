@@ -3,6 +3,7 @@ package fr.mosca421.worldprotector.data;
 import fr.mosca421.worldprotector.WorldProtector;
 import fr.mosca421.worldprotector.api.event.RegionEvent;
 import fr.mosca421.worldprotector.core.IRegion;
+import fr.mosca421.worldprotector.util.PlayerUtils;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.server.MinecraftServer;
@@ -393,6 +394,18 @@ public class RegionManager extends WorldSavedData {
         return false;
     }
 
+    public boolean addPlayer(String regionName, PlayerUtils.MCPlayerInfo playerInfo) {
+        Optional<DimensionRegionCache> maybeCache = getRegionDimCache(regionName);
+        if (maybeCache.isPresent()) {
+            boolean wasAdded = maybeCache.get().addPlayer(regionName, playerInfo);
+            if (wasAdded) {
+                markDirty();
+            }
+            return wasAdded;
+        }
+        return false;
+    }
+
     public List<PlayerEntity> addPlayers(String regionName, List<PlayerEntity> playersToAdd) {
         Optional<DimensionRegionCache> maybeCache = getRegionDimCache(regionName);
         if (maybeCache.isPresent()) {
@@ -415,6 +428,19 @@ public class RegionManager extends WorldSavedData {
         }
         return false;
     }
+
+    public boolean removePlayer(String regionName, String playerName) {
+        Optional<DimensionRegionCache> maybeCache = getRegionDimCache(regionName);
+        if (maybeCache.isPresent()) {
+            boolean wasRemoved = maybeCache.get().removePlayer(regionName, playerName);
+            if (wasRemoved) {
+                markDirty();
+            }
+            return wasRemoved;
+        }
+        return false;
+    }
+
 
     public List<PlayerEntity> removePlayers(String regionName, List<PlayerEntity> playersToRemove) {
         Optional<DimensionRegionCache> maybeCache = getRegionDimCache(regionName);
@@ -457,4 +483,6 @@ public class RegionManager extends WorldSavedData {
         MinecraftForge.EVENT_BUS.post(new RegionEvent.CreateRegionEvent(region, player));
         markDirty();
     }
+
+
 }

@@ -1,6 +1,7 @@
 package fr.mosca421.worldprotector.util;
 
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import fr.mosca421.worldprotector.command.Command;
 import fr.mosca421.worldprotector.core.IRegion;
 import fr.mosca421.worldprotector.core.Region;
 import fr.mosca421.worldprotector.data.RegionManager;
@@ -14,8 +15,6 @@ import net.minecraft.util.RegistryKey;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.*;
-import net.minecraft.util.text.event.ClickEvent;
-import net.minecraft.util.text.event.HoverEvent;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 
@@ -66,6 +65,16 @@ public final class RegionUtils {
 		} else {
 			sendMessage(player, "message.item-hand.take");
 		}
+	}
+
+	public static void createRegion(String regionName, PlayerEntity player, BlockPos startPos, BlockPos endPos) {
+		if (regionName.contains(" ")) { // region contains whitespace
+			sendStatusMessage(player, "message.region.define.error");
+			return;
+		}
+		Region region = new Region(regionName, new AxisAlignedBB(startPos, endPos), player.world.getDimensionKey());
+		RegionManager.get().addRegion(region, player);
+		sendMessage(player, new TranslationTextComponent("message.region.define", regionName));
 	}
 
 	public static void redefineRegion(String regionName, PlayerEntity player, ItemStack item) {
@@ -188,8 +197,7 @@ public final class RegionUtils {
 			return;
 		}
 		BlockPos pos = player.getPosition();
-		sendMessage(player, new TranslationTextComponent(""));
-		sendMessage(player, new TranslationTextComponent(TextFormatting.AQUA + "== Regions around [" + pos.getX() + ", " + pos.getY() + ", " + pos.getZ() + "] =="));
+		sendMessage(player, new TranslationTextComponent(TextFormatting.BOLD + "== Regions around [" + pos.getX() + ", " + pos.getY() + ", " + pos.getZ() + "] =="));
 		regions.forEach(regionName -> sendRegionInfoCommand(regionName, player));
 	}
 
@@ -210,70 +218,47 @@ public final class RegionUtils {
 		}
 	}
 
-	public static void giveHelpMessage(PlayerEntity player) {
-		sendMessage(player, new TranslationTextComponent(TextFormatting.AQUA + "== WorldProtector Help =="));
-		sendMessage(player, "help.region.1");
-		sendMessage(player, "help.region.2");
-		sendMessage(player, "help.region.3");
-		sendMessage(player, "help.region.4");
-		sendMessage(player, "help.region.4a");
-		sendMessage(player, "help.region.5");
-		sendMessage(player, "help.region.5a");
-		sendMessage(player, "help.region.6");
-		sendMessage(player, "help.region.7");
-		sendMessage(player, "help.region.8");
-		sendMessage(player, "help.region.9");
-		sendMessage(player, "help.region.10");
-	}
-
-	public static void giveRegionInfo(PlayerEntity player, String regionName) {
+	public static void promptInteractiveRegionInfo(PlayerEntity player, String regionName) {
 		if (RegionManager.get().containsRegion(regionName)) {
 			RegionManager.get().getRegion(regionName).ifPresent(region -> {
-				String noFlagsText = new TranslationTextComponent("message.region.info.noflags").getString();
-				String noPlayersText = new TranslationTextComponent("message.region.info.noplayers").getString();
-				sendMessage(player, new StringTextComponent(TextFormatting.AQUA + "== Region '" + regionName + "' information =="));
-				sendDimensionTeleportLink(player, region, new TranslationTextComponent("message.region.list.entry", region.getName()));
+
+				IFormattableTextComponent regionInfoHeader = new StringTextComponent(TextFormatting.BOLD + "== Region ")
+						.appendSibling(buildRegionInfoLink(regionName))
+						.appendSibling(new StringTextComponent(TextFormatting.BOLD + " information =="));
+				sendMessage(player, regionInfoHeader);
+
+				IFormattableTextComponent regionTeleportMessage = new TranslationTextComponent("message.region.info.teleport")
+						.appendSibling(buildDimensionTeleportLink(region));
+				sendMessage(player, regionTeleportMessage);
+
+				// Region area: ...
 				sendMessage(player, new TranslationTextComponent("message.region.info.area", region.getArea().toString().substring(4)));
-				sendMessage(player, new TranslationTextComponent("message.region.info.priority", region.getPriority()));
 
-				if (region.getPlayers().isEmpty()) {
-					sendMessage(player, new TranslationTextComponent("message.region.info.players", noPlayersText));
-				} else {
-					IFormattableTextComponent playerListLink = new StringTextComponent(": ")
-							.appendSibling(TextComponentUtils.wrapWithSquareBrackets(new StringTextComponent(region.getPlayers().size() + " player(s)"))
-									.setStyle(Style.EMPTY.setColor(Color.fromTextFormatting(TextFormatting.GREEN))
-											.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/wp player list " + regionName))
-											.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new StringTextComponent("List players in region '" + regionName + "'")))));
-					sendMessage(player, new TranslationTextComponent("message.region.info.players", playerListLink));
-				}
-				if (region.getFlags().isEmpty()) {
-					sendMessage(player, new TranslationTextComponent("message.region.info.flags", noFlagsText));
-				} else {
-					IFormattableTextComponent playerListLink = new StringTextComponent(": ")
-							.appendSibling(TextComponentUtils.wrapWithSquareBrackets(new StringTextComponent(region.getFlags().size() + " flag(s)"))
-									.setStyle(Style.EMPTY.setColor(Color.fromTextFormatting(TextFormatting.GREEN))
-											.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/wp flag list " + regionName))
-											.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new StringTextComponent("List flags in region '" + regionName + "'")))));
-					sendMessage(player, new TranslationTextComponent("message.region.info.flags", playerListLink));
-				}
+				// Region priority: n [#] [+] [-]
+				int regionPriority = region.getPriority();
+				sendMessage(player, buildRegionPriorityInfoLink(regionName, regionPriority));
 
-				IFormattableTextComponent activeLink = new StringTextComponent(": ")
-						.appendSibling(TextComponentUtils.wrapWithSquareBrackets(region.isActive()
-								? new TranslationTextComponent("message.region.info.active.true")
-								: new TranslationTextComponent("message.region.info.active.false"))
-								.setStyle(Style.EMPTY.setColor(Color.fromTextFormatting(TextFormatting.GREEN))
-										.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/wp region " + (region.isActive() ? "deactivate" : "activate") + " " + regionName))
-										.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new StringTextComponent((region.isActive() ? "Deactivate" : "Activate") + " region '" + regionName + "'")))));
+				// TODO: Link for clear players
+				// Region players: [n player(s)] [+]
+				IFormattableTextComponent regionPlayerMessage = new TranslationTextComponent("message.region.info.players",
+						region.getPlayers().isEmpty()
+						? new TranslationTextComponent("message.region.info.noplayers").getString()
+						: buildPlayerListLink(region));
+				regionPlayerMessage.appendSibling(buildAddPlayerLink(regionName));
+				sendMessage(player, regionPlayerMessage);
 
-				IFormattableTextComponent muteLink = new StringTextComponent("")
-						.appendSibling(TextComponentUtils.wrapWithSquareBrackets(region.isMuted()
-								? new TranslationTextComponent("message.region.info.muted.true")
-								: new TranslationTextComponent("message.region.info.muted.false"))
-								.setStyle(Style.EMPTY.setColor(Color.fromTextFormatting(TextFormatting.GREEN))
-										.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/wp region " + (region.isMuted() ? "unmute" : "mute") + " " + regionName))
-										.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new StringTextComponent((region.isMuted() ? "Unmute" : "Mute") + " region '" + regionName + "'")))));
+				// TODO: Link for clear flags
+				// Region flags: [n flag(s)] [+]
+				IFormattableTextComponent regionFlagMessage = new TranslationTextComponent("message.region.info.flags",
+						region.getFlags().isEmpty()
+				? new TranslationTextComponent("message.region.info.noflags").getString()
+						: buildFlagListLink(region));
+				regionFlagMessage.appendSibling(buildAddFlagLink(regionName));
+				sendMessage(player, regionFlagMessage);
 
-				sendMessage(player, new TranslationTextComponent("message.region.info.active", activeLink, muteLink));
+				// Region state: [activated], [unmuted]
+				sendMessage(player, new TranslationTextComponent("message.region.info.active", buildRegionActiveLink(region), buildRegionMuteLink(region)));
+				sendMessage(player, new StringTextComponent(""));
 			});
 		} else {
 			sendStatusMessage(player, new TranslationTextComponent("message.region.unknown", regionName));
@@ -288,7 +273,9 @@ public final class RegionUtils {
 			return;
 		}
 		regions.forEach(region -> {
-			sendDimensionTeleportLink(player, region, new TranslationTextComponent("message.region.list.entry", region.getName()));
+			IFormattableTextComponent regionTeleportMessage = new TranslationTextComponent("message.region.list.entry", region.getName())
+					.appendSibling(buildDimensionTeleportLink(region));
+			sendMessage(player, regionTeleportMessage);
 		});
 	}
 
@@ -303,23 +290,14 @@ public final class RegionUtils {
 			return;
 		}
 		regionsForDim.forEach(region -> {
-			sendDimensionTeleportLink(player, region, new TranslationTextComponent("message.region.list.entry", region.getName()));
+			IFormattableTextComponent regionTeleportMessage = new TranslationTextComponent("message.region.list.entry", region.getName())
+					.appendSibling(buildDimensionTeleportLink(region));
+			sendMessage(player, regionTeleportMessage);
 		});
 	}
 
 	public static Collection<String> getDimensionList() {
 		return RegionManager.get().getDimensionList();
-	}
-
-	/**
-	 * Only for usage in commands
-	 *
-	 * @return
-	 */
-	public static Collection<String> getQuotedDimensionList() {
-		return getDimensionList().stream()
-				.map(dim -> "'" + dim + "'")
-				.collect(Collectors.toList());
 	}
 
 	public static List<IRegion> getHandlingRegionsFor(Entity entity, IWorld world) {

@@ -3,9 +3,6 @@
 WorldProtector is a mod allows you to protect your constructions on your servers. It's based on the same principle as
 the plugin WorldGuard but with several differences at command level.
 
-**The port of the 1.16.5 version introduces a lot of new flags, new protection features, as well as some QoL
-improvements. This mentioned be aware that some described features below are not present in every version.**
-
 To protect your world you can define regions which can be protected against various actions by adding flags to the
 regions. These flags prevent certain actions/events from happening to protect the region: e.g. placing blocks, using
 doors or explosions destroying blocks.
@@ -13,12 +10,25 @@ doors or explosions destroying blocks.
 This can be done with the Flag Stick in conjunction with the Region Stick or with commands. You can further add players
 to a regions which are then allowed to bypass these rules/flags.
 
+## Older Versions
+
+The port of the 1.16.5 version introduces a lot of new flags, protection features, as well as some QoL
+improvements. This mentioned be aware that some described features below are not present in every version.
+
+Also note that older versions (1.12, 1.14, 1.15) will most likely not be updated with the new features added in 1.16. 
+If you are looking for a more up to date version for 1.12 take a look at [WorldDefender](https://www.curseforge.com/minecraft/mc-mods/world-defender) which is a direct fork of WorldProtector. 
+
 ## How to create a region?
 
-To define a region, follow these instructions:
+### Requirements
 
-0. For now, you need to be OP Level 4 on your dedicated server or enable cheats in your singleplayer world. This will be
-   configurable in a future update.
+- Dedicated Server: You'll need to have at least the OP level defined in your WorldProtector server configuration to be able to use WorldProtector.
+- Single player World: Enable cheats in your single player world to use WorldProtector.
+
+### Workflow
+
+The WorldProtector base command is ``/wp`` by default. Alternatively you can also use ``/w-p`` or ``/worldprotector``.
+If you have [JourneyMap](https://www.curseforge.com/minecraft/mc-mods/journeymap) installed the default base command will be ``/w-p`` due to JourneyMap using ``/wp`` to create waypoints.
 
 1. Use the Region Marker to mark the two blocks which define the area of the region.
 
@@ -78,8 +88,19 @@ This way you are able to group flags for the same purpose in a container and reu
 
 ### Commands
 
-**Note: Journey Map also uses the ``/wp`` command. For this reason WorldProtector offers ``/w-p`` or ``/worldprotector``
-as alternatives.**
+#### Interactive commands
+
+There are several new QoL-Features available in the more recent versions (2.1.5.1+ repectively 2.1.7.0).
+
+You can use the interactive links (indicated by the colored text) to copy commands into your chat or run them directly with a single click.
+Just hover over the links and read the hints to know what they are doing.
+
+Try it out! I would love to have some feedback. :-)
+
+Note: Journey Map also uses the ``/wp`` command. For this reason WorldProtector offers ``/w-p`` or ``/worldprotector``
+as alternatives.
+
+#### Command overview
 
 Currently, there are four types of commands to manager regions:
 
@@ -100,6 +121,8 @@ Currently, there are **57 flags** available. Click below to show the complete li
 
 To add a flag use the command ```/wp flag add <region> <flag>```. To remove a flag from a region
 use ```/wp flag remove <region> <flag>. ```
+
+To add or remove multiple flags at once just separate them with a space between them. 
 
 You are also able to add or remove all flags by using the special flag 'all': ```/wp flag <add|remove> <region> all```
 
@@ -214,6 +237,8 @@ Thanks to BrokenSwing for his help about regions and safeguard in the world.
 
 Thanks to TheBossMax2 for the mod logo.
 
+Thanks to xEdek_ for the 1.12 fork WorldDefender.
+
 ### License
 
 This mod is open sourced under the Creative Commons 3.0 Attribution Non-Commercial License (see Links below).
@@ -258,7 +283,7 @@ The following features will be implemented first in the 1.16.5 version, but will
 5. [Patchouli](https://github.com/Vazkii/Patchouli/wiki) documentation
 6. Modularisation
    * Configuration for server-side only usage
-   * Item-less alternative for the Region Marker
+   * Vanilla friendly alternative for the Region Marker (named Stick)
    * CLI offers all functionality without using Items
 7. Region highlighting
 8. Define regions as [prism](https://en.wikipedia.org/wiki/Prism_(geometry)) shapes.
@@ -278,7 +303,6 @@ The following features will be implemented first in the 1.16.5 version, but will
 #### Quality of life features:
 
 * [CLI]: add and remove multiple flags at once
-* [CLI]: add option to define a region without the region marker
 * [GUI]: Provide simple gui for choosing flag/region, since there could be many to cycle through
 
 ## FAQ
@@ -297,7 +321,7 @@ The following features will be implemented first in the 1.16.5 version, but will
 
 
 - **Q**: Why can't I use the commands provided by WorldProtector?
-- **A**: Make sure you are OP Level 4 on your server or enable cheats in your singleplayer world.
+- **A**: Make sure you have at least the OP level defined in your WorldProtector server configuration or enable cheats in your single player world.
 
 
 - **Q**: Why are not all commands with ``/wp <command>`` working and prompting errors?

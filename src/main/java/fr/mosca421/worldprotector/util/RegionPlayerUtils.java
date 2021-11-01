@@ -3,11 +3,12 @@ package fr.mosca421.worldprotector.util;
 import fr.mosca421.worldprotector.command.Command;
 import fr.mosca421.worldprotector.config.ServerConfigBuilder;
 import fr.mosca421.worldprotector.data.RegionManager;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.MinecraftGame;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.OpEntry;
 import net.minecraft.util.text.*;
-import net.minecraft.util.text.event.ClickEvent;
-import net.minecraft.util.text.event.HoverEvent;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 
 import java.util.List;
@@ -15,6 +16,7 @@ import java.util.stream.Collectors;
 
 import static fr.mosca421.worldprotector.config.ServerConfigBuilder.WP_CMD;
 import static fr.mosca421.worldprotector.util.MessageUtils.*;
+import static fr.mosca421.worldprotector.util.PlayerUtils.*;
 
 public final class RegionPlayerUtils {
 
@@ -32,10 +34,25 @@ public final class RegionPlayerUtils {
                 sendMessage(sourcePlayer, new TranslationTextComponent("message.players.add.multiple", playerString, regionName));
                 addedPlayers.forEach(playerEntity -> sendMessage(playerEntity, new TranslationTextComponent( "message.player.regionadded", regionName)));
             } else {
-                sendMessage(sourcePlayer, new TranslationTextComponent( "message.players.add.none", playerString));
+                // TODO: rework lang key
+                sendMessage(sourcePlayer, new TranslationTextComponent( "message.players.add.none", playerString, regionName));
             }
         } else {
             sendMessage(sourcePlayer, new TranslationTextComponent("message.region.unknown", regionName));
+        }
+    }
+
+    public static void addPlayer(String regionName, PlayerEntity sourcePlayer, MCPlayerInfo playerInfo) {
+        if (RegionManager.get().containsRegion(regionName)) {
+            String playerToAddName = playerInfo.playerName;
+            if (RegionManager.get().addPlayer(regionName, playerInfo)) {
+                sendMessage(sourcePlayer, new TranslationTextComponent("message.region.addplayer", playerToAddName, regionName));
+            } else {
+                // Player already defined in this region -> Message needed or silent acknowledgement?
+                sendMessage(sourcePlayer, new TranslationTextComponent("message.region.errorplayer", regionName, playerToAddName));
+            }
+        } else {
+            sendMessage(sourcePlayer,  new TranslationTextComponent("message.region.unknown", regionName));
         }
     }
 
@@ -51,6 +68,19 @@ public final class RegionPlayerUtils {
             }
         } else {
             sendMessage(sourcePlayer,  new TranslationTextComponent("message.region.unknown", regionName));
+        }
+    }
+
+    public static void removePlayer(String regionName, PlayerEntity sourcePlayer, String playerToRemoveName) {
+        if (RegionManager.get().containsRegion(regionName)) {
+            if (RegionManager.get().removePlayer(regionName, playerToRemoveName)) {
+                sendMessage(sourcePlayer, new TranslationTextComponent("message.region.removeplayer", playerToRemoveName, regionName));
+            } else {
+                // Player was not present in this region -> Message needed or silent acknowledgement?
+                sendMessage(sourcePlayer, new TranslationTextComponent("message.region.unknownplayer", regionName, playerToRemoveName));
+            }
+        } else {
+            sendMessage(sourcePlayer, new TranslationTextComponent("message.region.unknown", regionName));
         }
     }
 

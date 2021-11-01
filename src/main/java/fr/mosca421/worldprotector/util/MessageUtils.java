@@ -93,9 +93,11 @@ public final class MessageUtils {
 
     public static void promptPlayerCommandHelp(PlayerEntity player) {
         sendMessage(player, buildHelpHeader("help.players.header"));
-        sendMessage(player, MessageUtils.buildHelpSuggestionLink("help.players.1", Command.HELP, Command.ADD));
-        sendMessage(player, MessageUtils.buildHelpSuggestionLink("help.players.2", Command.HELP, Command.REMOVE));
-        sendMessage(player, MessageUtils.buildHelpSuggestionLink("help.players.3", Command.HELP, Command.LIST));
+        sendMessage(player, MessageUtils.buildHelpSuggestionLink("help.players.1", Command.PLAYER, Command.ADD));
+        sendMessage(player, MessageUtils.buildHelpSuggestionLink("help.players.2", Command.PLAYER, Command.REMOVE));
+        sendMessage(player, MessageUtils.buildHelpSuggestionLink("help.players.3", Command.PLAYER, Command.ADD_OFFLINE));
+        sendMessage(player, MessageUtils.buildHelpSuggestionLink("help.players.4", Command.PLAYER, Command.REMOVE_OFFLINE));
+        sendMessage(player, MessageUtils.buildHelpSuggestionLink("help.players.5", Command.PLAYER, Command.LIST));
         sendMessage(player, new StringTextComponent(""));
     }
 

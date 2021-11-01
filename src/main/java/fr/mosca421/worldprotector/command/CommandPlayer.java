@@ -43,7 +43,7 @@ public class CommandPlayer {
                                 .then(Commands.argument(Command.PLAYER.toString(), EntityArgument.player())
                                         .executes(ctx -> addPlayer(ctx.getSource(), StringArgumentType.getString(ctx, Command.REGION.toString()), EntityArgument.getPlayer(ctx, Command.PLAYER.toString()))))))
                 // add offline player
-                .then(Commands.literal(Command.ADD.toString() + "-offline")
+                .then(Commands.literal(Command.ADD_OFFLINE.toString())
                         .then(Commands.argument(Command.REGION.toString(), StringArgumentType.word())
                                 .suggests((ctx, builder) -> ISuggestionProvider.suggest(RegionManager.get().getAllRegionNames(), builder))
                                 .then(Commands.argument(Command.PLAYER.toString(), StringArgumentType.word())
@@ -61,7 +61,7 @@ public class CommandPlayer {
                                         .suggests((ctx, builder) -> ISuggestionProvider.suggest(RegionManager.get().getRegionPlayers(ctx.getArgument(Command.REGION.toString(), String.class)), builder))
                                         .executes(ctx -> removePlayer(ctx.getSource(), StringArgumentType.getString(ctx, Command.REGION.toString()), EntityArgument.getPlayer(ctx, Command.PLAYER.toString()))))))
                 // remove offline player
-                .then(Commands.literal(Command.REMOVE.toString() + "-offline")
+                .then(Commands.literal(Command.REMOVE_OFFLINE.toString())
                         .then(Commands.argument(Command.REGION.toString(), StringArgumentType.word())
                                 .suggests((ctx, builder) -> ISuggestionProvider.suggest(RegionManager.get().getAllRegionNames(), builder))
                                 .then(Commands.argument(Command.PLAYER.toString(), StringArgumentType.word())

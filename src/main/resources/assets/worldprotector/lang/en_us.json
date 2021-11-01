@@ -70,6 +70,7 @@
   "help.tooltip.region-stick.detail.4": "[Secondary use] Keep the Region Stick in your offhand and read the Flag Stick tooltip.",
   "help.tooltip.details.shift": "Hold SHIFT for more details!",
   "message.region.list.entry": "Region '%s': ",
+  "message.region.info.teleport": "Region teleport: ",
   "message.region.info.regions_for_dim": "Region list for dimension '%s': ",
   "message.region.info.no_regions": "No regions defined yet",
   "message.region.info.tpcenter": "Region center: ",

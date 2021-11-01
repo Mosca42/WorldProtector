@@ -2,6 +2,7 @@ package fr.mosca421.worldprotector.data;
 
 import fr.mosca421.worldprotector.core.IRegion;
 import fr.mosca421.worldprotector.core.Region;
+import fr.mosca421.worldprotector.util.PlayerUtils;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -152,6 +153,14 @@ public class DimensionRegionCache extends HashMap<String, IRegion> implements IN
         return false;
     }
 
+    public boolean addPlayer(String regionName, PlayerUtils.MCPlayerInfo playerInfo){
+        if (this.containsKey(regionName)) {
+            return this.get(regionName).addPlayer(playerInfo);
+        }
+        return false;
+    }
+
+
     public List<PlayerEntity> addPlayers(String regionName, List<PlayerEntity> players){
         if (this.containsKey(regionName)) {
             return players.stream()
@@ -165,6 +174,13 @@ public class DimensionRegionCache extends HashMap<String, IRegion> implements IN
     public boolean removePlayer(String regionName, PlayerEntity player){
         if (this.containsKey(regionName)) {
             return this.get(regionName).removePlayer(player);
+        }
+        return false;
+    }
+
+    public boolean removePlayer(String regionName, String playerName){
+        if (this.containsKey(regionName)) {
+            return this.get(regionName).removePlayer(playerName);
         }
         return false;
     }
